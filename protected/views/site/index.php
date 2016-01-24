@@ -76,7 +76,7 @@ $baseUrl = Yii::app()->baseUrl;
 
         </div>
 
-        </secti on><!-- --/wrapper ---- >
+        </section><!-- --/wrapper ---- >
 </section>
         <!-- Co ntent End --> 
         <script type="text/javascript">

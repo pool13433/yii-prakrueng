@@ -7,7 +7,7 @@
  * @property integer $obj_id
  * @property string $obj_name
  * @property integer $obj_price
- * @property string $obj_year
+ * @property string $obj_born
  * @property string $obj_img
  * @property integer $obj_like
  * @property string $obj_comment
@@ -34,13 +34,13 @@ class SacredObject extends CActiveRecord {
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('obj_name, obj_price, obj_year, obj_comment, type_id, pro_id, obj_updatedate', 'required'),
-            array('obj_price, obj_like,obj_view,obj_onwer, type_id, pro_id', 'numerical', 'integerOnly' => true),
+            array('obj_name, obj_price, obj_born, obj_comment, type_id, pro_id, obj_updatedate', 'required'),
+            array('obj_price, obj_like,obj_view,mem_id, type_id, pro_id', 'numerical', 'integerOnly' => true),
             array('obj_name, obj_img', 'length', 'max' => 255),
-            array('obj_year', 'length', 'max' => 4),
+            array('obj_born', 'length', 'max' => 4),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('obj_id, obj_name, obj_price, obj_year, obj_img, obj_like, obj_comment,obj_onwer, type_id, pro_id, obj_updatedate', 'safe', 'on' => 'search'),
+            array('obj_id, obj_name, obj_price, obj_born, obj_img, obj_like, obj_comment,mem_id, type_id, pro_id, obj_updatedate', 'safe', 'on' => 'search'),
         );
     }
 
@@ -52,6 +52,8 @@ class SacredObject extends CActiveRecord {
         // class name for the relations automatically generated below.
         return array(
             'type' => array(self::BELONGS_TO, 'SacredType', 'type_id'),
+            'province' => array(self::BELONGS_TO, 'Province', 'pro_id'),
+            'member' => array(self::BELONGS_TO, 'Member', 'mem_id'),
         );
     }
 
@@ -63,11 +65,11 @@ class SacredObject extends CActiveRecord {
             'obj_id' => 'Obj',
             'obj_name' => 'Obj Name',
             'obj_price' => 'Obj Price',
-            'obj_year' => 'Obj Year',
+            'obj_born' => 'Obj Year',
             'obj_img' => 'Obj Img',
             'obj_like' => 'Obj Like',
             'obj_view' => 'Obj View',
-            'obj_onwer' => 'Obj Onwer',
+            'mem_id' => 'Onwer',
             'obj_comment' => 'Obj Comment',
             'type_id' => 'Type',
             'pro_id' => 'Pro',
@@ -95,7 +97,7 @@ class SacredObject extends CActiveRecord {
         $criteria->compare('obj_id', $this->obj_id);
         $criteria->compare('obj_name', $this->obj_name, true);
         $criteria->compare('obj_price', $this->obj_price);
-        $criteria->compare('obj_year', $this->obj_year, true);
+        $criteria->compare('obj_born', $this->obj_born, true);
         $criteria->compare('obj_img', $this->obj_img, true);
         $criteria->compare('obj_like', $this->obj_like);
         $criteria->compare('obj_comment', $this->obj_comment, true);
@@ -122,7 +124,7 @@ class SacredObject extends CActiveRecord {
         // convert to display format
         $this->obj_updatedate = strtotime($this->obj_updatedate);
         $this->obj_updatedate = date('m/d/Y', $this->obj_updatedate);
-
+        $this->obj_born = (intval($this->obj_born) + 543);
         parent::afterFind();
     }
 

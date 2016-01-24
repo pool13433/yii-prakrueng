@@ -32,7 +32,7 @@ class SacredObjectController extends Controller {
         $sacredObject->obj_like = 1;//$_POST['like'];
         $sacredObject->obj_name = $_POST['name'];
         $sacredObject->obj_price = $_POST['price'];
-        $sacredObject->obj_year =$_POST['year'];
+        $sacredObject->obj_born =$_POST['year'];
         $sacredObject->type_id =$_POST['type'];
         $sacredObject->pro_id = $_POST['province'];
         $sacredObject->obj_updatedate = new CDbExpression('NOW()');
