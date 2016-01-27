@@ -10,3 +10,12 @@ return array(
     'password' => '',
     'charset' => 'utf8',
 );
+/*
+ * Database:	shoparai_prakreung
+*  Host:                    localhost
+*  Username:	shoparai_pk
+*  Password:	7NvE6Hai
+ * 
+ * 
+ */
+

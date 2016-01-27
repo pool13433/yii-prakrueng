@@ -17,4 +17,67 @@ class Utilities {
         return $listYear;
     }
 
+    public static function generateRandomString($length = 10) {
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $charactersLength = strlen($characters);
+        $randomString = '';
+        for ($i = 0; $i < $length; $i++) {
+            $randomString .= $characters[rand(0, $charactersLength - 1)];
+        }
+        return $randomString;
+    }
+
+    public static function resizeImage($pathFolder, $image, $width, $height) {
+        // parameter => $image['fileMain']
+        /* Get original image x y */
+        //var_dump($image);
+        //exit();
+        $newName = '';
+        $imageType = '';
+        try {
+            $imageType = $image['fileMain']['type'];
+
+            list($w, $h) = getimagesize($image['fileMain']['tmp_name']);
+            /* calculate new image size with ratio */
+            $ratio = max($width / $w, $height / $h);
+            $h = ceil($height / $ratio);
+            $x = ($w - $width / $ratio) / 2;
+            $w = ceil($width / $ratio);
+
+            /* new file name */
+            $imageExtension = explode("/", $imageType);
+           
+            $newName = $width . 'x' . $height . '_' . Utilities::generateRandomString(10) . '.' . $imageExtension[1];
+            $path = $pathFolder . $newName;
+
+            /* read binary data from image file */
+            $imgString = file_get_contents($image['fileMain']['tmp_name']);
+            /* create image from string */
+            $image['fileMain'] = imagecreatefromstring($imgString);
+            $tmp = imagecreatetruecolor($width, $height);
+            imagecopyresampled($tmp, $image['fileMain'], 0, 0, $x, 0, $width, $height, $w, $h);
+
+
+            /* Save image */
+            if ($imageType === 'image/jpeg' || $imageType == 'image/JPEG' || $imageType == 'image/jpg' || $imageType == 'image/JPG') {
+                imagejpeg($tmp, $path, 100);
+            } else if ($imageType == 'image/png' || $imageType == 'image/PNG') {
+                imagepng($tmp, $path, 0);
+            } else if ($imageType == 'image/GIF' || $imageType == 'image/gif') {
+                imagegif($tmp, $path);
+            } else {
+                echo 'image_type ::==' . $imageType;
+                exit();
+            }
+
+            /* cleanup memory */
+            imagedestroy($image['fileMain']);
+            imagedestroy($tmp);
+        } catch (Exception $exc) {
+            echo $exc->getTraceAsString();
+            exit();
+        }
+        return $newName;
+    }
+
 }

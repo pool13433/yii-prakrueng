@@ -1,10 +1,10 @@
 <fieldset>
     <legend>จัดการประเภทวัตถุมงคล
-        <a href="<?= Yii::app()->createUrl('sacredObject/indexType') ?>" class="btn btn-primary btn-sm"> 
+        <a href="<?= Yii::app()->createUrl('sacred/indexType') ?>" class="btn btn-primary btn-sm"> 
             <i class=" glyphicon glyphicon-plus"></i> ข้อมูลใหม่
         </a>
     </legend>
-    <form class="form-horizontal" method="post" action="<?= Yii::app()->createUrl('sacredObject/typeSave') ?>">
+    <form class="form-horizontal" method="post" action="<?= Yii::app()->createUrl('sacred/typeSave') ?>">
         <div class="form-group">
             <label class="col-sm-2 control-label">ชื่อ</label>
             <div class="col-sm-4">
@@ -39,10 +39,10 @@
                     <td><?= $type->type_id ?></td>
                     <td><?= $type->type_name ?></td>
                     <td>
-                        <a href="<?= Yii::app()->createUrl('sacredObject/indexType/' . $type->type_id) ?>" class="btn btn-warning btn-sm">แก้ไข</a>
+                        <a href="<?= Yii::app()->createUrl('sacred/indexType/' . $type->type_id) ?>" class="btn btn-warning btn-sm">แก้ไข</a>
                     </td>
                     <td>
-                        <a href="<?= Yii::app()->createUrl('sacredObject/typeDelete/' . $type->type_id) ?>" class="btn btn-danger btn-sm" onclick="return confirm('ยืนยันการลบ')">ลบ</a>
+                        <a href="<?= Yii::app()->createUrl('sacred/typeDelete/' . $type->type_id) ?>" class="btn btn-danger btn-sm" onclick="return confirm('ยืนยันการลบ')">ลบ</a>
                     </td>
                 </tr>
             <?php } ?>

@@ -1,10 +1,10 @@
 <fieldset>
     <legend>จัดการประเภทวัตถุมงคล
-        <a href="<?= Yii::app()->createUrl('sacredObject/indexProvince') ?>" class="btn btn-primary btn-sm"> 
+        <a href="<?= Yii::app()->createUrl('sacred/indexProvince') ?>" class="btn btn-primary btn-sm"> 
             <i class=" glyphicon glyphicon-plus"></i> ข้อมูลใหม่
         </a>
     </legend>
-    <form class="form-horizontal" method="post" action="<?= Yii::app()->createUrl('sacredObject/provinceSave') ?>">
+    <form class="form-horizontal" method="post" action="<?= Yii::app()->createUrl('sacred/provinceSave') ?>">
         <div class="form-group">
             <label class="col-sm-2 control-label">ชื่อ</label>
             <div class="col-sm-4">
@@ -48,10 +48,10 @@
                     <td><?= $province->pro_name_th ?></td>
                     <td><?= $province->pro_name_eng ?></td>
                     <td>
-                        <a href="<?= Yii::app()->createUrl('sacredObject/indexProvince/' . $province->pro_id) ?>" class="btn btn-warning btn-sm">แก้ไข</a>
+                        <a href="<?= Yii::app()->createUrl('sacred/indexProvince/' . $province->pro_id) ?>" class="btn btn-warning btn-sm">แก้ไข</a>
                     </td>
                     <td>
-                        <a href="<?= Yii::app()->createUrl('sacredObject/provinceDelete/' . $province->pro_id) ?>" class="btn btn-danger btn-sm" onclick="return confirm('ยืนยันการลบ')">ลบ</a>
+                        <a href="<?= Yii::app()->createUrl('sacred/provinceDelete/' . $province->pro_id) ?>" class="btn btn-danger btn-sm" onclick="return confirm('ยืนยันการลบ')">ลบ</a>
                     </td>
                 </tr>
             <?php } ?>

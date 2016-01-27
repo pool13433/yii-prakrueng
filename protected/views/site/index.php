@@ -13,54 +13,50 @@ $baseUrl = Yii::app()->baseUrl;
                 <!-- -- 1st ROW OF PANELS ---->
                 <div id="boxPraKreung" class="row">
                     <?php foreach ($listSacredObject as $index => $object) { ?>
-                        <div class="col-lg-4 col-md-4 col-sm-4 mb">          
-                            <div class="weather-2 pn">             
-                                <div class="weather-2-header">                     
-                                    <div class="row">                         
-                                        <div class="col-lg-12 col-sm-12 col-xs-12">                             
-                                            <p><?= $object->obj_name ?></p>                        
-                                        </div>                     
-                                    </div>             
-                                </div><!-- /weather-2 header -->             
-                                <div class="row centered">             
-                                    <div class="col-lg-10 col-lg-offset-1 col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1 col-xs-10 col-xs-offset-1 desc">                     
-                                        <div class="project-wrapper">                       
-                                            <div class="project">                            
-                                                <div class="photo-wrapper">                                
-                                                    <div class="photo">                                   
-                                                        <a class="fancybox" href="<?= $baseUrl ?>/img/prakrueng/a1.jpg">                                       
-                                                            <img class="img-responsive" src="<?= $baseUrl ?>/img/prakrueng/a1.jpg" alt=""></a>                           
-                                                    </div>                                 
-                                                    <div class="overlay">
-
-                                                    </div>                             
-                                                </div>                          
-                                            </div>                       
-                                        </div>                
-                                    </div>             
-                                </div>             
-                                <div class="row data">                     
-                                    <div class="col-sm-6 col-xs-6 goleft">                         
-                                        <h4>ราคา</h4>                        
-                                        <h6>เจ้าของ</h6>                         
-                                        <h6>โทร</h6>                     
-                                    </div>                     
-                                    <div class="col-sm-6 col-xs-6 goright">                         
-                                        <h4>999999</h4>                         
-                                        <h6>Poolsawat Apin</h6>                         
-                                        <h5>0801166617</h5>                     
-                                    </div>                 
-                                </div>    
-                                <div class="row data">                     
-                                    <div class="col-sm-6 col-xs-6 pull-right">
-                                        <a href="<?= Yii::app()->createUrl('site/detail/' . $object->obj_id) ?>"><p class="goright"><i class="fa fa-flag"></i> อ่านต่อ...</p></a>
-                                    </div>              
-                                </div> 
+                        <div class="col-lg-4 col-md-4 col-sm-4 mb">        
+                            <div class="panel panel-warning">
+                                <div class="panel-heading clearfix">
+                                    <h4 class="panel-title pull-left" style="padding-top: 7.5px;"><b><?= $object->obj_name ?></h4>
+                                    <h4 class="panel-title pull-right" style="padding-top: 7.5px;"><b><?= $object->obj_price ?></b></h4>
+                                </div>
+                                <div class="panel-body">
+                                    <div class="thumbnail">
+                                        <a class="fancybox" href="<?= $baseUrl . '/images/' . $object->obj_img ?>">                                       
+                                            <img class="img-responsive" src="<?= $baseUrl . '/images/' . $object->obj_img ?>"
+                                                 style="max-width: 75%;min-height: 180px;" alt="">
+                                        </a>                                                                   
+                                    </div>
+                                    <p class="pull-right">
+                                        <a href="<?= Yii::app()->createUrl('site/detail/' . $object->obj_id) ?>" class="btn btn-warning btn-xs">
+                                            <i class="fa fa-flag"></i> อ่านต่อ...
+                                        </a>
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     <?php } ?>
                 </div><!-- /END 6TH ROW OF PANELS -->
-
+                <div class="row pull-right">
+                    <nav>
+                        <ul class="pagination">
+                            <li>
+                                <a href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            <li><a href="#">1</a></li>
+                            <li><a href="#">2</a></li>
+                            <li><a href="#">3</a></li>
+                            <li><a href="#">4</a></li>
+                            <li><a href="#">5</a></li>
+                            <li>
+                                <a href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
             </div>
 
             <!-- Sidebar Right Begin-->
@@ -68,7 +64,8 @@ $baseUrl = Yii::app()->baseUrl;
                 <?php
                 $this->renderPartial('/sidebar_right', array(
                     'listSacredObjectLastInsert' => $listSacredObjectLastInsert,
-                    'listSacredType' => $listSacredType
+                    'listSacredType' => $listSacredType,
+                    'listMemberLastInsert' => $listMemberLastInsert
                 ))
                 ?>
             </div>
@@ -76,13 +73,13 @@ $baseUrl = Yii::app()->baseUrl;
 
         </div>
 
-        </section><!-- --/wrapper ---- >
+    </section><!-- --/wrapper ---- >
 </section>
-        <!-- Co ntent End --> 
-        <script type="text/javascript">
-            $(document).ready(function () {
-                $(".fancybox").fancybox({'width': 400,
-                    'height': 300,
-                    'autoSize': false});
-            });
-        </script>
+    <!-- Co ntent End --> 
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".fancybox").fancybox({'width': 400,
+                'height': 300,
+                'autoSize': false});
+        });
+    </script>
