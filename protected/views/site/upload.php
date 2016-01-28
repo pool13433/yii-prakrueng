@@ -2,9 +2,9 @@
 $baseUrl = Yii::app()->baseUrl;
 ?>
 <form id="form-upload" method="post" action="<?= Yii::app()->createUrl('site/upload') ?>" class="form-horizontal" enctype="multipart/form-data">
-    <div class="panel panel-primary">
+    <div class="panel panel-warning">
         <div class="panel-heading">
-            ลงข้อมูลพระเครื่องเพื่อปล่อยเช่า
+            <h4> <i class="fa fa-shopping-cart"></i> ลงข้อมูลพระเครื่องเพื่อปล่อยเช่า</h4>
         </div>
         <div class="panel-body">
             <div class="form-group">
@@ -59,7 +59,7 @@ $baseUrl = Yii::app()->baseUrl;
                 <div class="col-lg-3 col-md-6 col-sm-3 col-xs-7 box-browse-upload">
                     <input type="file" id="fileMain" name="fileMain"/>
                     <a class="thumbnail">
-                        <img id="imgMain" class="img-rounded" style="max-width: 60%;" src="<?= $baseUrl . '/images/upload_main/image_main.png' ?>"/>
+                        <img id="imgMain" class="img-rounded" style="max-width: 60%;" src="<?= $baseUrl . '/images/image_main.png' ?>"/>
                     </a>
                     <span class="label label-warning">กรุณากรอกข้อมูล รูปหลักสินค้า</span>
                 </div>                
@@ -97,7 +97,7 @@ $baseUrl = Yii::app()->baseUrl;
     </div>
 </form>
 <script type="text/javascript">
-    
+
     // The camelized version of the ID of the form element
     var myDropzone = {};
     Dropzone.options.myAwesomeDropzone = {
@@ -146,7 +146,14 @@ $baseUrl = Yii::app()->baseUrl;
             });
         },
         success: function (file, response) {
-
+            console.log(response);
+            var res = JSON.parse(response);
+            if (res.status) {
+                window.location.href = '<?= Yii::app()->createUrl('site/index') ?>'
+            } else {
+                alert(res.message);
+                window.location.href = res.url;
+            }
         }
     };
     $(function () {
@@ -173,7 +180,7 @@ $baseUrl = Yii::app()->baseUrl;
                     number: true,
                     minlength: 4,
                     maxlength: 4,
-                    max: new Date().getFullYear()+543
+                    max: new Date().getFullYear() + 543
                 },
                 province: "required",
 //                fileMain: {
@@ -211,8 +218,10 @@ $baseUrl = Yii::app()->baseUrl;
                     return false;
                 }
                 if (myDropzone.getQueuedFiles().length > 0) {
+                    console.log(' == myDropzone.processQueue ==');
                     myDropzone.processQueue();
                 } else {
+                    console.log(' == ajax ==');
                     $.ajax({
                         url: '<?= Yii::app()->createUrl('site/upload') ?>',
                         type: 'POST',
@@ -223,10 +232,12 @@ $baseUrl = Yii::app()->baseUrl;
                         contentType: false,
                         processData: false,
                         success: function (response) {
+                            console.log(response);
                             if (response.status) {
                                 window.location.href = '<?= Yii::app()->createUrl('site/index') ?>'
                             } else {
-                                alert('upload file error');
+                                alert(response.message);
+                                window.location.href = response.url;
                             }
                         },
                         error: function () {
@@ -245,5 +256,5 @@ $baseUrl = Yii::app()->baseUrl;
             $(span).css({'display': 'none'});
         });
     }
-   
+
 </script>

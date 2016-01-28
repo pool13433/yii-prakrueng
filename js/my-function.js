@@ -5,7 +5,13 @@ $(document).ready(function () {
     //customElevateZoom();
     //initApp();
     validateDefault();
+    $(".fancybox").fancybox({
+        //'width': 400,
+        //'height': 300,
+        'autoSize': false});
+
 });
+
 
 $.extend(true, $.fn.dataTable.defaults, {
     "language": {

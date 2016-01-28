@@ -75,6 +75,11 @@ $baseUrl = Yii::app()->baseUrl;
                                         </div>
                                         <div class="col-lg-5 col-md-5 col-12 col-xs-12">
                                             <div id="albumImage">
+                                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6">
+                                                    <a href="#" class="thumbnail" data-image="<?= $baseUrl . '/images/' . $sacredObject->obj_img ?>" data-zoom-image="<?= $baseUrl . '/images/' . $sacredObject->obj_img ?>"> 
+                                                        <img id="img_zoom" class="img-rounded" src="<?= $baseUrl . '/images/' . $sacredObject->obj_img ?>"/> 
+                                                    </a>
+                                                </div>
                                                 <?php foreach ($listSacredObjectImg as $index => $img) { ?>
                                                     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6">
                                                         <a href="#" class="thumbnail" data-image="<?= $baseUrl . '/images/' . $img->img_name ?>" data-zoom-image="<?= $baseUrl . '/images/' . $img->img_name ?>"> 
@@ -105,7 +110,7 @@ $baseUrl = Yii::app()->baseUrl;
                                         </dl>
                                         <dl class="dl-horizontal">
                                             <dt>ราคา</dt>
-                                            <dd><?= $sacredObject->obj_price ?></dd>
+                                            <dd><?= $sacredObject->obj_price ?> บาท</dd>
                                         </dl>
                                         <dl class="dl-horizontal">
                                             <dt>สร้างเมื่อ</dt>
@@ -304,7 +309,12 @@ $baseUrl = Yii::app()->baseUrl;
                 value: 1
             },
             function (response) {
-                $('#btnLike').prop('disabled', true);
+                if (response.status) {
+                    $('#btnLike').prop('disabled', true);
+                } else {
+                    alert(response.message);
+                    window.location.href = response.url;
+                }
             }, 'json');
         });
         $('#btnFavorite').on('click', function () {
@@ -314,7 +324,12 @@ $baseUrl = Yii::app()->baseUrl;
                 value: 1
             },
             function (response) {
-                $('#btnFavorite').prop('disabled', true);
+                if (response.status) {
+                    $('#btnFavorite').prop('disabled', true);
+                } else {
+                    alert(response.message);
+                    window.location.href = response.url;
+                }
             }, 'json');
         });
 

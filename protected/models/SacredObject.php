@@ -20,6 +20,8 @@
  */
 class SacredObject extends CActiveRecord {
 
+    public $count_img;
+
     /**
      * @return string the associated database table name
      */
@@ -125,7 +127,14 @@ class SacredObject extends CActiveRecord {
         $this->obj_updatedate = strtotime($this->obj_updatedate);
         $this->obj_updatedate = date('m/d/Y', $this->obj_updatedate);
         $this->obj_born = (intval($this->obj_born) + 543);
+        $this->obj_price = Yii::app()->format->formatNumber($this->obj_price);
         parent::afterFind();
+    }
+
+    public function beforeSave() {
+       $this->obj_updatedate = new CDbExpression('NOW()');
+       $this->obj_price = Yii::app()->format->unformatNumber($this->obj_price);
+        return parent::beforeSave();
     }
 
 }

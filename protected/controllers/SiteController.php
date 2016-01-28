@@ -4,6 +4,7 @@ class SiteController extends Controller {
 
     public $data = array();
     private $member = null;
+    private $imageSize = 600;
 
     public function init() {
 
@@ -95,16 +96,81 @@ class SiteController extends Controller {
     }
 
     public function actionIndex() {
+        $where_condition = ' 1=1 ';
+        $pagin_page_size = 15;
+        $pagin_page_current = (empty($_GET['page']) ? '1' : $_GET['page']);
+        $mem_id = (empty($_GET['user']) ? '' : $_GET['user']);
+
         $title = 'พระเครื่องยอดนิยม';
         $typeId = (empty($_GET['typeId']) ? '' : $_GET['typeId']);
-        $params = array();
+        $criteria = new CDbCriteria();
+        $criteria->select = 'o.*';
+        $criteria->alias = 'o';
         if (!empty($typeId)) {
-            $params['type_id'] = $typeId;
+            $where_condition .= 'AND type_id = ' . $typeId;
+            $criteria->compare('o.type_id', $typeId);
             $title = SacredType::model()->findByPk($typeId)->type_name;
         }
-        $listSacredObject = SacredObject::model()->findAllByAttributes($params);
+        if (!empty($mem_id)) {
+            $where_condition .= 'AND mem_id = ' . $mem_id;
+            $criteria->compare('o.mem_id', $mem_id);
+        }
+        $criteria->order = 'o.obj_updatedate desc';
+
+        $criteria->limit = $pagin_page_size;
+        $criteria->offset = ($pagin_page_current - 1) * $pagin_page_size;
+
+        $listSacredObject = SacredObject::model()->findAll($criteria);
         $this->data['listSacredObject'] = $listSacredObject;
         $this->data['title'] = $title;
+
+        /*
+         * pagination logic 
+         */
+
+        $count_object = Yii::app()->db->createCommand()
+                ->select('count(*)')
+                ->from('sacred_object')
+                ->where($where_condition)
+                ->queryScalar();
+        $pagin_page_count = $count_object;
+        $pagin_page_all = ceil($pagin_page_count / $pagin_page_size);
+        $paramsBegin = array(
+            'typeId' => $typeId,
+            'user' => $mem_id
+        );
+        if (1 == $pagin_page_current) {
+            $paramsBegin['page'] = 1;
+        } else {
+            $paramsBegin['page'] = ($pagin_page_current - 1);
+        }
+        $paramsEnd = array(
+            'typeId' => $typeId,
+            'user' => $mem_id
+        );
+        if ($pagin_page_all == $pagin_page_current) {
+            $paramsEnd['page'] = $pagin_page_all;
+        } else {
+            $paramsEnd['page'] = ($pagin_page_current + 1);
+        }
+
+        $pagin_url_begin = Yii::app()->createUrl('site/index', $paramsBegin);
+        $pagin_url_end = Yii::app()->createUrl('site/index', $paramsEnd);
+
+        $this->data['pagination'] = array(
+            'page_size' => $pagin_page_size,
+            'page_count' => $pagin_page_count,
+            'page_current' => $pagin_page_current,
+            'page_all' => $pagin_page_all,
+            'page_type_id' => $typeId,
+            'page_user_id' => $mem_id,
+            'page_url_begin' => $pagin_url_begin,
+            'page_url_end' => $pagin_url_end
+        );
+        /*
+         * pagiation logic
+         */
+
         $this->render('index', $this->data);
     }
 
@@ -115,8 +181,8 @@ class SiteController extends Controller {
         $criteria->join = 'LEFT JOIN member m ON m.mem_id = o.mem_id';
         $criteria->condition = 'o.obj_id = ' . $id;
         $sacredObject = SacredObject::model()->find($criteria);
-        
-        
+
+
         $this->data['sacredObject'] = $sacredObject;
         $params = array();
         if (!empty($sacredObject->mem_id)) {
@@ -132,19 +198,32 @@ class SiteController extends Controller {
     }
 
     public function actionUpload() {
+
         if (empty($_POST)) {
-            $listSacredType = SacredType::model()->findAll();
-            $listProvince = Province::model()->findAll();
+            $listSacredType = SacredType::model()->findAll(array(
+                'order' => 'type_name'
+            ));
+            $listProvince = Province::model()->findAll(array(
+                'order' => 'pro_name_th'
+            ));
             $this->render('upload', array(
                 'listSacredType' => $listSacredType,
                 'listProvince' => $listProvince
             ));
         } else {
-            if (empty($_POST)) {
-                echo '';
+            $this->member = Yii::app()->session['member'];
+            if (empty($this->member)) {
+                echo CJSON::encode(array(
+                    'status' => false,
+                    'title' => 'ไม่สามารถลงปล่อยพระเครื่องให้เช่าได้',
+                    'message' => 'ท่านยังไม่ได้ Login เข้าระบบ กรุณา Login เข้าระบบก่อน',
+                    'url' => Yii::app()->createUrl('site/login')
+                ));
+                exit(0);
             } else {
-
+                $currentDate = date('Ymd');
                 $pathImage = YiiBase::getPathOfAlias("webroot") . '/images';
+                $utility = new Utilities();
 
                 $sacredObject = new SacredObject();
                 $sacredObject->obj_born = $_POST['born'];
@@ -156,19 +235,18 @@ class SiteController extends Controller {
                 $sacredObject->type_id = $_POST['type'];
                 $sacredObject->mem_id = $this->member->mem_id;
                 $sacredObject->obj_updatedate = new CDbExpression('NOW()');
-
                 /*
                  * Manage Image Resize , Rename of File
                  */
-                $subDerectory = '/upload_main/';
-                $imageName = Utilities::resizeImage($pathImage . $subDerectory, $_FILES, 300, 300);
+                $subDerectoryMain = '/upload_main/' . $currentDate . '_';
+                $imageName = $utility->resizeImage($pathImage . $subDerectoryMain, $_FILES['fileMain'], $this->imageSize, $this->imageSize);
                 /*
                  * Manage Image Resize , Rename of File
                  */
-                $sacredObject->obj_img = $subDerectory . $imageName;
+                $sacredObject->obj_img = $subDerectoryMain . $imageName;
                 if ($sacredObject->save(false)) {
+
                     if (!empty($_FILES['fileOther'])) {
-                        var_dump($_FILES['fileOther']);
                         $listFileOther = $this->readArrayFiles($_FILES['fileOther']);
                         foreach ($listFileOther as $index => $file) {
                             $sacredImg = new SacredObjectImg();
@@ -179,27 +257,29 @@ class SiteController extends Controller {
                             /*
                              * Manage Image Resize , Rename of File
                              */
-                            $subDerectory = '/upload_other/';
-                            $imageName = Utilities::resizeImage($pathImage . $subDerectory, $_FILES, 300, 300);
+                            $subDerectoryOther = '/upload_other/' . $currentDate . '_';
+                            $imageName = $utility->resizeImage($pathImage . $subDerectoryOther, $file, $this->imageSize, $this->imageSize);
                             /*
                              * Manage Image Resize , Rename of File
                              */
-                            $sacredImg->img_name = $subDerectory . $imageName;
+                            $sacredImg->img_name = $subDerectoryOther . $imageName;
                             if (!$sacredImg->save(false)) {
                                 echo CJSON::encode(array(
-                                    'status' => false
+                                    'status' => false,
+                                    'title' => 'ไม่สามารถบันทึกได้',
+                                    'message' => 'ไม่สามารถบันทึก รูปภาพที่เกี่ยวข้องได้ กรุณาติดต่อ Admin Page',
+                                    'url' => ''
                                 ));
                                 exit();
                             }
                         }
-                        echo CJSON::encode(array(
-                            'status' => true,
-                        ));
-                    } else {
-                        echo CJSON::encode(array(
-                            'status' => true,
-                        ));
                     }
+                    echo CJSON::encode(array(
+                        'status' => true,
+                        'title' => 'ลงข้อมูลปล่อยเช่าพระสำเร็จ',
+                        'message' => 'ลงข้อมูลปล่อยเช่าพระสำเร็จ',
+                        'url' => ''
+                    ));
                 }
             }
         }
@@ -250,6 +330,64 @@ class SiteController extends Controller {
                 echo 'system error';
             }
         }
+    }
+
+    public function actionNews() {
+        $where_condition = ' 1=1 ';
+        $pagin_page_size = 15;
+        $pagin_page_current = (empty($_GET['page']) ? '1' : $_GET['page']);
+
+        $criteria = new CDbCriteria();
+        $criteria->select = 'n.*';
+        $criteria->alias = 'n';
+        $criteria->order = 'n.news_updatedate desc';
+
+        $criteria->limit = $pagin_page_size;
+        $criteria->offset = ($pagin_page_current - 1) * $pagin_page_size;
+
+        $this->data['listSacredNews'] = SacredNews::model()->findAll($criteria);
+
+        /*
+         * pagination logic 
+         */
+
+        $count_object = Yii::app()->db->createCommand()
+                ->select('count(*)')
+                ->from('sacred_news')
+                ->where($where_condition)
+                ->queryScalar();
+        $pagin_page_count = $count_object;
+        $pagin_page_all = ceil($pagin_page_count / $pagin_page_size);
+        $paramsBegin = array();
+        if (1 == $pagin_page_current) {
+            $paramsBegin['page'] = 1;
+        } else {
+            $paramsBegin['page'] = ($pagin_page_current - 1);
+        }
+        $paramsEnd = array();
+        if ($pagin_page_all == $pagin_page_current) {
+            $paramsEnd['page'] = $pagin_page_all;
+        } else {
+            $paramsEnd['page'] = ($pagin_page_current + 1);
+        }
+
+        $pagin_url_begin = Yii::app()->createUrl('site/news', $paramsBegin);
+        $pagin_url_end = Yii::app()->createUrl('site/news', $paramsEnd);
+
+        $this->data['pagination'] = array(
+            'page_size' => $pagin_page_size,
+            'page_count' => $pagin_page_count,
+            'page_current' => $pagin_page_current,
+            'page_all' => $pagin_page_all,
+            'page_url_begin' => $pagin_url_begin,
+            'page_url_end' => $pagin_url_end
+        );
+        /*
+         * pagiation logic
+         */
+
+
+        $this->render('list-news', $this->data);
     }
 
     private function readArrayFiles(&$file_post) {

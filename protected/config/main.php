@@ -62,6 +62,10 @@ return array(
              */
             ),
         ),
+        'format' => array(
+            'class' => 'application.components.Formatter',            
+            'numberFormat'=>array('decimals'=>0, 'decimalSeparator'=>',', 'thousandSeparator'=>','),
+        ),
     ),
     // application-level parameters that can be accessed
     // using Yii::app()->params['paramName']

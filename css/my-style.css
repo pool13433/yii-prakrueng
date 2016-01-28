@@ -64,64 +64,48 @@ div.form-group > label.control-label{
 /*
 * ***************************** Navbar ************************************
 */
-.navbar-default {
+#my-menu.navbar-default .navbar-brand {
+    color: rgba(255, 235, 235, 1);
+}
+#my-menu.navbar-default {
+    font-size: 18px;
+    background-color: rgba(251, 192, 45, 1);
+    background: -webkit-linear-gradient(top, rgba(230, 81, 0, 1) 0%, rgba(251, 192, 45, 1) 100%);
+    background: linear-gradient(to bottom, rgba(230, 81, 0, 1) 0%, rgba(251, 192, 45, 1) 100%);
+    border-bottom-width: 1px;
+}
+#my-menu.navbar-default .navbar-nav>li>a {
+    color: rgba(138, 0, 0, 1);
+    background-color: rgba(251, 192, 38, 1);
+    background: -webkit-linear-gradient(top, rgba(230, 81, 0, 1) 0%, rgba(251, 192, 38, 1) 100%);
+    background: linear-gradient(to bottom, rgba(230, 81, 0, 1) 0%, rgba(251, 192, 38, 1) 100%);
+}
+#my-menu.navbar-default .navbar-nav>li>a:hover,
+#my-menu.navbar-default .navbar-nav>li>a:focus {
+    color: rgba(176, 19, 19, 1);
+    background-color: rgba(232, 37, 37, 1);
+    background: -webkit-linear-gradient(top, rgba(199, 4, 4, 1) 0%, rgba(232, 37, 37, 1) 100%);
+    background: linear-gradient(to bottom, rgba(199, 4, 4, 1) 0%, rgba(232, 37, 37, 1) 100%);
+}
+#my-menu.navbar-default .navbar-nav>.active>a,
+#my-menu.navbar-default .navbar-nav>.active>a:hover,
+#my-menu.navbar-default .navbar-nav>.active>a:focus {
+    color: rgba(64, 5, 5, 1);
+    background-color: rgba(255, 5, 5, 1);
+}
+#my-menu.navbar-default .navbar-toggle {
+    border-color: #ff0505;
+}
+#my-menu.navbar-default .navbar-toggle:hover,
+#my-menu.navbar-default .navbar-toggle:focus {
+    background-color: #ff0505;
+}
+#my-menu.navbar-default .navbar-toggle .icon-bar {
+    background-color: #ff0505;
+}
+#my-menu.navbar-default .navbar-toggle:hover .icon-bar,
+#my-menu.navbar-default .navbar-toggle:focus .icon-bar {
     background-color: #fbc02d;
-    border-color: #00c853;
-}
-.navbar-default .navbar-brand {
-    color: #e65100;
-}
-.navbar-default .navbar-brand:hover, .navbar-default .navbar-brand:focus {
-    color: #ffff00;
-}
-.navbar-default .navbar-text {
-    color: #e65100;
-}
-.navbar-default .navbar-nav > li > a {
-    color: #e65100;
-}
-.navbar-default .navbar-nav > li > a:hover, .navbar-default .navbar-nav > li > a:focus {
-    color: #ffff00;
-}
-.navbar-default .navbar-nav > .active > a, .navbar-default .navbar-nav > .active > a:hover, .navbar-default .navbar-nav > .active > a:focus {
-    color: #ffff00;
-    background-color: #00c853;
-}
-.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:hover, .navbar-default .navbar-nav > .open > a:focus {
-    color: #ffff00;
-    background-color: #00c853;
-}
-.navbar-default .navbar-toggle {
-    border-color: #00c853;
-}
-.navbar-default .navbar-toggle:hover, .navbar-default .navbar-toggle:focus {
-    background-color: #00c853;
-}
-.navbar-default .navbar-toggle .icon-bar {
-    background-color: #e65100;
-}
-.navbar-default .navbar-collapse,
-.navbar-default .navbar-form {
-    border-color: #e65100;
-}
-.navbar-default .navbar-link {
-    color: #e65100;
-}
-.navbar-default .navbar-link:hover {
-    color: #ffff00;
-}
-
-@media (max-width: 767px) {
-    .navbar-default .navbar-nav .open .dropdown-menu > li > a {
-        color: #e65100;
-    }
-    .navbar-default .navbar-nav .open .dropdown-menu > li > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > li > a:focus {
-        color: #ffff00;
-    }
-    .navbar-default .navbar-nav .open .dropdown-menu > .active > a, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:hover, .navbar-default .navbar-nav .open .dropdown-menu > .active > a:focus {
-        color: #ffff00;
-        background-color: #00c853;
-    }
 }
 /*
 * ***************************** Navbar ************************************

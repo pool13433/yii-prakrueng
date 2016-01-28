@@ -1,12 +1,13 @@
 <!-- BASIC FORM ELELEMNTS -->
-<div class="panel panel-warning">
-    <div class="panel-heading">
-        <h4><i class="fa fa-angle-right"></i> <?= (empty($form_title) ? 'ลงทะเบียนเพื่อเข้าร่วมเป็นสมาชิกของเรา' : $form_title) ?></h4>
-    </div>
-    <div class="panel-body">
-        <div class="row mt">
-            <div class="col-lg-12">
-                <form  id="form-register" class="form-horizontal style-form" method="post" action="<?= Yii::app()->createUrl($action_url) ?>">
+<form  id="form-register" class="form-horizontal style-form" method="post" action="<?= Yii::app()->createUrl($action_url) ?>">
+    <div class="panel panel-warning">
+        <div class="panel-heading">
+            <h4><i class="fa fa-angle-right"></i> <?= (empty($form_title) ? 'ลงทะเบียนเพื่อเข้าร่วมเป็นสมาชิกของเรา' : $form_title) ?></h4>
+        </div>
+        <div class="panel-body">
+            <div class="row mt">
+                <div class="col-lg-12">
+
 
                     <div class="form-group">
                         <label for="username" class="col-sm-2 col-sm-2 control-label">username</label>
@@ -27,11 +28,11 @@
 
                     <?php if (!empty($profile) && $profile) { ?>
                         <div class="form-group">
-                            <label for="phone" class="col-sm-2 col-sm-2 control-label">ชื่อจริง</label>
+                            <label for="fname" class="col-sm-2 col-sm-2 control-label">ชื่อจริง</label>
                             <div class="col-sm-4">
                                 <input type="text" class="form-control" name="fname" value="<?= $member->mem_fname ?>">
                             </div>
-                            <label for="email" class="col-sm-2 col-sm-2 control-label">นามสกุล</label>
+                            <label for="lname" class="col-sm-2 col-sm-2 control-label">นามสกุล</label>
                             <div class="col-sm-4">
                                 <input type="text" class="form-control" name="lname" value="<?= $member->mem_lname ?>">
                             </div>
@@ -72,23 +73,26 @@
                         </div>
                     <?php } ?>
 
-                    <div class="form-group">
-                        <div class="col-lg-10 col-lg-offset-2">
-                            <button type="submit" class="btn btn-success">
-                                <i class="glyphicon glyphicon-ok-sign"></i> ลงทะเบียน
-                            </button>
-                            <?php if (empty($profile)) { ?>
-                                <a href="<?= Yii::app()->createUrl("site/login") ?>" class="btn btn-warning btn-sm">
-                                    <i class="glyphicon glyphicon-arrow-left"></i> กลับเพื่อไป Login
-                                </a>
-                            <?php } ?>
-                        </div>
-                    </div>
-                </form>
-            </div><!-- col-lg-12-->      	
-        </div><!-- /row -->
+
+                </div><!-- col-lg-12-->      	
+            </div><!-- /row -->
+        </div>
+        <div class="panel-footer">
+            <div class="form-group">
+                <div class="col-lg-10 col-lg-offset-2">
+                    <button type="submit" class="btn btn-success">
+                        <i class="glyphicon glyphicon-ok-sign"></i> ลงทะเบียน
+                    </button>
+                    <?php if (empty($profile)) { ?>
+                        <a href="<?= Yii::app()->createUrl("site/login") ?>" class="btn btn-warning btn-sm">
+                            <i class="glyphicon glyphicon-arrow-left"></i> กลับเพื่อไป Login
+                        </a>
+                    <?php } ?>
+                </div>
+            </div>  
+        </div>
     </div>
-</div>
+</form>
 
 <script type = "text/javascript" >
     $(function () {

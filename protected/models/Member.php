@@ -126,5 +126,9 @@ class Member extends CActiveRecord {
         }
         parent::afterFind();
     }
+    public function beforeSave() {
+       $this->mem_updatedate = new CDbExpression('NOW()');
+        return parent::beforeSave();
+    }
 
 }

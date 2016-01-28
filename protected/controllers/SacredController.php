@@ -2,13 +2,25 @@
 
 class SacredController extends Controller {
 
+    public $imagePath = "";
+    public $imageSize = 400;
+    
+    public function init() {
+        $this->imagePath = YiiBase::getPathOfAlias("webroot") . '/images';
+    }
+
     public function actionIndex($id = null) {
         $sacred = new SacredObject();
         if (!empty($id)) {
             $sacred = SacredObject::model()->findByPk($id);
         }
 
-        $listSacredObject = SacredObject::model()->findAll();
+
+        $criteria = new CDbCriteria();
+        $criteria->select = ' o.*,(SELECT count(*) FROM sacred_object_img i WHERE i.obj_id = o.obj_id) as count_img';
+        $criteria->alias = 'o';
+        $listSacredObject = SacredObject::model()->findAll($criteria);
+
         $listProvince = Province::model()->findAll(array('order' => 'pro_name_th'));
         $listSacredType = SacredType::model()->findAll();
         $listYear = Utilities::getYear();
@@ -27,21 +39,24 @@ class SacredController extends Controller {
         } else {
             $sacred = SacredObject::model()->findByPk($_POST['id']);
         }
-
-        $pathImage = YiiBase::getPathOfAlias("webroot") . '/images';
-
-        /*
-         * Manage Image Resize , Rename of File
-         */
-        $subDerectory = '/upload_main/';
-        $imageName = Utilities::resizeImage($pathImage . $subDerectory, $_FILES, 300, 300);
-        /*
-         * Manage Image Resize , Rename of File
-         */
+        if (!empty($_FILES['fileMain']['name']) && is_array($_FILES['fileMain'])) {
+            $filename = $this->imagePath . $sacred->obj_img;
+            if (file_exists($filename)) {
+                unlink($filename);
+            }
+            $utility = new Utilities();
+            /*
+             * Manage Image Resize , Rename of File
+             */
+            $subDerectory = '/upload_main/';
+            $imageName = $utility->resizeImage($this->imagePath . $subDerectory, $_FILES['fileMain'], $this->imageSize, $this->imageSize);
+            $sacred->obj_img = $subDerectory . $imageName;
+            /*
+             * Manage Image Resize , Rename of File
+             */
+        }
 
         $sacred->obj_comment = $_POST['comment'];
-
-        $sacred->obj_img = $subDerectory . $imageName;
         $sacred->obj_like = 1; //$_POST['like'];
         $sacred->obj_name = $_POST['name'];
         $sacred->obj_price = $_POST['price'];
@@ -58,7 +73,12 @@ class SacredController extends Controller {
     }
 
     public function actionObjectDelete($id) {
-        if (SacredObject::model()->findByPk($id)->delete()) {
+        $object = SacredObject::model()->findByPk($id);
+        $filename = $this->imagePath . $object->obj_img;
+        if (file_exists($filename)) {
+            unlink($filename);
+        }
+        if ($object->delete()) {
             $this->redirect(array('sacred/index'));
         }
     }
@@ -144,6 +164,52 @@ class SacredController extends Controller {
     public function actionProvinceDelete($id) {
         if (Province::model()->findByPk($id)->delete()) {
             $this->redirect(array('sacred/indexProvince'));
+        }
+    }
+
+    /*
+     * *************************** Sacred Object Province **************************************
+     */
+    
+    
+    /*
+     * *************************** Sacred Object News **************************************
+     */
+
+    public function actionIndexNews($id = null) {
+        $news = new SacredNews();
+        if (!empty($id)) {
+            $news = SacredNews::model()->findByPk($id);
+        }
+
+        $listNews = SacredNews::model()->findAll();
+        $this->render('index_news', array(
+            'listNews' => $listNews,
+            'news' => $news
+        ));
+    }
+
+    public function actionNewsSave() {
+        if (empty($_POST['id'])) {
+            $news = new SacredNews();
+        } else {
+            $news = SacredNews::model()->findByPk($_POST['id']);
+        }
+        $news->news_title = $_POST['title'];
+        $news->news_detail = $_POST['detail'];
+        $news->news_link = $_POST['link'];
+        $news->news_updatedate = new CDbExpression('NOW()');
+
+        if ($news->save(false)) {
+            $this->redirect(array('sacred/indexNews'));
+        } else {
+            echo 'System Error';
+        }
+    }
+
+    public function actionNewsDelete($id) {
+        if (SacredNews::model()->findByPk($id)->delete()) {
+            $this->redirect(array('sacred/indexNews'));
         }
     }
 

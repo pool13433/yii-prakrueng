@@ -66,10 +66,10 @@
             <ul class="task-list ui-sortable sortable" id="boxPraKreungLastAdd">
                 <?php foreach ($listMemberLastInsert as $index => $objectLast) { ?>
                     <li class="list-primary">
-                        <a href="<?= Yii::app()->createUrl('site/detail/' . $objectLast->mem_id) ?>">
+                        <a href="<?= Yii::app()->createUrl('site/index',array('user' => $objectLast->mem_id)) ?>">
                             <i class=" fa fa-ellipsis-v"></i>
                             <div class="task-title">
-                                <span class="task-title-sp"><?= $objectLast->mem_fname ?></span>
+                                <span class="task-title-sp"><?= $objectLast->mem_username ?></span>
                                 <span class="badge bg-theme"></span>
                                 <div class="pull-right hidden-phone">
                                     <button class="btn btn-success btn-xs">

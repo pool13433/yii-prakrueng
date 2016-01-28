@@ -27,17 +27,17 @@ class Utilities {
         return $randomString;
     }
 
-    public static function resizeImage($pathFolder, $image, $width, $height) {
-        // parameter => $image['fileMain']
+    public function resizeImage($pathFolder, $image,$width, $height) {
+        // parameter => $image
         /* Get original image x y */
         //var_dump($image);
         //exit();
         $newName = '';
         $imageType = '';
         try {
-            $imageType = $image['fileMain']['type'];
+            $imageType = $image['type'];
 
-            list($w, $h) = getimagesize($image['fileMain']['tmp_name']);
+            list($w, $h) = getimagesize($image['tmp_name']);
             /* calculate new image size with ratio */
             $ratio = max($width / $w, $height / $h);
             $h = ceil($height / $ratio);
@@ -51,11 +51,11 @@ class Utilities {
             $path = $pathFolder . $newName;
 
             /* read binary data from image file */
-            $imgString = file_get_contents($image['fileMain']['tmp_name']);
+            $imgString = file_get_contents($image['tmp_name']);
             /* create image from string */
-            $image['fileMain'] = imagecreatefromstring($imgString);
+            $image = imagecreatefromstring($imgString);
             $tmp = imagecreatetruecolor($width, $height);
-            imagecopyresampled($tmp, $image['fileMain'], 0, 0, $x, 0, $width, $height, $w, $h);
+            imagecopyresampled($tmp, $image, 0, 0, $x, 0, $width, $height, $w, $h);
 
 
             /* Save image */
@@ -71,7 +71,7 @@ class Utilities {
             }
 
             /* cleanup memory */
-            imagedestroy($image['fileMain']);
+            imagedestroy($image);
             imagedestroy($tmp);
         } catch (Exception $exc) {
             echo $exc->getTraceAsString();

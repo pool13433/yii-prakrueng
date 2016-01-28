@@ -1,6 +1,6 @@
 <?php
 $baseUrl = Yii::app()->baseUrl;
-$image = '/upload_main/image_main.png';
+$image = '/image_main.png';
 if (!empty($sacred->obj_img)) {
     $image = $sacred->obj_img;
 }
@@ -11,9 +11,9 @@ if (!empty($sacred->obj_img)) {
         <div class="form-group">
             <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">รูปหลัก</label>
             <div class="col-lg-3 col-md-6 col-sm-3 col-xs-7 box-browse-upload">
-                <input type="file" id="fileMain" name="fileMain" required/>
+                <input type="file" id="fileMain" name="fileMain" <?=(empty($sacred->obj_id) ? 'required' : '')?>/>
                 <a class="thumbnail">
-                    <img id="imgMain" class="img-rounded" style="max-width: 60%;" src="<?= $baseUrl . '/images'.$image ?>"/>
+                    <img id="imgMain" class="img-rounded" style="max-width: 60%;" src="<?= $baseUrl . '/images' . $image ?>"/>
                 </a>
                 <span class="label label-warning">กรุณากรอกข้อมูล รูปหลักสินค้า</span>
             </div>                
@@ -21,6 +21,7 @@ if (!empty($sacred->obj_img)) {
         <div class="form-group">
             <label class="col-sm-2 control-label">ชื่อ</label>
             <div class="col-sm-4">
+                <input type="hidden" name="id" value="<?=$sacred->obj_id?>"/>
                 <input type="text" class="form-control" name="name" value="<?= $sacred->obj_name ?>" required  placeholder="ชื่อ">
             </div>
             <label class="col-sm-1 control-label">ราคา</label>
@@ -77,12 +78,12 @@ if (!empty($sacred->obj_img)) {
     <table class="table table-bordered table-striped">
         <thead>
             <tr>
-                <th>ลำดับ</th>
-                <th>ชื่อ</th>
-                <th>ราคา</th>
                 <th>ภาพ</th>
+                <th>ชื่อ</th>
+                <th>ราคา</th>                
                 <th>ปีที่สร้าง</th>
                 <th>รายละเอียด</th>
+                <th style="width: 10%;">รูปที่เกี่ยวข้อง</th>
                 <th>แก้ไข</th>
                 <th>ลบ</th>
             </tr>
@@ -90,12 +91,18 @@ if (!empty($sacred->obj_img)) {
         <tbody>
             <?php foreach ($listSacredObject as $index => $object) { ?>
                 <tr>
-                    <td><?= $object->obj_id ?></td>
+                    <td title="<?=$object->obj_img?>">
+                        <a href="<?= $baseUrl.'/images'.$object->obj_img ?>" class="thumbnail fancybox">
+                            <img src="<?= $baseUrl.'/images'.$object->obj_img ?>" 
+                                 style="max-height: 100px;max-width: 100px;"
+                                 alt="...">
+                        </a>
+                     </td>
                     <td><?= $object->obj_name ?></td>
-                    <td><?= $object->obj_price ?></td>
-                    <td><?= $object->obj_img ?></td>
+                    <td><?= $object->obj_price ?></td>                    
                     <td><?= $object->obj_born ?></td>
                     <td><?= $object->obj_comment ?></td>
+                    <td style="text-align: center"><?= $object->count_img ?></td>
                     <td>
                         <a href="<?= Yii::app()->createUrl('sacred/index/' . $object->obj_id) ?>" class="btn btn-warning btn-sm">แก้ไข</a>
                     </td>
