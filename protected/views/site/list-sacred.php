@@ -22,7 +22,9 @@
                         <?php foreach ($listSacredObject as $index => $object) { ?>
                             <tr>
                                 <td><?= ($index + 1) ?></td>
-                                <td><?= $object->obj_name ?></td>
+                                <td>
+                                    <a href="<?=  Yii::app()->createUrl('site/detail/'.$object->obj_id)?>"><?= $object->obj_name ?></a>
+                                </td>
                                 <td><?= $object->obj_price ?></td>
                                 <td><?= $object->obj_born ?></td>
                                 <td><?= $object->type->type_name ?></td>
@@ -43,7 +45,8 @@
         $this->renderPartial('/sidebar_right', array(
             'listSacredObjectLastInsert' => $listSacredObjectLastInsert,
             'listSacredType' => $listSacredType,
-            'listMemberLastInsert' => $listMemberLastInsert
+            'listMemberLastInsert' => $listMemberLastInsert,
+            'listRegion' => $listRegion
         ))
         ?>
     </div>

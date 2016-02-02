@@ -3,7 +3,9 @@
 class SacredController extends Controller {
 
     public $imagePath = "";
-    public $imageSize = 400;
+    //public $imageSize = 400;
+    private $imageWeight = 800;
+    private $imageHeight = 600;
     
     public function init() {
         $this->imagePath = YiiBase::getPathOfAlias("webroot") . '/images';
@@ -49,7 +51,7 @@ class SacredController extends Controller {
              * Manage Image Resize , Rename of File
              */
             $subDerectory = '/upload_main/';
-            $imageName = $utility->resizeImage($this->imagePath . $subDerectory, $_FILES['fileMain'], $this->imageSize, $this->imageSize);
+            $imageName = $utility->resizeImage($this->imagePath . $subDerectory, $_FILES['fileMain'], $this->imageWeight, $this->imageHeight);
             $sacred->obj_img = $subDerectory . $imageName;
             /*
              * Manage Image Resize , Rename of File
@@ -136,11 +138,16 @@ class SacredController extends Controller {
         if (!empty($id)) {
             $province = Province::model()->findByPk($id);
         }
-
-        $listProvince = Province::model()->findAll();
+        $listRegion = Region::model()->findAll(array(
+            'order' => 'reg_id'
+        ));
+        $listProvince = Province::model()->findAll(array(
+            'order' => 'pro_name_th desc',
+        ));
         $this->render('index_province', array(
             'listProvince' => $listProvince,
-            'province' => $province
+            'province' => $province,
+            'listRegion' => $listRegion
         ));
     }
 
@@ -152,6 +159,7 @@ class SacredController extends Controller {
         }
         $province->pro_name_th = $_POST['name_th'];
         $province->pro_name_eng = $_POST['name_eng'];
+        $province->reg_id = $_POST['region'];
         $province->pro_updatedate = new CDbExpression('NOW()');
 
         if ($province->save(false)) {
@@ -210,6 +218,50 @@ class SacredController extends Controller {
     public function actionNewsDelete($id) {
         if (SacredNews::model()->findByPk($id)->delete()) {
             $this->redirect(array('sacred/indexNews'));
+        }
+    }
+
+    /*
+     * *************************** Sacred Object Province **************************************
+     */
+    
+    
+    /*
+     * *************************** Region **************************************
+     */
+
+    public function actionIndexRegion($id = null) {
+        $region = new Region();
+        if (!empty($id)) {
+            $region = Region::model()->findByPk($id);
+        }
+
+        $listRegion = Region::model()->findAll();
+        $this->render('index_region', array(
+            'listRegion' => $listRegion,
+            'region' => $region
+        ));
+    }
+
+    public function actionRegionSave() {
+        if (empty($_POST['id'])) {
+            $region = new Region();
+        } else {
+            $region = Region::model()->findByPk($_POST['id']);
+        }
+        $region->reg_name = $_POST['name'];
+        $region->reg_updatedate = new CDbExpression('NOW()');
+
+        if ($region->save(false)) {
+            $this->redirect(array('sacred/indexRegion'));
+        } else {
+            echo 'System Error';
+        }
+    }
+
+    public function actionRegionDelete($id) {
+        if (Region::model()->findByPk($id)->delete()) {
+            $this->redirect(array('sacred/indexRegion'));
         }
     }
 

@@ -4,7 +4,8 @@ class SiteController extends Controller {
 
     public $data = array();
     private $member = null;
-    private $imageSize = 600;
+    private $imageWidth = 800;
+    private $imageHeight = 600;
 
     public function init() {
 
@@ -29,10 +30,16 @@ class SiteController extends Controller {
                 )
         );
 
+        $criteria = new CDbCriteria();
+        $criteria->select = 'r.reg_id,r.reg_name,(SELECT COUNT(*) FROM province p WHERE p.reg_id = r.reg_id) cnt';
+        $criteria->alias = 'r';
+        $listRegion = Region::model()->findAll($criteria);
+
         $this->data = array(
             'listSacredObjectLastInsert' => $listSacredObjectLastInsert,
             'listSacredType' => $listSacredType,
-            'listMemberLastInsert' => $listMemberLastInsert
+            'listMemberLastInsert' => $listMemberLastInsert,
+            'listRegion' => $listRegion
         );
 
         if (Yii::app()->session['member']) {
@@ -52,10 +59,20 @@ class SiteController extends Controller {
             ));
             if (empty($this->member)) {
                 Yii::app()->session['message'] = 'ไม่พบข้อมูลของท่านในระบบ';
-                $this->redirect(array('site/login'));
+                //$this->redirect(array('site/login'));
+                echo CJSON::encode(array(
+                    'status' => false,
+                    'message' => 'ไม่พบข้อมูลของท่านในระบบ',
+                    'url' => ''
+                ));
             } else {
                 Yii::app()->session['member'] = $this->member;
-                $this->redirect(array('site/index'));
+                //$this->redirect(array('site/index'));
+                echo CJSON::encode(array(
+                    'status' => true,
+                    'message' => 'ไม่พบข้อมูลของท่านในระบบ',
+                    'url' => Yii::app()->createUrl('site/index')
+                ));
             }
         }
     }
@@ -81,10 +98,17 @@ class SiteController extends Controller {
             $this->member->mem_status = 1;
             if ($this->member->save(false)) {
                 Yii::app()->session['member'] = $this->member;
-                $this->redirect(array('site/index'));
+                echo CJSON::encode(array(
+                    'status' => true,
+                    'message' => 'ลงทะเบียน สำเร็จ',
+                    'url' => Yii::app()->createUrl('site/index')
+                ));
             } else {
-                echo 'system error';
-                exit();
+                echo CJSON::encode(array(
+                    'status' => false,
+                    'message' => 'เกิดข้อผิดพลาดไม่สามรถลงทะเบียนเข้าใช้งานระบบได้',
+                    'url' => ''
+                ));
             }
         }
     }
@@ -92,6 +116,7 @@ class SiteController extends Controller {
     public function actionLogout() {
         unset(Yii::app()->session['message']);
         unset(Yii::app()->session['member']);
+        unset(Yii::app()->session['criteria']);
         $this->redirect(array('site/index'));
     }
 
@@ -106,20 +131,54 @@ class SiteController extends Controller {
         $criteria = new CDbCriteria();
         $criteria->select = 'o.*';
         $criteria->alias = 'o';
-        if (!empty($typeId)) {
-            $where_condition .= 'AND type_id = ' . $typeId;
-            $criteria->compare('o.type_id', $typeId);
-            $title = SacredType::model()->findByPk($typeId)->type_name;
-        }
+        $criteria->join = 'RIGHT JOIN province p ON p.pro_id = o.pro_id';
+        /* if (!empty($typeId)) {
+          $where_condition .= 'AND type_id = ' . $typeId;
+          $criteria->compare('o.type_id', $typeId);
+          $title = SacredType::model()->findByPk($typeId)->type_name;
+          } */
         if (!empty($mem_id)) {
             $where_condition .= 'AND mem_id = ' . $mem_id;
-            $criteria->compare('o.mem_id', $mem_id);
+            $criteria->compare('o.mem_id', $mem_id, true);
+        }
+        if (!empty(Yii::app()->session['criteria'])) {
+            $criterias = Yii::app()->session['criteria'];
+            $criteriaType = $criterias['types'];
+            $criteriaRegion = $criterias['region'];
+            $criteriaForm = $criterias['form'];
+            if (!empty($criteriaForm['price_begin']) && !empty($criteriaForm['price_end'])) {
+                $criteria->addBetweenCondition('o.obj_price', $criteriaForm['price_begin'], $criteriaForm['price_end']);
+                $where_condition .= ' AND (obj_price between ' . $criteriaForm['price_begin'] . ' AND ' . $criteriaForm['price_end'] . ') ';
+            }
+            if (!empty($criteriaForm['born_begin']) && !empty($criteriaForm['born_end'])) {
+                $criteria->addBetweenCondition('o.obj_born', $criteriaForm['born_begin'], $criteriaForm['born_end']);
+                $where_condition .= ' AND (obj_born between ' . $criteriaForm['born_begin'] . ' AND ' . $criteriaForm['born_end'] . ') ';
+            }
+            if (count($criteriaType) > 0) {
+                $arrayCriteria = array();
+                foreach ($criteriaType as $key => $value) {
+                    $arrayCriteria[] = $value;
+                }
+                $arrayString = implode(',', $arrayCriteria);
+                $criteria->addInCondition('o.type_id', $arrayCriteria);
+                $where_condition .= ' AND type_id in (' . $arrayString . ') ';
+            }
+            if (count($criteriaRegion) > 0) {
+                $arrayCriteria = array();
+                foreach ($criteriaRegion as $key => $value) {
+                    $arrayCriteria[] = $value;
+                }
+                $arrayString = implode(',', $arrayCriteria);
+                $criteria->addInCondition('o.pro_id', $arrayCriteria);
+                $where_condition .= ' AND o.pro_id in (' . $arrayString . ') ';
+            }
         }
         $criteria->order = 'o.obj_updatedate desc';
 
         $criteria->limit = $pagin_page_size;
         $criteria->offset = ($pagin_page_current - 1) * $pagin_page_size;
-
+        //var_dump($criteria);
+        //exit();
         $listSacredObject = SacredObject::model()->findAll($criteria);
         $this->data['listSacredObject'] = $listSacredObject;
         $this->data['title'] = $title;
@@ -130,13 +189,13 @@ class SiteController extends Controller {
 
         $count_object = Yii::app()->db->createCommand()
                 ->select('count(*)')
-                ->from('sacred_object')
+                ->from('sacred_object o')
+                ->join('province p', 'p.pro_id = o.pro_id')
                 ->where($where_condition)
                 ->queryScalar();
         $pagin_page_count = $count_object;
         $pagin_page_all = ceil($pagin_page_count / $pagin_page_size);
         $paramsBegin = array(
-            'typeId' => $typeId,
             'user' => $mem_id
         );
         if (1 == $pagin_page_current) {
@@ -145,17 +204,19 @@ class SiteController extends Controller {
             $paramsBegin['page'] = ($pagin_page_current - 1);
         }
         $paramsEnd = array(
-            'typeId' => $typeId,
-            'user' => $mem_id
         );
+
         if ($pagin_page_all == $pagin_page_current) {
             $paramsEnd['page'] = $pagin_page_all;
         } else {
             $paramsEnd['page'] = ($pagin_page_current + 1);
         }
-
-        $pagin_url_begin = Yii::app()->createUrl('site/index', $paramsBegin);
-        $pagin_url_end = Yii::app()->createUrl('site/index', $paramsEnd);
+        if (!empty($mem_id)) {
+            $paramsEnd['user'] = $mem_id;
+            $paramsBegin['user'] = $mem_id;
+        }
+        $pagin_url_begin = ($pagin_page_count > 0 ? Yii::app()->createUrl('site/index', $paramsBegin) : 'javascript:void(0)');
+        $pagin_url_end = ($pagin_page_count > 0 ? Yii::app()->createUrl('site/index', $paramsEnd) : 'javascript:void(0)');
 
         $this->data['pagination'] = array(
             'page_size' => $pagin_page_size,
@@ -170,6 +231,12 @@ class SiteController extends Controller {
         /*
          * pagiation logic
          */
+
+        $listSacredNews = SacredNews::model()->findAll(array(
+            'order' => 'news_updatedate desc',
+            'limit' => 3
+        ));
+        $this->data['listSacredNews'] = $listSacredNews;
 
         $this->render('index', $this->data);
     }
@@ -194,7 +261,13 @@ class SiteController extends Controller {
         $listSacredObjectImg = SacredObjectImg::model()->findAllByAttributes(array('obj_id' => $id));
         $this->data['listSacredObjectImg'] = $listSacredObjectImg;
 
-        $this->render('detail', $this->data);
+        $this->render('detail-sacred', $this->data);
+    }
+
+    public function actionNewsDetail($id) {
+        $news = SacredNews::model()->findByPk($id);
+        $this->data['news'] = $news;
+        $this->render('detail-news', $this->data);
     }
 
     public function actionUpload() {
@@ -228,6 +301,7 @@ class SiteController extends Controller {
                 $sacredObject = new SacredObject();
                 $sacredObject->obj_born = $_POST['born'];
                 $sacredObject->obj_comment = $_POST['comment'];
+                $sacredObject->obj_location = $_POST['location'];
                 $sacredObject->obj_like = 0;
                 $sacredObject->obj_name = $_POST['name'];
                 $sacredObject->obj_price = $_POST['price'];
@@ -239,7 +313,8 @@ class SiteController extends Controller {
                  * Manage Image Resize , Rename of File
                  */
                 $subDerectoryMain = '/upload_main/' . $currentDate . '_';
-                $imageName = $utility->resizeImage($pathImage . $subDerectoryMain, $_FILES['fileMain'], $this->imageSize, $this->imageSize);
+                //$imageName = $utility->resizeImage($pathImage . $subDerectoryMain, $_FILES['fileMain'], $this->imageWidth, $this->imageHeight);
+                $imageName = $utility->resizeImagePercent($pathImage . $subDerectoryMain, $_FILES['fileMain'], 0.5);
                 /*
                  * Manage Image Resize , Rename of File
                  */
@@ -258,7 +333,8 @@ class SiteController extends Controller {
                              * Manage Image Resize , Rename of File
                              */
                             $subDerectoryOther = '/upload_other/' . $currentDate . '_';
-                            $imageName = $utility->resizeImage($pathImage . $subDerectoryOther, $file, $this->imageSize, $this->imageSize);
+                            //$imageName = $utility->resizeImage($pathImage . $subDerectoryOther, $file, $this->imageWidth, $this->imageHeight);
+                            $imageName = $utility->resizeImagePercent($pathImage . $subDerectoryOther, $file, 0.5);
                             /*
                              * Manage Image Resize , Rename of File
                              */
@@ -295,8 +371,9 @@ class SiteController extends Controller {
         $criteria = new CDbCriteria();
         $criteria->select = 'o.*';
         $criteria->alias = 'o';
-        $criteria->join = 'LEFT JOIN member_object_action a ON a.obj_id=o.obj_id';
-        $criteria->condition = 'a.act_favorite = 1';
+        $criteria->join = 'LEFT JOIN member_object_action a ON a.obj_id=o.obj_id';        
+        $criteria->compare('a.act_favorite',1);
+        $criteria->compare('a.mem_id', $this->member->mem_id);
 
         $listSacredObjectFavorite = SacredObject::model()->findAll($criteria);
         $this->data['listSacredObjectFavorite'] = $listSacredObjectFavorite;

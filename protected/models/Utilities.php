@@ -79,5 +79,56 @@ class Utilities {
         }
         return $newName;
     }
+    
+    public function resizeImagePercent($pathFolder, $image,$percent) {
+        // parameter => $image
+        /* Get original image x y */
+        //var_dump($image);
+        //exit();
+        $newName = '';
+        $imageType = '';
+        try {
+            $imageType = $image['type'];
+
+            list($w, $h) = getimagesize($image['tmp_name']);
+            /* calculate new image size with ratio */
+            $newWidth = ceil($w*$percent);
+            $newHeight = ceil($h * $percent);
+
+            /* new file name */
+            $imageExtension = explode("/", $imageType);
+           
+            $newName = $newWidth . 'x' . $newHeight . '_' . Utilities::generateRandomString(10) . '.' . $imageExtension[1];
+            $path = $pathFolder . $newName;
+
+            /* read binary data from image file */
+            $imgString = file_get_contents($image['tmp_name']);
+            /* create image from string */
+            $image = imagecreatefromstring($imgString);
+            $tmp = imagecreatetruecolor($newWidth, $newHeight);
+            imagecopyresampled($tmp, $image, 0, 0, 0, 0, $newWidth, $newHeight, $w, $h);
+
+
+            /* Save image */
+            if ($imageType === 'image/jpeg' || $imageType == 'image/JPEG' || $imageType == 'image/jpg' || $imageType == 'image/JPG') {
+                imagejpeg($tmp, $path, 100);
+            } else if ($imageType == 'image/png' || $imageType == 'image/PNG') {
+                imagepng($tmp, $path, 0);
+            } else if ($imageType == 'image/GIF' || $imageType == 'image/gif') {
+                imagegif($tmp, $path);
+            } else {
+                echo 'image_type ::==' . $imageType;
+                exit();
+            }
+
+            /* cleanup memory */
+            imagedestroy($image);
+            imagedestroy($tmp);
+        } catch (Exception $exc) {
+            echo $exc->getTraceAsString();
+            exit();
+        }
+        return $newName;
+    }
 
 }

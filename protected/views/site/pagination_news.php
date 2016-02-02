@@ -3,7 +3,7 @@
 
         <li>
             <a href="<?= $pagination['page_url_begin'] ?>" aria-label="Previous">
-                <span aria-hidden="true">&laquo;</span>
+                <span aria-hidden="true" class="glyphicon glyphicon-chevron-left"></span>
             </a>
         </li>                            
         <?php for ($i = 0; $i < $pagination['page_all']; $i++) { ?>
@@ -19,7 +19,7 @@
         <?php } ?>
         <li>
             <a href="<?= $pagination['page_url_end'] ?>" aria-label="Next">
-                <span aria-hidden="true">&raquo;</span>
+                <span aria-hidden="true" class="glyphicon glyphicon-chevron-right"></span>
             </a>
         </li>
 

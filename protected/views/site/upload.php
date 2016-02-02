@@ -7,6 +7,12 @@ $baseUrl = Yii::app()->baseUrl;
             <h4> <i class="fa fa-shopping-cart"></i> ลงข้อมูลพระเครื่องเพื่อปล่อยเช่า</h4>
         </div>
         <div class="panel-body">
+            <div role="alert" class="alert alert-danger alert-dismissible fade in"> 
+                <button aria-label="Close" data-dismiss="alert" class="close" type="button">
+                    <span aria-hidden="true" class="glyphicon glyphicon-remove"></span></button> 
+                <strong><u>กรุณา Login เพื่อเข้าระบบก่อนการลงประกาศขาย</u></strong> 
+                เพื่อความสะดวกในการจัดเก็บข้อมูล
+            </div>
             <div class="form-group">
                 <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">ชื่อสินค้า</label>
                 <div class="col-lg-5 col-md-5 col-sm-5 col-xs-8">
@@ -28,19 +34,24 @@ $baseUrl = Yii::app()->baseUrl;
             </div>
             <div class="form-group">
                 <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">ราคาเช่า</label>
-                <div class="col-lg-4 col-md-4 col-sm-3 col-xs-6">
+                <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
                     <input type="text" class="form-control" name="price" id="price" required/>
                     <span class="label label-warning">กรุณากรอกข้อมูล ราคาสินค้า</span>
                 </div>
             </div>
             <div class="form-group">
-                <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">ปีที่สร้าง</label>
+                <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">ปี พ.ศ. ที่จัดสร้าง</label>
                 <div class="col-lg-2 col-md-3 col-sm-3 col-xs-8">
                     <input type="text" class="form-control" name="born" id="born" required maxlength="4"/>
                     <span class="label label-warning">กรุณาเลือก ปีที่สร้าง</span>
                 </div>
             </div>
-
+            <div class="form-group">
+                <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">สถานที่รับสินค้า</label>
+                <div class="col-lg-6 col-md-6 col-sm-7 col-xs-8">
+                    <textarea rows="2" class="form-control" name="location" id="location"></textarea>                    
+                </div>
+            </div>
 
             <div class="form-group">
                 <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">กำเนิดจากจังหวัด</label>
@@ -85,10 +96,10 @@ $baseUrl = Yii::app()->baseUrl;
 
             <div class="form-group">
                 <div class="col-lg-9 col-md-9 col-xs-9 col-lg-offset-3 col-md-offset-3 col-sm-offset-4 col-xs-offset-3">                    
-                    <button type="button" class="btn btn-success btn-sm" id="submit-all">
+                    <button type="button" class="btn btn-success btn-lg" id="submit-all">
                         <i class="glyphicon glyphicon-gift"></i> ประกาศปล่อยเช่าทันที
                     </button>
-                    <button type="reset" class="btn btn-warning btn-sm">
+                    <button type="reset" class="btn btn-warning">
                         <i class="glyphicon glyphicon-remove"></i> เคลีย์ข้อมูล
                     </button>
                 </div>
@@ -134,6 +145,7 @@ $baseUrl = Yii::app()->baseUrl;
                 data.append("type", $('#type').val());
                 data.append("price", $('#price').val());
                 data.append("born", $('#born').val());
+                data.append("location", $('#location').val());
                 data.append("province", $('#province').val());
                 data.append("comment", $('#comment').val());
                 data.append("fileMain", $("#fileMain")[0].files[0]);

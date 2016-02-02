@@ -14,8 +14,8 @@ $baseUrl = Yii::app()->baseUrl;
                         <div class="col-lg-4 col-md-4 col-sm-4 mb">        
                             <div class="panel panel-warning">
                                 <div class="panel-heading clearfix">
-                                    <h4 class="panel-title pull-left" style="padding-top: 7.5px;"><b><?= $object->obj_name ?></h4>
-                                    <h4 class="panel-title pull-right" style="padding-top: 7.5px;"><b><?= $object->obj_price ?></b></h4>
+                                    <h4 class="panel-title" style="padding-top: 7.5px;"><b><i class="fa fa-circle-o"></i> <?= $object->obj_name ?></h4>
+                                    <h4 class="panel-title fa fa-money" style="padding-top: 7.5px;"><b> <?= $object->obj_price ?></b></h4>
                                 </div>
                                 <div class="panel-body">
                                     <div class="thumbnail">
@@ -49,7 +49,8 @@ $baseUrl = Yii::app()->baseUrl;
         $this->renderPartial('/sidebar_right', array(
             'listSacredObjectLastInsert' => $listSacredObjectLastInsert,
             'listSacredType' => $listSacredType,
-            'listMemberLastInsert' => $listMemberLastInsert
+            'listMemberLastInsert' => $listMemberLastInsert,
+            'listRegion' => $listRegion
         ))
         ?>
     </div>
@@ -72,6 +73,7 @@ $baseUrl = Yii::app()->baseUrl;
                 value: 0
             },
             function (response) {
+                console.log(response);
                 window.location.reload(true);
             }, 'json');
         }

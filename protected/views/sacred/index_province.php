@@ -21,6 +21,20 @@
             </div>
         </div>
         <div class="form-group">
+            <label class="col-sm-2 control-label">ภูมิภาค</label>
+            <div class="col-sm-4">
+                <select class="form-control" name="region" required>
+                    <?php foreach ($listRegion as $index => $region) { ?>
+                        <?php if ($region->reg_id == $province->reg_id) { ?>
+                            <option value="<?= $region->reg_id ?>" selected><?= $region->reg_name ?></option>
+                        <?php } else { ?>
+                            <option value="<?= $region->reg_id ?>"><?= $region->reg_name ?></option>
+                        <?php } ?>
+                    <?php } ?>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
             <div class="col-sm-offset-2 col-sm-10">
                 <button type="submit" class="btn btn-success">
                     <i class="glyphicon glyphicon-saved"></i> บันทึก
@@ -36,7 +50,7 @@
             <tr>
                 <th>ลำดับ</th>
                 <th>ชื่อไทย</th>
-                <th>ชื่ออังกฤษ</th>
+                <th>ภูมิภาค</th>
                 <th>แก้ไข</th>
                 <th>ลบ</th>
             </tr>
@@ -46,7 +60,7 @@
                 <tr>
                     <td><?= $province->pro_id ?></td>
                     <td><?= $province->pro_name_th ?></td>
-                    <td><?= $province->pro_name_eng ?></td>
+                    <td><?= $province->region->reg_name ?></td>
                     <td>
                         <a href="<?= Yii::app()->createUrl('sacred/indexProvince/' . $province->pro_id) ?>" class="btn btn-warning btn-sm">แก้ไข</a>
                     </td>

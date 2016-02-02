@@ -24,28 +24,54 @@ $baseUrl = Yii::app()->baseUrl;
         <link href="<?php echo Yii::app()->request->baseUrl; ?>/css/style.css" rel="stylesheet">
         <link href="<?php echo Yii::app()->request->baseUrl; ?>/css/style-responsive.css" rel="stylesheet">
         <link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/fancybox/jquery.fancybox.css">
-        
+
         <link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/datatables/dataTables.bootstrap.min.css">
         <link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/datatables/dataTables.css">
         <link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/datatables/responsive.bootstrap.min.css">
-        
+
         <link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/dropzone/dropzone.css">
-        
+
         <link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/my-style.css">
+        <link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/my-navbar.css">
 
         <title><?php echo CHtml::encode($this->pageTitle); ?></title>
+        <style type="text/css">
+            @font-face {
+                font-family: 'TH-Dan-Vi-Vek';
+                src: url('webfont.eot'); /* IE9 Compat Modes */
+                src: url('<?php echo Yii::app()->request->baseUrl; ?>/fonts/TH-Dan-Vi-Vek/TH Dan Vi Vek ver 1.03.ttf') format('truetype');
+            }
+            body *{
+                font-family: 'TH-Dan-Vi-Vek';                
+            }
+            body a, 
+            div.alert, 
+            div.panel-heading,
+            div.panel-body,
+            ul li a,
+            table.table,
+            div.media-body{
+                font-size: 1.4em;
+                color : black;
+            }
+            body div.media-body h4,
+            input,select,textarea,
+            ul.nav{
+                font-size: 1.55em;
+            }
+        </style>
     </head>
 
     <body>
         <div class="container">
-            
-            <?php $this->renderPartial('/navbar-top')?>
+
+            <?php $this->renderPartial('/navbar-top') ?>
             <div class="wrapper">
                 <?php echo $content; ?>
             </div>
-            
+
         </div> 
-        
+
         <?php
         $cs = Yii::app()->getClientScript();
         $cs->registerScriptFile($baseUrl . '/js/jquery.js');
@@ -54,25 +80,25 @@ $baseUrl = Yii::app()->baseUrl;
 
 
         $cs->registerScriptFile($baseUrl . '/js/fancybox/jquery.fancybox.js');
-        
+
         /*
          * Jquery Datatable
          */
         $cs->registerScriptFile($baseUrl . '/js/datatables/jquery.dataTables.min.js');
         $cs->registerScriptFile($baseUrl . '/js/datatables/dataTables.bootstrap.min.js');
-        $cs->registerScriptFile($baseUrl . '/js/datatables/dataTables.responsive.min.js');        
+        $cs->registerScriptFile($baseUrl . '/js/datatables/dataTables.responsive.min.js');
         $cs->registerScriptFile($baseUrl . '/js/datatables/responsive.bootstrap.min.js');
-        
+
         /*
          * Jquery ElevateZoom
          */
         $cs->registerScriptFile($baseUrl . '/js/elevatezoom/jquery.elevateZoom-3.0.8.min.js');
         $cs->registerScriptFile($baseUrl . '/js/elevatezoom/jquery.elevatezoom.js');
-        
+
         $cs->registerScriptFile($baseUrl . '/js/dropzone/dropzone.min.js');
-        
+
         $cs->registerScriptFile($baseUrl . '/js/validate/jquery.validate.min.js');
-        
+
         $cs->registerScriptFile($baseUrl . '/js/my-function.js');
         ?>
     </body>

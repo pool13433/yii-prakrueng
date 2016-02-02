@@ -42,7 +42,7 @@ class SacredObject extends CActiveRecord {
             array('obj_born', 'length', 'max' => 4),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('obj_id, obj_name, obj_price, obj_born, obj_img, obj_like, obj_comment,mem_id, type_id, pro_id, obj_updatedate', 'safe', 'on' => 'search'),
+            array('obj_id, obj_name, obj_price, obj_born, obj_img,obj_location, obj_like, obj_comment,mem_id, type_id, pro_id, obj_updatedate', 'safe', 'on' => 'search'),
         );
     }
 
@@ -69,6 +69,7 @@ class SacredObject extends CActiveRecord {
             'obj_price' => 'Obj Price',
             'obj_born' => 'Obj Year',
             'obj_img' => 'Obj Img',
+            'obj_location' => 'Obj Location',
             'obj_like' => 'Obj Like',
             'obj_view' => 'Obj View',
             'mem_id' => 'Onwer',
@@ -101,6 +102,7 @@ class SacredObject extends CActiveRecord {
         $criteria->compare('obj_price', $this->obj_price);
         $criteria->compare('obj_born', $this->obj_born, true);
         $criteria->compare('obj_img', $this->obj_img, true);
+        $criteria->compare('obj_location', $this->obj_location);
         $criteria->compare('obj_like', $this->obj_like);
         $criteria->compare('obj_comment', $this->obj_comment, true);
         $criteria->compare('type_id', $this->type_id);
@@ -134,6 +136,7 @@ class SacredObject extends CActiveRecord {
     public function beforeSave() {
        $this->obj_updatedate = new CDbExpression('NOW()');
        $this->obj_price = Yii::app()->format->unformatNumber($this->obj_price);
+       $this->obj_born = (intval($this->obj_born) - 543);
         return parent::beforeSave();
     }
 

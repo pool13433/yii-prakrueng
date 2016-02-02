@@ -1,5 +1,5 @@
 <!-- BASIC FORM ELELEMNTS -->
-<form  id="form-register" class="form-horizontal style-form" method="post" action="<?= Yii::app()->createUrl($action_url) ?>">
+<form  id="form-register" class="form-horizontal style-form">
     <div class="panel panel-warning">
         <div class="panel-heading">
             <h4><i class="fa fa-angle-right"></i> <?= (empty($form_title) ? 'ลงทะเบียนเพื่อเข้าร่วมเป็นสมาชิกของเรา' : $form_title) ?></h4>
@@ -96,7 +96,9 @@
 
 <script type = "text/javascript" >
     $(function () {
-        $('#form-register').validate({
+        $('#form-register').submit(function (e) {
+            e.preventDefault();
+        }).validate({
             rules: {
                 username: "required",
                 password: {
@@ -140,7 +142,23 @@
                 }
             },
             submitHandler: function (form) {
-                $(form).submit();
+                $.ajax({
+                    url: '<?= Yii::app()->createUrl('site/register') ?>',
+                    data: $(form).serialize(),
+                    type: 'POST',
+                    dataType: 'JSON',
+                    success: function (response) {
+                        if (response.status) {
+                            window.location.href = response.url;
+                        } else {                            
+                            alert(response.message);
+                            //window.location.reload(true);
+                        }
+                    },
+                    error: function () {
+
+                    }
+                });
             }
         });
     });

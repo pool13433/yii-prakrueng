@@ -1,0 +1,199 @@
+@import "http://fonts.googleapis.com/css?family=Open+Sans";
+/*body {
+    background-color: #eee;
+    background-image: url("../images/patterns/light_toast.png");
+    color: #666;
+    font-family: "Open Sans",sans-serif;
+    font-size: 12px;
+    margin: 0;
+    padding: 0;
+}*/
+a {
+    color: #23dbdb;
+    text-decoration: none;
+}
+a:hover {
+    color: #000;
+}
+ol, ul {
+    list-style: outside none none;
+    margin: 0;
+    padding: 0;
+}
+#wrap {
+    margin: 0 auto;
+}
+.inner {
+    margin: 0 auto;
+    max-width: 940px;
+    padding: 0 40px;
+}
+.relative {
+    position: relative;
+}
+.right {
+    float: right;
+}
+.left {
+    float: left;
+}
+#wrap > header {
+    background-color: #333;
+    padding-bottom: 20px;
+}
+.logo {
+    display: inline-block;
+    font-size: 0;
+    padding-top: 15px;
+}
+#navigation {
+    bottom: 0;
+    position: absolute;
+    right: 40px;
+}
+#menu-toggle {
+    display: none;
+    float: right;
+}
+#main-menu {
+    float: right;
+    font-size: 0;
+    margin: 10px 0;
+}
+#main-menu > li {
+    display: inline-block;
+    margin-left: 30px;
+    padding: 2px 0;
+}
+#main-menu > li.parent {
+    background-image: url("../images/plus-gray.png");
+    background-position: left center;
+    background-repeat: no-repeat;
+    background-size: 7px 7px;
+}
+#main-menu > li.parent > a {
+    padding-left: 14px;
+}
+#main-menu > li > a {
+    color: #eee;
+    font-size: 14px;
+    line-height: 14px;
+    padding: 30px 0;
+    text-decoration: none;
+}
+#main-menu > li:hover > a, #main-menu > li.current-menu-item > a {
+    color: #23dbdb;
+}
+#main-menu li {
+    position: relative;
+}
+ul.sub-menu {
+    display: none;
+    left: 0;
+    padding-top: 10px;
+    position: absolute;
+    top: 38px;
+    width: 150px;
+    z-index: 9999;
+}
+ul.sub-menu ul.sub-menu {
+    left: 149px;
+    margin-top: -1px;
+    padding-top: 0;
+    top: 0;
+}
+ul.sub-menu > li > a {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background-color: #333;
+    border-color: -moz-use-text-color #444 #444;
+    border-image: none;
+    border-style: none solid solid;
+    border-width: medium 1px 1px;
+    color: #bbb;
+    display: block;
+    font-size: 12px;
+    line-height: 15px;
+    padding: 10px 12px;
+}
+ul.sub-menu > li > a:hover {
+    background-color: #2a2a2a;
+    color: #fff;
+}
+ul.sub-menu > li:first-child {
+    border-top: 3px solid #23dbdb;
+}
+ul.sub-menu ul.sub-menu > li:first-child {
+    border-top: 1px solid #444;
+}
+ul.sub-menu > li:last-child > a {
+    border-radius: 0 0 2px 2px;
+}
+ul.sub-menu > li > a.parent {
+    background-image: url("../images/arrow.png");
+    background-position: 95% center;
+    background-repeat: no-repeat;
+    background-size: 5px 9px;
+}
+#main-menu li:hover > ul.sub-menu {
+    display: block;
+}
+@media all and (max-width: 700px) {
+    #navigation {
+        margin-top: 20px;
+        position: static;
+    }
+    #menu-toggle {
+        display: block;
+    }
+    #main-menu {
+        display: none;
+        float: none;
+    }
+    #main-menu li {
+        display: block;
+        margin: 0;
+        padding: 0;
+    }
+    #main-menu > li {
+        margin-top: -1px;
+    }
+    #main-menu > li:first-child {
+        margin-top: 0;
+    }
+    #main-menu > li > a {
+        background-color: #333;
+        border: 1px solid #444;
+        color: #bbb;
+        display: block;
+        font-size: 14px;
+        padding: 12px !important;
+    }
+    #main-menu li > a:hover {
+        background-color: #444;
+    }
+    #main-menu > li.parent {
+        background: rgba(0, 0, 0, 0) none repeat scroll 0 0 !important;
+        padding: 0;
+    }
+    #main-menu > li:hover > a, #main-menu > li.current-menu-item > a {
+        border: 1px solid #444 !important;
+        color: #fff !important;
+    }
+    ul.sub-menu {
+        display: block;
+        margin-left: 20px;
+        margin-top: -1px;
+        padding: 0;
+        position: static;
+        width: inherit;
+    }
+    ul.sub-menu > li:first-child {
+        border-top: 1px solid #444 !important;
+    }
+    ul.sub-menu > li > a.parent {
+        background: #333 none repeat scroll 0 0 !important;
+    }
+}
