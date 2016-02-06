@@ -14,6 +14,7 @@
  * @property integer $type_id
  * @property integer $pro_id
  * @property string $obj_updatedate
+ * @property int  $obj_status
  *
  * The followings are the available model relations:
  * @property SacredType $type
@@ -21,6 +22,7 @@
 class SacredObject extends CActiveRecord {
 
     public $count_img;
+    public $obj_status_desc;
 
     /**
      * @return string the associated database table name
@@ -77,6 +79,7 @@ class SacredObject extends CActiveRecord {
             'type_id' => 'Type',
             'pro_id' => 'Pro',
             'obj_updatedate' => 'Obj Updatedate',
+            'obj_status' => 'Object Status'
         );
     }
 
@@ -130,13 +133,14 @@ class SacredObject extends CActiveRecord {
         $this->obj_updatedate = date('m/d/Y', $this->obj_updatedate);
         $this->obj_born = (intval($this->obj_born) + 543);
         $this->obj_price = Yii::app()->format->formatNumber($this->obj_price);
+        $this->obj_status_desc = ($this->obj_status == 1 ? 'เผยแพร่' : 'ส่วนตัว');
         parent::afterFind();
     }
 
     public function beforeSave() {
-       $this->obj_updatedate = new CDbExpression('NOW()');
-       $this->obj_price = Yii::app()->format->unformatNumber($this->obj_price);
-       $this->obj_born = (intval($this->obj_born) - 543);
+        $this->obj_updatedate = new CDbExpression('NOW()');
+        $this->obj_price = Yii::app()->format->unformatNumber($this->obj_price);
+        $this->obj_born = (intval($this->obj_born) - 543);
         return parent::beforeSave();
     }
 

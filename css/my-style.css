@@ -236,7 +236,16 @@ div.form-group > label.control-label{
 .sidebar span.task-title-sp,span.task-title{
     font-size: 1.45em;
 }
-.panel-news *{
-    font-size: 1.4em;
-    
+.panel-news *,
+fieldset input *,
+fieldset textarea
+{
+    font-size: 1.4em;    
+}
+.panel-news a{
+    font-size: 1.1em;    
+}
+
+.nav-tabs *{
+    font-size: 1.1em;    
 }

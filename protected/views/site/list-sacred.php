@@ -16,6 +16,7 @@
                             <th>หมวดหมู่</th>
                             <th>จังหวัด</th>
                             <th>ชอบ</th>
+                            <th>สถานะ</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -23,13 +24,25 @@
                             <tr>
                                 <td><?= ($index + 1) ?></td>
                                 <td>
-                                    <a href="<?=  Yii::app()->createUrl('site/detail/'.$object->obj_id)?>"><?= $object->obj_name ?></a>
+                                    <a href="<?= Yii::app()->createUrl('site/detail/' . $object->obj_id) ?>"><?= $object->obj_name ?></a>
                                 </td>
                                 <td><?= $object->obj_price ?></td>
                                 <td><?= $object->obj_born ?></td>
                                 <td><?= $object->type->type_name ?></td>
                                 <td><?= $object->province->pro_name_th ?></td>
                                 <td><?= $object->obj_like ?></td>
+                                <td style="width: 15%">
+                                    <div class="btn-group" data-toggle="buttons">
+                                        <label class="btn btn-danger btn-sm <?= ($object->obj_status == 0 ? 'active' : '') ?>"
+                                                onclick="changeSacedStatus(<?= $object->obj_id ?>, 0)">
+                                            <input type="radio" name="options" id="option1" <?= ($object->obj_status == 0  ? 'checked' : '') ?>> ส่วนตัว
+                                        </label>
+                                        <label class="btn btn-success btn-sm  <?= ($object->obj_status == 1 ? 'active' : '') ?>"
+                                                onclick="changeSacedStatus(<?= $object->obj_id ?>, 1)">
+                                            <input type="radio" name="options" id="option2" <?= ($object->obj_status == 1 ? 'checked' : '') ?>> เผยแพร่
+                                        </label>
+                                    </div>                                    
+                                </td>
                             </tr>
                         <?php } ?>
                     </tbody>
@@ -54,3 +67,17 @@
 
 </div>
 <!-- Co ntent End --> 
+<script type="text/javascript">
+    function changeSacedStatus(id, status) {
+        $.post('<?= Yii::app()->createUrl('helper/UpdateSacredStatus') ?>', {
+            id: id,
+            status: status
+        }, function (response) {
+            if (response.status) {
+                //window.location.reload(true);
+            } else {
+                alert('System error');
+            }
+        }, 'json');
+    }
+</script>

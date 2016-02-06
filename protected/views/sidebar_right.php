@@ -11,6 +11,11 @@
             <div class="panel-body">
                 <form name="form-criteria" id="form-criteria">
                     <div class="form-group">
+                        <label class="">ชื่อ,อื่นๆ</label>                
+                        <input type="text" id="freedom" class="form-control" placeholder="ชื่อ,อื่นๆ"/>                                
+                    </div>
+                    <hr/>
+                    <div class="form-group">
                         <label class="">ช่วงราคา</label>                
                         <input type="text" id="price_begin" class="form-control" placeholder="ราคาเริ่มต้น"/>                                
                     </div>
@@ -34,6 +39,42 @@
         </div>
     </div>
 </div>        
+
+<section class="task-panel tasks-widget panel sidebar">
+    <div class="panel-heading">
+        <div class="pull-left"><h3><i class="fa fa-map-marker"></i> ภูมิภาคของจังหวัดที่จัดสร้างวัตถุ</h3></div>
+        <br>
+    </div>
+    <div class="panel-body">
+        <div class="panel-group" id="accordionRegion" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-warning" id="boxPrakreungRegion">
+                <?php foreach ($listRegion as $index => $region) { ?>
+                    <div class="panel-heading" role="tab" id="headingOne">
+                        <h6 class="panel-title" style="font-size: 0.6em;">
+                            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#region<?= $index ?>" aria-expanded="true" aria-controls="collapseOne">
+                                <?= $region->reg_name ?> (<?= $region->cnt ?> จังหวัด)<i class="glyphicon glyphicon-chevron-down"></i>
+                            </a>
+                        </h6>
+                    </div>
+                    <div id="region<?= $index ?>" class="panel-collapse collapse <?= ($index == 0 ? 'in' : '') ?>" role="tabpanel" aria-labelledby="headingOne">
+                        <div class="panel-body">
+                            <?php
+                            $listProvinceByRegion = Province::model()->findAllByAttributes(array('reg_id' => $region->reg_id), array('order' => 'pro_name_th'));
+                            foreach ($listProvinceByRegion as $key => $province) {
+                                ?>
+                                <div class="checkbox">
+                                    <label>
+                                        <input type="checkbox" value="<?= $province->pro_id ?>">
+                                        <?= $province->pro_name_th ?>
+                                    </label>
+                                </div>
+                            <?php } ?>
+                        </div>
+                    </div>
+                <?php } ?>
+            </div>
+        </div>
+</section>
 
 <section class="task-panel tasks-widget panel sidebar">
     <div class="panel-heading">
@@ -70,41 +111,7 @@
     </div>
 </section>
 
-<section class="task-panel tasks-widget panel sidebar">
-    <div class="panel-heading">
-        <div class="pull-left"><h3><i class="fa fa-map-marker"></i> ภูมิภาคของจังหวัดที่จัดสร้างวัตถุ</h3></div>
-        <br>
-    </div>
-    <div class="panel-body">
-        <div class="panel-group" id="accordionRegion" role="tablist" aria-multiselectable="true">
-            <div class="panel panel-warning" id="boxPrakreungRegion">
-                <?php foreach ($listRegion as $index => $region) { ?>
-                    <div class="panel-heading" role="tab" id="headingOne">
-                        <h6 class="panel-title" style="font-size: 0.6em;">
-                            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#region<?= $index ?>" aria-expanded="true" aria-controls="collapseOne">
-                                <?= $region->reg_name ?> (<?=$region->cnt?> จังหวัด)<i class="glyphicon glyphicon-chevron-down"></i>
-                            </a>
-                        </h6>
-                    </div>
-                    <div id="region<?= $index ?>" class="panel-collapse collapse <?= ($index == 0 ? 'in' : '') ?>" role="tabpanel" aria-labelledby="headingOne">
-                        <div class="panel-body">
-                            <?php
-                            $listProvinceByRegion = Province::model()->findAllByAttributes(array('reg_id' => $region->reg_id), array('order' => 'pro_name_th'));
-                            foreach ($listProvinceByRegion as $key => $province) {
-                                ?>
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" value="<?= $province->pro_id ?>">
-                                        <?= $province->pro_name_th ?>
-                                    </label>
-                                </div>
-                            <?php } ?>
-                        </div>
-                    </div>
-                <?php } ?>
-            </div>
-        </div>
-</section>
+
 
 <section class="task-panel tasks-widget panel sidebar">
     <div class="panel-heading">
@@ -180,12 +187,14 @@
                 checked = 1;
             }
             console.log($(this).is(':checked'));
-            $.post(url,
-                    {group: 'TYPE', value: $(this).val(), checked: checked},
-            function (response) {
-                //renderCriteria(response);                
-                window.location.href = redirect;
-            }, 'json');
+            var data = {
+                group: 'TYPE', value: $(this).val(), checked: checked
+            };
+            $.post(url, getCriteria(data),
+                    function (response) {
+                        //renderCriteria(response);                
+                        window.location.href = redirect;
+                    }, 'json');
         });
         checkboxRegion.on('click', function () {
             var checked = 0;
@@ -193,14 +202,14 @@
                 checked = 1;
             }
             console.log($(this).is(':checked'));
-            $.post(url,
-                    {
-                        group: 'REGION', value: $(this).val(), checked: checked
-                    },
-            function (response) {
-                //renderCriteria(response);                
-                window.location.href = redirect;
-            }, 'json');
+            var data = {
+                group: 'REGION', value: $(this).val(), checked: checked,
+            };
+            $.post(url, getCriteria(data),
+                    function (response) {
+                        //renderCriteria(response);                
+                        window.location.href = redirect;
+                    }, 'json');
         });
         submitCriteriaForm();
     });
@@ -223,17 +232,33 @@
         $('#price_end').val(collection.form.price_end);
         $('#born_begin').val(collection.form.born_begin);
         $('#born_end').val(collection.form.born_end);
+        $('#freedom').val(collection.form.freedom);
+        if ($('#price_begin').val() != '' || $('#price_end').val() != '' || $('#born_begin').val() != ''
+                || $('#born_end').val() != '' || $('#freedom').val() != '') {
+            $('#collapseOne').collapse({toggle: true});
+        } else {
+            $('#collapseOne').collapse({toggle: false});
+        }
         collapseCustom();
+    }
+    function getCriteria(data) {
+        var criteria = {};
+        criteria.price_begin = $('#price_begin').val();
+        criteria.price_end = $('#price_end').val();
+        criteria.born_begin = $('#born_begin').val();
+        criteria.born_end = $('#born_end').val();
+        criteria.freedom = $('#freedom').val();
+        criteria.checked = data.checked;
+        criteria.group = data.group;
+        criteria.value = data.value;
+        return criteria;
     }
     function submitCriteriaForm() {
         $('#btnSubmit').on('click', function () {
-            $.post(url, {
-                price_begin: $('#price_begin').val(),
-                price_end: $('#price_end').val(),
-                born_begin: $('#born_begin').val(),
-                born_end: $('#born_end').val(),
-                checked: '',
-            }, function (response) {
+            var data = {
+                group: '', value: '', checked: ''
+            };
+            $.post(url, getCriteria(data), function (response) {
                 window.location.href = redirect;
             }, 'json');
         });
@@ -259,7 +284,7 @@
                 //console.log($(province).prop('checked')); 
                 var isCheck = $(province).prop('checked');
                 if (isCheck) {
-                    countChecked ++;
+                    countChecked++;
                 }
             });
             var prevA = $(groupRegion).prev().find('a');
@@ -267,8 +292,8 @@
                 $(groupRegion).removeClass('in');
                 $(prevA).addClass('collapsed');
                 $(prevA).find('i.glyphicon').removeClass('glyphicon-chevron-down').addClass('glyphicon-chevron-right');
-            } else {                
-                $(groupRegion).addClass('in');                
+            } else {
+                $(groupRegion).addClass('in');
                 $(prevA).removeClass('collapsed');
                 $(prevA).find('i.glyphicon').removeClass('glyphicon-chevron-right').addClass('glyphicon-chevron-down');
             }

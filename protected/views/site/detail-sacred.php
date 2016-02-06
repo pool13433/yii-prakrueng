@@ -39,7 +39,7 @@ $baseUrl = Yii::app()->baseUrl;
                         </ul>
 
                         <!-- Tab panes -->
-                        <div class="tab-content">
+                        <div class="tab-content panel-sacred">
 
                             <!-- Panel Images-->
                             <div role="tabpanel" class="tab-pane active" id="home">
@@ -182,13 +182,71 @@ $baseUrl = Yii::app()->baseUrl;
                                                 <small><u>แสดงความคิดเห็น</u></small>
                                             </h1>
                                         </div>
-                                        <div class="form-group">
-                                            <labe class="control-label col-lg-3 col-md-3 col-sm-3 col-xs-12">แสดงความคิดเห็น</labe>
-                                            <div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
-                                                <textarea class="form-control" rows="4"></textarea>
+                                        <div class="row">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                <div class="panel">
+                                                    <div class="panel-body">
+                                                        <div class="form-group">
+                                                            <labe class="control-label col-lg-3 col-md-3 col-sm-3 col-xs-12">แสดงความคิดเห็น</labe>
+                                                            <div class="col-lg-9 col-md-9 col-sm-8 col-xs-12">
+                                                                <textarea class="form-control" id="messagePost" rows="4" style="font-size: 1.3em;"></textarea>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="panel-footer">
+                                                        <div class="row">
+                                                            <div class="col-lg-4 col-lg-offset-3">
+                                                                <button type="button" id="btnPost" class="btn btn-success" onclick="submitPostComment(<?= $sacredObject->obj_id ?>)">
+                                                                    <i class="fa fa-comment"></i> แสดงความคิดเห็น
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
                                             </div>
+                                        </div>                
+                                        <div class="row" id="boxComments"> 
+                                            <?php foreach ($listCommentQuestion as $index => $question) { ?>                                            
+                                                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                    <div class="page-header">
+                                                        <h1><?= $question['ques_message'] ?>                                                            
+                                                        </h1>
+                                                        <h4 class="pull-left">
+                                                            โพสต์โดย :: <?= $question['mem_fname'] ?>
+                                                            เมื่อเวลา :: <?= $question['ques_updatedate'] ?>
+                                                        </h4>
+                                                        <h4 class="pull-right">
+                                                            <?php
+                                                            $btnClass = '';
+                                                            $btnTitle = 'Like';
+                                                            $isLike = 0;
+                                                            $sessionMember = Yii::app()->session['member'];
+                                                            if (!empty($sessionMember->mem_id)) {
+                                                                $isUserLikeComment = WbQuestionAction::model()->findByAttributes(array(
+                                                                    'ques_id' => $question['ques_id'],
+                                                                    'mem_id' => $sessionMember->mem_id,
+                                                                ));                                                                
+                                                                if ($isUserLikeComment) {// แสดงว่าเคย Like comment                                                                    
+                                                                    $isLike = $isUserLikeComment->act_like;
+                                                                    //echo '<br/> ' . $isUserLikeComment->act_like . '<br/>';
+                                                                    if ($isLike == 1) {
+                                                                        $btnClass = 'btn-primary';
+                                                                        $btnTitle = 'UnLike';
+                                                                    } else {
+                                                                        $btnClass = '';                                                                        
+                                                                    }
+                                                                }
+                                                            }
+                                                            ?>
+                                                            <button class="fa fa-thumbs-o-up btn btn-sm btn-like <?= $btnClass ?>" title="<?=$btnTitle?>"
+                                                                    name="<?= $isLike ?>" id="<?= $question['ques_id'] ?>" onclick="actionLikeComment(this)">     
+                                                                        <?= $question['ques_like'] ?>
+                                                            </button> 
+                                                        </h4>
+                                                    </div>
+                                                </div>
+                                            <?php } ?>
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
@@ -213,8 +271,8 @@ $baseUrl = Yii::app()->baseUrl;
                                                                     <img src="<?= $baseUrl . '/images/' . $relate->obj_img ?>" alt="..." style="min-height: 200px;">
                                                                 </a>
                                                                 <p class="pull-right">
-                                                                    <a href="<?= Yii::app()->createUrl('site/detail/' . $relate->obj_id) ?>" class="btn btn-warning btn-xs">
-                                                                        <i class="fa fa-flag"></i> อ่านต่อ...
+                                                                    <a href="<?= Yii::app()->createUrl('site/detail/' . $relate->obj_id) ?>" class="btn btn-warning">
+                                                                        <i class="fa fa-flag"></i> เพิ่มเติม...
                                                                     </a>
                                                                 </p>
                                                             </div>
@@ -258,6 +316,68 @@ $baseUrl = Yii::app()->baseUrl;
         handleElevateZoomer();
         initMemberObjectAction();
     });
+
+    function initMemberObjectAction() {
+        //actionLikeComment();
+        actionLikeSacred();
+        actionFavoriteSacred();
+        renderDefaultMemberAction();
+        //renderQuestionAction();
+    }
+
+    function submitPostComment(objectId) {
+        var messagePost = $('#messagePost').val();
+        if (messagePost != '') {
+            $.post('<?= Yii::app()->createUrl('helper/PostComment') ?>', {
+                id: objectId,
+                message: messagePost
+            }, function (response) {
+                if (response.status) {
+                    //window.location.reload(true);
+                    cloneComment(response.comment);
+                } else {
+                    alert(response.message);
+                    window.location.href = response.url;
+                }
+            }, 'json');
+        } else {
+            alert('กรุณากรอกข้อความแสดงความคิดเห็นก่อน');
+        }
+    }
+
+    function cloneComment(comment) {
+        var boxComment = htmlBoxComment() //$('#boxComments').children(':first-child').clone();
+        $(boxComment).find('h1').text(comment.ques_message);
+        $(boxComment).find('h4.pull-left').text('โพสต์โดย :: ' + comment.mem_fname + ' เมื่อเวลา :: ' + comment.ques_updatedate);
+        var button = $(boxComment).find('h4.pull-right').find('button.btn-like');
+        button.text(' ' + comment.ques_like + ' ');
+        button.attr('name', comment.ques_like);
+        button.attr('id', comment.ques_id);
+        if (comment.act_like != null && comment.act_like == 0) {
+            button.addClass('btn-primary');
+        }
+        var countChildren = $('#boxComments').children().length;
+        if (countChildren > 0) {
+            $(boxComment).insertBefore($('#boxComments').children(':first-child'));
+        } else {
+            $('#boxComments').append(boxComment);
+        }
+        $('#messagePost').val('');
+    }
+
+    function htmlBoxComment() {
+        var boxComment = '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">';
+        boxComment += '<div class="page-header">';
+        boxComment += '	<h1></h1>';
+        boxComment += '	<h4 class="pull-left"></h4>';
+        boxComment += '	<h4 class="pull-right">';
+        boxComment += '         <button name="" class="fa fa-thumbs-o-up btn btn-sm btn-like" onclick="actionLikeComment(this)"> ';
+        boxComment += '        </button> ';
+        boxComment += '	</h4>';
+        boxComment += '</div>';
+        boxComment += '</div>';
+        return $.parseHTML(boxComment);
+    }
 
     function removeElevateZoom() {
         $('.zoomContainer').remove();
@@ -306,7 +426,50 @@ $baseUrl = Yii::app()->baseUrl;
                 }, 'json');
     }
 
-    function initMemberObjectAction() {
+
+
+    function renderDefaultMemberAction() {
+        $.get('<?= Yii::app()->createUrl('helper/getMemberObjectAction/' . $sacredObject->obj_id) ?>', {},
+                function (response) {
+                    if (response != null) {
+                        if (response.act_like == 1) {
+                            $('#btnLike').prop('disabled', true);
+                        }
+                        if (response.act_favorite == 1) {
+                            $('#btnFavorite').prop('disabled', true);
+                        }
+                    }
+                }, 'json');
+    }
+
+    function actionLikeComment(elementButton) {
+        var element = elementButton;
+        var id = $(elementButton).prop('id');
+        var likeStatus = $(element).prop('name');
+        var data = {
+            commentId: id,
+            objectId: <?= $sacredObject->obj_id ?>
+        };
+        if (likeStatus == '1') {
+            $(element).attr('name', '0').removeClass('btn-primary');
+            data.like = 0;
+            $(element).attr('title', 'Like');
+        } else {
+            $(element).attr('name', '1').addClass('btn-primary');
+            data.like = 1;
+            $(element).attr('title', 'UnLike');
+        }
+        $.post('<?= Yii::app()->createUrl('helper/UpdateLikeComment') ?>', data, function (response) {
+            if (response.status) {
+                $(element).text(response.question.ques_like);
+            } else {
+                alert(response.message);
+                window.location.href = response.url;
+            }
+        }, 'json');
+    }
+
+    function actionLikeSacred() {
         $('#btnLike').on('click', function () {
             $.get('<?= Yii::app()->createUrl('helper/updateMemberObjectAction') ?>', {
                 id: <?= $sacredObject->obj_id ?>,
@@ -322,6 +485,9 @@ $baseUrl = Yii::app()->baseUrl;
                 }
             }, 'json');
         });
+    }
+
+    function actionFavoriteSacred() {
         $('#btnFavorite').on('click', function () {
             $.get('<?= Yii::app()->createUrl('helper/updateMemberObjectAction') ?>', {
                 id: <?= $sacredObject->obj_id ?>,
@@ -337,18 +503,6 @@ $baseUrl = Yii::app()->baseUrl;
                 }
             }, 'json');
         });
-
-        $.get('<?= Yii::app()->createUrl('helper/getMemberObjectAction/' . $sacredObject->obj_id) ?>', {},
-                function (response) {
-                    if (response != null) {
-                        if (response.act_like == 1) {
-                            $('#btnLike').prop('disabled', true);
-                        }
-                        if (response.act_favorite == 1) {
-                            $('#btnFavorite').prop('disabled', true);
-                        }
-                    }
-                }, 'json');
     }
 
 </script>

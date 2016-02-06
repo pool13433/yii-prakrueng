@@ -7,6 +7,12 @@
  */
 
 class HelperController extends Controller {
+    
+    
+    public function init() {
+        header('Content-Type: application/json');
+        parent::init();
+    }
 
     public function actionUpdateSacredObjectView($id) {
         $sacredObject = SacredObject::model()->findByPk($id);
@@ -20,28 +26,30 @@ class HelperController extends Controller {
 
     public function actionGetMemberObjectAction($id) {
         $member = Yii::app()->session['member'];
-        $memberObjectAction = MemberObjectAction::model()->findByAttributes(array(
-            'obj_id' => $id,
-            'mem_id' => $member->mem_id
-        ));
+        $memberObjectAction = new MemberObjectAction();
+        if ($member) {
+            $memberObjectAction = MemberObjectAction::model()->findByAttributes(array(
+                'obj_id' => $id,
+                'mem_id' => $member->mem_id
+            ));
+        }
         echo CJSON::encode($memberObjectAction);
     }
 
     public function actionUpdateMemberObjectAction() {
-        if (!empty($_GET)) {
-            $id = $_GET['id'];
-            $value = $_GET['value'];
+        if (empty(Yii::app()->session['member']->mem_id)) {
+            Yii::app()->session['last_url'] = Yii::app()->createUrl('site/detail/' . $_GET['id']);
+            echo CJSON::encode(array(
+                'status' => false,
+                'message' => 'กรุณา Login เข้าระบบก่อน',
+                'url' => Yii::app()->createUrl('site/login')
+            ));
+        } else {
+            if (!empty($_GET)) {
+                $id = $_GET['id'];
+                $value = $_GET['value'];
 
-            $member = Yii::app()->session['member'];
-            if (empty($member)) {
-                echo CJSON::encode(array(
-                    'status' => false,
-                    'title' => 'ไม่สามารถลงปล่อยพระเครื่องให้เช่าได้',
-                    'message' => 'ท่านยังไม่ได้ Login เข้าระบบ กรุณา Login เข้าระบบก่อน',
-                    'url' => Yii::app()->createUrl('site/login')
-                ));
-                exit(0);
-            } else {
+                $member = Yii::app()->session['member'];
                 $memberObjectAction = MemberObjectAction::model()->findByAttributes(array(
                     'obj_id' => $id,
                     'mem_id' => $member->mem_id
@@ -58,7 +66,9 @@ class HelperController extends Controller {
                     $memberObjectAction->act_favorite = $value;
                 }
                 echo CJSON::encode(array(
-                    'status' => $memberObjectAction->save()
+                    'status' => $memberObjectAction->save(),
+                    'message' => '',
+                    'url' => ''
                 ));
             }
         }
@@ -106,20 +116,32 @@ class HelperController extends Controller {
                     }
                 }
             }
-
-            if (!empty($_POST['price_begin']) && !empty($_POST['price_end'])) {
-                $collectionForm['price_begin'] = $_POST['price_begin'];
-                $collectionForm['price_end'] = $_POST['price_end'];
+            if (empty($_POST['price_begin']) && empty($_POST['price_end']) &&
+                    empty($_POST['born_begin']) && empty($_POST['born_end']) && empty($_POST['freedom'])) {
+                $collectionForm = $criteriaFilter->collectionForm;
             } else {
-                $collectionForm['price_begin'] = '';
-                $collectionForm['price_end'] = '';
-            }
-            if (!empty($_POST['born_begin']) && !empty($_POST['born_end'])) {
-                $collectionForm['born_begin'] = $_POST['born_begin'];
-                $collectionForm['born_end'] = $_POST['born_end'];
-            } else {
-                $collectionForm['born_begin'] = '';
-                $collectionForm['born_end'] = '';
+                if (!empty($_POST['price_begin']) && !empty($_POST['price_end'])) {
+                    $collectionForm['price_begin'] = $_POST['price_begin'];
+                    $collectionForm['price_end'] = $_POST['price_end'];
+                }
+//            else {
+//                $collectionForm['price_begin'] = '';
+//                $collectionForm['price_end'] = '';
+//            }
+                if (!empty($_POST['born_begin']) && !empty($_POST['born_end'])) {
+                    $collectionForm['born_begin'] = $_POST['born_begin'];
+                    $collectionForm['born_end'] = $_POST['born_end'];
+                }
+//            else {
+//                $collectionForm['born_begin'] = '';
+//                $collectionForm['born_end'] = '';
+//            }
+                if (!empty($_POST['freedom'])) {
+                    $collectionForm['freedom'] = $_POST['freedom'];
+                }
+//            else{
+//                $collectionForm['freedom'] = '';
+//            }
             }
             $criteria['form'] = $collectionForm;
             $criteria['types'] = $collectionType;
@@ -128,5 +150,113 @@ class HelperController extends Controller {
         }
         echo CJSON::encode($criteria);
     }
+
+    public function actionUpdateSacredStatus() {
+        if (!empty($_POST)) {
+            $id = $_POST['id'];
+            $status = $_POST['status'];
+//            $object = SacredObject::model()->updateByPk($id, array(
+//                'obj_status' => $status,
+//                'obj_updatedate' => new CDbExpression('NOW()')
+//            ));            
+            $object = SacredObject::model()->findByPk($id);
+            $object->obj_status = $status;
+            $object->obj_updatedate = new CDbExpression('NOW()');
+            echo CJSON::encode(array(
+                'status' => $object->update(),
+                'message' => '',
+                'url' => '',
+            ));
+        }
+    }
+
+    public function actionPostComment() {
+        if (!empty($_POST)) {
+            $objectId = $_POST['id'];
+            $message = $_POST['message'];
+
+            if (empty(Yii::app()->session['member']->mem_id)) {
+                Yii::app()->session['last_url'] = Yii::app()->createUrl('site/detail/' . $objectId);
+                echo CJSON::encode(array(
+                    'status' => false,
+                    'message' => 'กรุณา Login เข้าระบบก่อน',
+                    'url' => Yii::app()->createUrl('site/login')
+                ));
+            } else {
+                $question = new WbQuestion();
+                $question->ques_message = $message;
+                $question->ques_like = 0;
+                $question->ques_updatedate = new CDbExpression('NOW()');
+                $question->obj_id = $objectId;
+                $question->mem_id = Yii::app()->session['member']->mem_id;
+
+                if ($question->save()) {
+                    $listQuestionAction = Yii::app()->db->createCommand()
+                            ->select('q.*,qa.act_id,qa.act_like,m.mem_id,qa.act_updatedate,m.mem_fname,m.mem_lname')
+                            ->from('wb_question q')
+                            ->leftJoin('wb_question_action qa', 'qa.ques_id = q.ques_id')
+                            ->join('member m', 'm.mem_id = q.mem_id')
+                            ->where('q.obj_id =:objId and q.ques_id =:quesId', array(
+                                ':objId' => $objectId,
+                                ':quesId' => $question->ques_id))
+                            ->queryRow();
+                    echo CJSON::encode(array(
+                        'status' => true,
+                        'comment' => $listQuestionAction,
+                        'message' => '',
+                        'url' => ''
+                    ));
+                }
+            }
+        }
+    }
+
+    public function actionUpdateLikeComment() {
+        if (!empty($_POST)) {
+            if (empty(Yii::app()->session['member']->mem_id)) {
+                Yii::app()->session['last_url'] = Yii::app()->createUrl('site/detail/' . $_POST['objectId']);
+                echo CJSON::encode(array(
+                    'status' => false,
+                    'message' => 'กรุณา Login เข้าระบบก่อน',
+                    'url' => Yii::app()->createUrl('site/login')
+                ));
+            } else {
+
+                $like = $_POST['like'];
+                $commentId = $_POST['commentId'];
+                $action = WbQuestionAction::model()->findByAttributes(array(
+                    'ques_id' => $commentId,
+                    'mem_id' => Yii::app()->session['member']->mem_id
+                ));
+                if (!$action) {
+                    $action = new WbQuestionAction();
+                    $action->mem_id = Yii::app()->session['member']->mem_id;
+                    $action->ques_id = $commentId;
+                    $action->act_updatedate = new CDbExpression('NOW()');
+                }
+                $action->act_like = $like;
+
+                $question = WbQuestion::model()->findByPk($commentId);
+                if ($like == 0) {
+                    $question->ques_like = ($question->ques_like - 1);
+                } else {
+                    $question->ques_like = ($question->ques_like + 1);
+                }
+                if ($question->save()) {
+                    if ($action->save(false)) {
+                        echo CJSON::encode(array(
+                            'status' => true,
+                            'question' => $question
+                        ));
+                    } else {
+                        
+                    }
+                } else {
+                    echo 'System Error';
+                }
+            }
+        }
+    }
+    
 
 }

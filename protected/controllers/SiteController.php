@@ -6,6 +6,8 @@ class SiteController extends Controller {
     private $member = null;
     private $imageWidth = 800;
     private $imageHeight = 600;
+    public $publicStatus = 1;
+    public $levelDefault = 1; // มือใหม่
 
     public function init() {
 
@@ -67,11 +69,14 @@ class SiteController extends Controller {
                 ));
             } else {
                 Yii::app()->session['member'] = $this->member;
-                //$this->redirect(array('site/index'));
+                $url = Yii::app()->createUrl('site/index');
+                if (!empty(Yii::app()->session['last_url'])) {
+                    $url = Yii::app()->session['last_url'];
+                }
                 echo CJSON::encode(array(
                     'status' => true,
-                    'message' => 'ไม่พบข้อมูลของท่านในระบบ',
-                    'url' => Yii::app()->createUrl('site/index')
+                    'message' => '',
+                    'url' => $url
                 ));
             }
         }
@@ -91,7 +96,7 @@ class SiteController extends Controller {
             $this->member->mem_password = $_POST['password'];
             $this->member->mem_fname = '';
             $this->member->mem_img = '';
-            $this->member->mem_level = '';
+            $this->member->mem_level = $this->levelDefault;
             $this->member->mem_lname = '';
             $this->member->mem_phone = $_POST['phone'];
             $this->member->mem_sex = $_POST['sex'];
@@ -117,11 +122,12 @@ class SiteController extends Controller {
         unset(Yii::app()->session['message']);
         unset(Yii::app()->session['member']);
         unset(Yii::app()->session['criteria']);
+        unset(Yii::app()->session['last_url']);
         $this->redirect(array('site/index'));
     }
 
     public function actionIndex() {
-        $where_condition = ' 1=1 ';
+        $where_condition = ' obj_status = ' . $this->publicStatus . ' ';
         $pagin_page_size = 15;
         $pagin_page_current = (empty($_GET['page']) ? '1' : $_GET['page']);
         $mem_id = (empty($_GET['user']) ? '' : $_GET['user']);
@@ -131,12 +137,13 @@ class SiteController extends Controller {
         $criteria = new CDbCriteria();
         $criteria->select = 'o.*';
         $criteria->alias = 'o';
-        $criteria->join = 'RIGHT JOIN province p ON p.pro_id = o.pro_id';
+        $criteria->join = 'LEFT JOIN province p ON p.pro_id = o.pro_id';
         /* if (!empty($typeId)) {
           $where_condition .= 'AND type_id = ' . $typeId;
           $criteria->compare('o.type_id', $typeId);
           $title = SacredType::model()->findByPk($typeId)->type_name;
           } */
+        $criteria->compare('obj_status', $this->publicStatus);
         if (!empty($mem_id)) {
             $where_condition .= 'AND mem_id = ' . $mem_id;
             $criteria->compare('o.mem_id', $mem_id, true);
@@ -153,6 +160,10 @@ class SiteController extends Controller {
             if (!empty($criteriaForm['born_begin']) && !empty($criteriaForm['born_end'])) {
                 $criteria->addBetweenCondition('o.obj_born', $criteriaForm['born_begin'], $criteriaForm['born_end']);
                 $where_condition .= ' AND (obj_born between ' . $criteriaForm['born_begin'] . ' AND ' . $criteriaForm['born_end'] . ') ';
+            }
+            if (!empty($criteriaForm['freedom'])) {
+                $criteria->compare('o.obj_name', $criteriaForm['freedom'], true);
+                $where_condition .= " AND o.obj_name like '%" . $criteriaForm['freedom'] . "%' ";
             }
             if (count($criteriaType) > 0) {
                 $arrayCriteria = array();
@@ -234,9 +245,25 @@ class SiteController extends Controller {
 
         $listSacredNews = SacredNews::model()->findAll(array(
             'order' => 'news_updatedate desc',
-            'limit' => 3
+            'limit' => 10
         ));
         $this->data['listSacredNews'] = $listSacredNews;
+        /*
+         * Meta SEO Tag
+         */
+        $metaDescription = '';
+        $sacredObjectType = $this->data['listSacredType'];                
+        foreach ($sacredObjectType as $index => $type) {
+            $metaDescription .= ','.$type['type_name'];
+        }
+        foreach ($listSacredObject as $key => $object) {
+            $metaDescription .= ','.$object->obj_name;
+        }
+        $this->metaDescription = $metaDescription;
+        $this->metaKeywords = $metaDescription;
+        /*
+         * Meta SEO tag
+         */
 
         $this->render('index', $this->data);
     }
@@ -261,6 +288,25 @@ class SiteController extends Controller {
         $listSacredObjectImg = SacredObjectImg::model()->findAllByAttributes(array('obj_id' => $id));
         $this->data['listSacredObjectImg'] = $listSacredObjectImg;
 
+
+
+        //$listQuestionAction = WbQuestion::model()->findAll();
+        $listQuestion = Yii::app()->db->createCommand()
+                ->select('q.*,m.*')
+                ->from('wb_question q')
+                ->join('member m', 'm.mem_id = q.mem_id')
+                ->where('q.obj_id =:objId', array(
+                    ':objId' => $id,
+                ))
+                ->order('q.ques_updatedate desc')
+                ->queryAll();
+        //echo CJSON::encode($listQuestionAction);
+        //exit();
+        $this->data['listCommentQuestion'] = $listQuestion;
+        
+        $this->metaDescription = $sacredObject->obj_name.','.$sacredObject->obj_price.','.$sacredObject->obj_status_desc.','.$sacredObject->obj_comment;
+        $this->metaKeywords = $sacredObject->obj_name.','.$sacredObject->obj_price.','.$sacredObject->obj_status_desc.','.$sacredObject->obj_comment;
+
         $this->render('detail-sacred', $this->data);
     }
 
@@ -271,98 +317,109 @@ class SiteController extends Controller {
     }
 
     public function actionUpload() {
-
-        if (empty($_POST)) {
-            $listSacredType = SacredType::model()->findAll(array(
-                'order' => 'type_name'
-            ));
-            $listProvince = Province::model()->findAll(array(
-                'order' => 'pro_name_th'
-            ));
-            $this->render('upload', array(
-                'listSacredType' => $listSacredType,
-                'listProvince' => $listProvince
-            ));
+        if (empty($this->member->mem_id)) {
+            Yii::app()->session['last_url'] = Yii::app()->createUrl('site/upload');
+            $this->render('login');
         } else {
-            $this->member = Yii::app()->session['member'];
-            if (empty($this->member)) {
-                echo CJSON::encode(array(
-                    'status' => false,
-                    'title' => 'ไม่สามารถลงปล่อยพระเครื่องให้เช่าได้',
-                    'message' => 'ท่านยังไม่ได้ Login เข้าระบบ กรุณา Login เข้าระบบก่อน',
-                    'url' => Yii::app()->createUrl('site/login')
+
+            if (empty($_POST)) {
+                $listSacredType = SacredType::model()->findAll(array(
+                    'order' => 'type_name'
                 ));
-                exit(0);
+                $listProvince = Province::model()->findAll(array(
+                    'order' => 'pro_name_th'
+                ));
+                $this->render('upload', array(
+                    'listSacredType' => $listSacredType,
+                    'listProvince' => $listProvince
+                ));
             } else {
-                $currentDate = date('Ymd');
-                $pathImage = YiiBase::getPathOfAlias("webroot") . '/images';
-                $utility = new Utilities();
+                $this->member = Yii::app()->session['member'];
+                if (empty($this->member)) {
+                    echo CJSON::encode(array(
+                        'status' => false,
+                        'title' => 'ไม่สามารถลงปล่อยพระเครื่องให้เช่าได้',
+                        'message' => 'ท่านยังไม่ได้ Login เข้าระบบ กรุณา Login เข้าระบบก่อน',
+                        'url' => Yii::app()->createUrl('site/login')
+                    ));
+                    exit(0);
+                } else {
+                    $currentDate = date('Ymd');
+                    $pathImage = YiiBase::getPathOfAlias("webroot") . '/images';
+                    $utility = new Utilities();
 
-                $sacredObject = new SacredObject();
-                $sacredObject->obj_born = $_POST['born'];
-                $sacredObject->obj_comment = $_POST['comment'];
-                $sacredObject->obj_location = $_POST['location'];
-                $sacredObject->obj_like = 0;
-                $sacredObject->obj_name = $_POST['name'];
-                $sacredObject->obj_price = $_POST['price'];
-                $sacredObject->pro_id = $_POST['province'];
-                $sacredObject->type_id = $_POST['type'];
-                $sacredObject->mem_id = $this->member->mem_id;
-                $sacredObject->obj_updatedate = new CDbExpression('NOW()');
-                /*
-                 * Manage Image Resize , Rename of File
-                 */
-                $subDerectoryMain = '/upload_main/' . $currentDate . '_';
-                //$imageName = $utility->resizeImage($pathImage . $subDerectoryMain, $_FILES['fileMain'], $this->imageWidth, $this->imageHeight);
-                $imageName = $utility->resizeImagePercent($pathImage . $subDerectoryMain, $_FILES['fileMain'], 0.5);
-                /*
-                 * Manage Image Resize , Rename of File
-                 */
-                $sacredObject->obj_img = $subDerectoryMain . $imageName;
-                if ($sacredObject->save(false)) {
+                    $sacredObject = new SacredObject();
+                    $sacredObject->obj_born = $_POST['born'];
+                    $sacredObject->obj_comment = $_POST['comment'];
+                    $sacredObject->obj_location = $_POST['location'];
+                    $sacredObject->obj_like = 0;
+                    $sacredObject->obj_name = $_POST['name'];
+                    $sacredObject->obj_price = $_POST['price'];
+                    $sacredObject->pro_id = $_POST['province'];
+                    $sacredObject->type_id = $_POST['type'];
+                    $sacredObject->mem_id = $this->member->mem_id;
+                    $sacredObject->obj_updatedate = new CDbExpression('NOW()');
+                    /*
+                     * Manage Image Resize , Rename of File
+                     */
+                    $subDerectoryMain = '/upload_main/' . $currentDate . '_';
+                    //$imageName = $utility->resizeImage($pathImage . $subDerectoryMain, $_FILES['fileMain'], $this->imageWidth, $this->imageHeight);
+                    $imageName = $utility->resizeImagePercent($pathImage . $subDerectoryMain, $_FILES['fileMain'], 0.5);
+                    /*
+                     * Manage Image Resize , Rename of File
+                     */
+                    $sacredObject->obj_img = $subDerectoryMain . $imageName;
+                    if ($sacredObject->save(false)) {
 
-                    if (!empty($_FILES['fileOther'])) {
-                        $listFileOther = $this->readArrayFiles($_FILES['fileOther']);
-                        foreach ($listFileOther as $index => $file) {
-                            $sacredImg = new SacredObjectImg();
+                        if (!empty($_FILES['fileOther'])) {
+                            $listFileOther = $this->readArrayFiles($_FILES['fileOther']);
+                            foreach ($listFileOther as $index => $file) {
+                                $sacredImg = new SacredObjectImg();
 
-                            $sacredImg->img_size = $file['size'];
-                            $sacredImg->img_ext = $file['type'];
-                            $sacredImg->obj_id = $sacredObject->obj_id;
-                            /*
-                             * Manage Image Resize , Rename of File
-                             */
-                            $subDerectoryOther = '/upload_other/' . $currentDate . '_';
-                            //$imageName = $utility->resizeImage($pathImage . $subDerectoryOther, $file, $this->imageWidth, $this->imageHeight);
-                            $imageName = $utility->resizeImagePercent($pathImage . $subDerectoryOther, $file, 0.5);
-                            /*
-                             * Manage Image Resize , Rename of File
-                             */
-                            $sacredImg->img_name = $subDerectoryOther . $imageName;
-                            if (!$sacredImg->save(false)) {
-                                echo CJSON::encode(array(
-                                    'status' => false,
-                                    'title' => 'ไม่สามารถบันทึกได้',
-                                    'message' => 'ไม่สามารถบันทึก รูปภาพที่เกี่ยวข้องได้ กรุณาติดต่อ Admin Page',
-                                    'url' => ''
-                                ));
-                                exit();
+                                $sacredImg->img_size = $file['size'];
+                                $sacredImg->img_ext = $file['type'];
+                                $sacredImg->obj_id = $sacredObject->obj_id;
+                                /*
+                                 * Manage Image Resize , Rename of File
+                                 */
+                                $subDerectoryOther = '/upload_other/' . $currentDate . '_';
+                                //$imageName = $utility->resizeImage($pathImage . $subDerectoryOther, $file, $this->imageWidth, $this->imageHeight);
+                                $imageName = $utility->resizeImagePercent($pathImage . $subDerectoryOther, $file, 0.5);
+                                /*
+                                 * Manage Image Resize , Rename of File
+                                 */
+                                $sacredImg->img_name = $subDerectoryOther . $imageName;
+                                if (!$sacredImg->save(false)) {
+                                    echo CJSON::encode(array(
+                                        'status' => false,
+                                        'title' => 'ไม่สามารถบันทึกได้',
+                                        'message' => 'ไม่สามารถบันทึก รูปภาพที่เกี่ยวข้องได้ กรุณาติดต่อ Admin Page',
+                                        'url' => ''
+                                    ));
+                                    exit();
+                                }
                             }
                         }
+                        echo CJSON::encode(array(
+                            'status' => true,
+                            'title' => 'ลงข้อมูลปล่อยเช่าพระสำเร็จ',
+                            'message' => 'ลงข้อมูลปล่อยเช่าพระสำเร็จ',
+                            'url' => ''
+                        ));
                     }
-                    echo CJSON::encode(array(
-                        'status' => true,
-                        'title' => 'ลงข้อมูลปล่อยเช่าพระสำเร็จ',
-                        'message' => 'ลงข้อมูลปล่อยเช่าพระสำเร็จ',
-                        'url' => ''
-                    ));
                 }
             }
         }
     }
 
     public function actionUserSacredList() {
-        $listSacredObject = SacredObject::model()->findAllByAttributes(array('mem_id' => $this->member->mem_id));
+        $criteria = new CDbCriteria();
+        $criteria->select = '*';
+        $criteria->alias = 'o';
+        $criteria->join = ' LEFT JOIN province p ON p.pro_id = o.pro_id';
+        $criteria->compare('o.mem_id', $this->member->mem_id);
+        $listSacredObject = SacredObject::model()->findAll($criteria);
+
         $this->data['listSacredObject'] = $listSacredObject;
         $this->render('list-sacred', $this->data);
     }
@@ -371,8 +428,8 @@ class SiteController extends Controller {
         $criteria = new CDbCriteria();
         $criteria->select = 'o.*';
         $criteria->alias = 'o';
-        $criteria->join = 'LEFT JOIN member_object_action a ON a.obj_id=o.obj_id';        
-        $criteria->compare('a.act_favorite',1);
+        $criteria->join = 'LEFT JOIN member_object_action a ON a.obj_id=o.obj_id';
+        $criteria->compare('a.act_favorite', 1);
         $criteria->compare('a.mem_id', $this->member->mem_id);
 
         $listSacredObjectFavorite = SacredObject::model()->findAll($criteria);
@@ -465,6 +522,12 @@ class SiteController extends Controller {
 
 
         $this->render('list-news', $this->data);
+    }
+
+    public function actionRules() {
+        $listRules = SacredRules::model()->findAll();
+        $this->data['listRules'] = $listRules;
+        $this->render('rules', $this->data);
     }
 
     private function readArrayFiles(&$file_post) {

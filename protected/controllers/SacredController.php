@@ -6,8 +6,13 @@ class SacredController extends Controller {
     //public $imageSize = 400;
     private $imageWeight = 800;
     private $imageHeight = 600;
-    
+
     public function init() {
+        $sessionMember = Yii::app()->session['member'];
+        if (empty($sessionMember->mem_id)) {
+            $this->render('../authen');
+            exit();
+        }                
         $this->imagePath = YiiBase::getPathOfAlias("webroot") . '/images';
     }
 
@@ -16,8 +21,6 @@ class SacredController extends Controller {
         if (!empty($id)) {
             $sacred = SacredObject::model()->findByPk($id);
         }
-
-
         $criteria = new CDbCriteria();
         $criteria->select = ' o.*,(SELECT count(*) FROM sacred_object_img i WHERE i.obj_id = o.obj_id) as count_img';
         $criteria->alias = 'o';
@@ -26,6 +29,7 @@ class SacredController extends Controller {
         $listProvince = Province::model()->findAll(array('order' => 'pro_name_th'));
         $listSacredType = SacredType::model()->findAll();
         $listYear = Utilities::getYear();
+
         $this->render('index_object', array(
             'sacred' => $sacred,
             'listSacredObject' => $listSacredObject,
@@ -178,8 +182,8 @@ class SacredController extends Controller {
     /*
      * *************************** Sacred Object Province **************************************
      */
-    
-    
+
+
     /*
      * *************************** Sacred Object News **************************************
      */
@@ -224,8 +228,8 @@ class SacredController extends Controller {
     /*
      * *************************** Sacred Object Province **************************************
      */
-    
-    
+
+
     /*
      * *************************** Region **************************************
      */
@@ -266,6 +270,50 @@ class SacredController extends Controller {
     }
 
     /*
-     * *************************** Sacred Object Province **************************************
+     * *************************** Region **************************************
+     */
+
+    /*
+     * *************************** Rules **************************************
+     */
+
+    public function actionIndexRules($id = null) {
+        $rules = new SacredRules();
+        if (!empty($id)) {
+            $rules = SacredRules::model()->findByPk($id);
+        }
+
+        $listRules = SacredRules::model()->findAll();
+        $this->render('index_rules', array(
+            'listRules' => $listRules,
+            'rules' => $rules
+        ));
+    }
+
+    public function actionRulesSave() {
+        if (empty($_POST['id'])) {
+            $rules = new SacredRules();
+        } else {
+            $rules = SacredRules::model()->findByPk($_POST['id']);
+        }
+        $rules->rul_desc = $_POST['desc'];
+        $rules->rul_updatedate = new CDbExpression('NOW()');
+        //var_dump($rules->save());
+        //exit();
+        if ($rules->save()) {
+            $this->redirect(array('sacred/indexRules'));
+        } else {
+            echo 'System Error';
+        }
+    }
+
+    public function actionRulesDelete($id) {
+        if (SacredRules::model()->findByPk($id)->delete()) {
+            $this->redirect(array('sacred/indexRules'));
+        }
+    }
+
+    /*
+     * *************************** Rules **************************************
      */
 }

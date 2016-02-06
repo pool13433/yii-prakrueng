@@ -10,6 +10,6 @@ class CriteriaFilter extends CFormModel {
 
     public $collectionType = array();
     public $collectionRegion = array();
-    public $collectionForm = array('price_begin' => '', 'price_end' => '', 'born_begin' => '', 'born_end' => '');
+    public $collectionForm = array('price_begin' => '', 'price_end' => '', 'born_begin' => '', 'born_end' => '','freedom' => '');
 
 }

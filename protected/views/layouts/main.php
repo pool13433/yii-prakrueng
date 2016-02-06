@@ -6,11 +6,13 @@ $baseUrl = Yii::app()->baseUrl;
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="">
-        <meta name="author" content="PraKruengThailand">
-        <meta name="keyword" content="PraKrueng, Admin, Template, Theme, Responsive, Fluid, Retina">
+        <?php
+        Yii::app()->clientScript->registerMetaTag($this->getMetaDescription(), 'description');
+        Yii::app()->clientScript->registerMetaTag($this->getMetaKeywords(), 'keywords');        
+        ?>
+        <meta name="author" content="พระเครื่องเมืองไทย">
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-        <meta name="language" content="en">
+        <meta name="language" content="th">
 
         <!-- Bootstrap core CSS -->
         <link href="<?php echo Yii::app()->request->baseUrl; ?>/css/bootstrap.min.css" rel="stylesheet">
@@ -41,7 +43,7 @@ $baseUrl = Yii::app()->baseUrl;
                 src: url('webfont.eot'); /* IE9 Compat Modes */
                 src: url('<?php echo Yii::app()->request->baseUrl; ?>/fonts/TH-Dan-Vi-Vek/TH Dan Vi Vek ver 1.03.ttf') format('truetype');
             }
-            body *{
+            body *,h5 *{
                 font-family: 'TH-Dan-Vi-Vek';                
             }
             body a, 

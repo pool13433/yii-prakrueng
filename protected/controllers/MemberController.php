@@ -4,6 +4,15 @@ class MemberController extends Controller {
     /*
      *  ********************** Function Member ***************************
      */
+    
+    public function init() {
+        $sessionMember = Yii::app()->session['member'];
+        if(empty($sessionMember->mem_id)){
+            $this->render('../authen');            
+            exit();
+        }
+        parent::init();
+    }
 
     public function actionIndex($id = null) {
         $member = new Member();

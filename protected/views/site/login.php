@@ -28,7 +28,7 @@
                 <hr>
                 <div class="registration">
                     ยังไม่ได้ลงทะเบียนเป็นสมาชิกระบบ<br>
-                    <a href="<?= Yii::app()->createUrl('site/register') ?>" class="btn btn-block btn-sm btn-primary">
+                    <a href="<?= Yii::app()->createUrl('site/rules') ?>" class="btn btn-block btn-sm btn-primary">
                         <I class="fa fa-sign-in"></i> ลงทะเบียนทันที
                     </a>
                 </div>

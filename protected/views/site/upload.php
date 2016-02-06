@@ -7,12 +7,12 @@ $baseUrl = Yii::app()->baseUrl;
             <h4> <i class="fa fa-shopping-cart"></i> ลงข้อมูลพระเครื่องเพื่อปล่อยเช่า</h4>
         </div>
         <div class="panel-body">
-            <div role="alert" class="alert alert-danger alert-dismissible fade in"> 
+<!--            <div role="alert" class="alert alert-danger alert-dismissible fade in"> 
                 <button aria-label="Close" data-dismiss="alert" class="close" type="button">
                     <span aria-hidden="true" class="glyphicon glyphicon-remove"></span></button> 
                 <strong><u>กรุณา Login เพื่อเข้าระบบก่อนการลงประกาศขาย</u></strong> 
                 เพื่อความสะดวกในการจัดเก็บข้อมูล
-            </div>
+            </div>-->
             <div class="form-group">
                 <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">ชื่อสินค้า</label>
                 <div class="col-lg-5 col-md-5 col-sm-5 col-xs-8">

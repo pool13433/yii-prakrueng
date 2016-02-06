@@ -8,7 +8,7 @@
             <span class="icon-bar"></span>
         </button>
         <a class="navbar-brand" href="<?= Yii::app()->createUrl('site/index') ?>" 
-           style="font-size: 2.5em;font-weight: bold"><u>PrakreungMreungThai</u>
+           style="font-size: 2.5em;font-weight: bold"><u>พระเครื่องเมืองไทย</u>
         </a>
     </div>
 
@@ -39,7 +39,7 @@
                     <a href="<?= Yii::app()->createUrl('site/login') ?>"><i class="glyphicon glyphicon-log-in"></i> Login</a>                    
                 </li>
                 <li>
-                    <a href="<?= Yii::app()->createUrl('site/register') ?>"><i class="glyphicon glyphicon-registration-mark"></i> Register</a>
+                    <a href="<?= Yii::app()->createUrl('site/rules') ?>"><i class="glyphicon glyphicon-registration-mark"></i> Register</a>
                 </li>
             <?php } else { ?>
                 <?php $member = Yii::app()->session['member'] ?>
@@ -57,6 +57,7 @@
                             <li><a href="<?= Yii::app()->createUrl('sacred/indexProvince') ?>">จังหวัดกำเนิด</a></li>
                             <li role="separator" class="divider"></li>
                             <li><a href="<?= Yii::app()->createUrl('sacred/indexNews') ?>">ข่าว</a></li>
+                            <li><a href="<?= Yii::app()->createUrl('sacred/indexRules') ?>">กฏกติกา</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
