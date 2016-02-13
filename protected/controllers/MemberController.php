@@ -4,14 +4,24 @@ class MemberController extends Controller {
     /*
      *  ********************** Function Member ***************************
      */
-    
+
+    public $memberStatusDefault;
+    public $memberLevelDefault;
+
     public function init() {
         $sessionMember = Yii::app()->session['member'];
-        if(empty($sessionMember->mem_id)){
-            $this->render('../authen');            
+        if (empty($sessionMember->mem_id)) {
+            $this->render('../authen');
             exit();
         }
-        parent::init();
+        /*
+         * Load Config
+         */
+        $this->memberLevelDefault = WebConfig::getValueByKey('default_level');
+        $this->memberStatusDefault = WebConfig::getValueByKey('default_object_public');
+        /*
+         * Load Config
+         */
     }
 
     public function actionIndex($id = null) {
@@ -76,7 +86,7 @@ class MemberController extends Controller {
             'listLevel' => $listLevel
         ));
     }
-    
+
     public function actionLevelSave() {
         if (empty($_POST['id'])) {
             $level = new MemberLevel();
@@ -98,5 +108,4 @@ class MemberController extends Controller {
             $this->redirect(array('member/indexLevel'));
         }
     }
-
 }

@@ -8,7 +8,7 @@ $baseUrl = Yii::app()->baseUrl;
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <?php
         Yii::app()->clientScript->registerMetaTag($this->getMetaDescription(), 'description');
-        Yii::app()->clientScript->registerMetaTag($this->getMetaKeywords(), 'keywords');        
+        Yii::app()->clientScript->registerMetaTag($this->getMetaKeywords(), 'keywords');
         ?>
         <meta name="author" content="พระเครื่องเมืองไทย">
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -32,6 +32,9 @@ $baseUrl = Yii::app()->baseUrl;
         <link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/datatables/responsive.bootstrap.min.css">
 
         <link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/dropzone/dropzone.css">
+        
+        <link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/pace/templates/pace-theme-flash.tmpl.css">
+        <link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/pace/themes/orange/pace-theme-flash.css">
 
         <link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/my-style.css">
         <link rel="stylesheet" href="<?php echo Yii::app()->request->baseUrl; ?>/css/my-navbar.css">
@@ -42,25 +45,7 @@ $baseUrl = Yii::app()->baseUrl;
                 font-family: 'TH-Dan-Vi-Vek';
                 src: url('webfont.eot'); /* IE9 Compat Modes */
                 src: url('<?php echo Yii::app()->request->baseUrl; ?>/fonts/TH-Dan-Vi-Vek/TH Dan Vi Vek ver 1.03.ttf') format('truetype');
-            }
-            body *,h5 *{
-                font-family: 'TH-Dan-Vi-Vek';                
-            }
-            body a, 
-            div.alert, 
-            div.panel-heading,
-            div.panel-body,
-            ul li a,
-            table.table,
-            div.media-body{
-                font-size: 1.4em;
-                color : black;
-            }
-            body div.media-body h4,
-            input,select,textarea,
-            ul.nav{
-                font-size: 1.55em;
-            }
+            }            
         </style>
     </head>
 
@@ -69,10 +54,12 @@ $baseUrl = Yii::app()->baseUrl;
 
             <?php $this->renderPartial('/navbar-top') ?>
             <div class="wrapper">
+                <div id="fb-root"></div>
                 <?php echo $content; ?>
             </div>
 
         </div> 
+        <?php $this->renderPartial('/footer') ?>
 
         <?php
         $cs = Yii::app()->getClientScript();
@@ -100,6 +87,10 @@ $baseUrl = Yii::app()->baseUrl;
         $cs->registerScriptFile($baseUrl . '/js/dropzone/dropzone.min.js');
 
         $cs->registerScriptFile($baseUrl . '/js/validate/jquery.validate.min.js');
+        
+        $cs->registerScriptFile($baseUrl . '/js/facebookSDK.js');
+        
+        $cs->registerScriptFile($baseUrl . '/js/pace/pace.min.js');        
 
         $cs->registerScriptFile($baseUrl . '/js/my-function.js');
         ?>

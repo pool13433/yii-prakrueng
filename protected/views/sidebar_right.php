@@ -155,7 +155,7 @@
                         <a href="<?= Yii::app()->createUrl('site/index', array('user' => $objectLast->mem_id)) ?>">
                             <i class=" fa fa-ellipsis-v"></i>
                             <div class="task-title">
-                                <span class="task-title-sp"><?= $objectLast->mem_username ?></span>
+                                <span class="task-title-sp"><?= empty($objectLast->mem_fname) ? $objectLast->mem_username : $objectLast->mem_fname ?></span>
                                 <span class="badge bg-theme"></span>
                                 <div class="pull-right hidden-phone">
                                     <button class="btn btn-warning btn-xs">

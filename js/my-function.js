@@ -2,6 +2,7 @@ var MaximumSizeOfFile = (1024 * 1024) * 2;
 
 $(document).ready(function () {
     customDatatable();
+    customPace();
     //customElevateZoom();
     //initApp();
     validateDefault();
@@ -41,6 +42,15 @@ function initApp() {
 
     });
 
+}
+
+function customPace() {
+    paceOptions = {
+        // Configuration goes here. Example:
+        elements: false,
+        restartOnPushState: false,
+        restartOnRequestAfter: false
+    }
 }
 
 function readURL(input) {

@@ -7,8 +7,7 @@
  */
 
 class HelperController extends Controller {
-    
-    
+
     public function init() {
         header('Content-Type: application/json');
         parent::init();
@@ -45,6 +44,60 @@ class HelperController extends Controller {
                 'url' => Yii::app()->createUrl('site/login')
             ));
         } else {
+            $status = false;
+            if (!empty($_GET)) {
+                $id = $_GET['id'];
+                $value = ($_GET['value'] == "0" ? "1" : "0");
+
+                $member = Yii::app()->session['member'];
+                $memberObjectAction = MemberObjectAction::model()->findByAttributes(array(
+                    'obj_id' => $id,
+                    'mem_id' => $member->mem_id
+                ));
+                if (!$memberObjectAction) {
+                    $memberObjectAction = new MemberObjectAction();
+                    $memberObjectAction->mem_id = $member->mem_id;
+                    $memberObjectAction->obj_id = $id;
+                    $memberObjectAction->act_updatedate = new CDbExpression('NOW()');
+                }
+
+                $sacredObject = SacredObject::model()->findByPk($id);
+                if ($_GET['action'] == 'LIKE') {
+                    $memberObjectAction->act_like = $value;
+                    if ($value == 0) {
+                        $sacredObject->obj_like = ($sacredObject->obj_like + 1);
+                    } else {
+                        $sacredObject->obj_like = ($sacredObject->obj_like - 1);
+                    }
+                } else if ($_GET['action'] == 'FAVORITE') {
+                    $memberObjectAction->act_favorite = $value;
+                }
+                $status = $memberObjectAction->save(false);
+
+                $sacredObject->obj_updatedate = new CDbExpression('NOW()');
+                $status = $sacredObject->save(false);
+
+                echo CJSON::encode(array(
+                    'status' => $status,
+                    'object' => $sacredObject,
+                    'action' => $memberObjectAction,
+                    'message' => '',
+                    'url' => ''
+                ));
+            }
+        }
+    }
+
+    public function actionRemoveMemberObjectActionFavorite() {
+        if (empty(Yii::app()->session['member']->mem_id)) {
+            Yii::app()->session['last_url'] = Yii::app()->createUrl('site/userfavoritelist');
+            echo CJSON::encode(array(
+                'status' => false,
+                'message' => 'กรุณา Login เข้าระบบก่อน',
+                'url' => Yii::app()->createUrl('site/login')
+            ));
+        } else {
+            $status = false;
             if (!empty($_GET)) {
                 $id = $_GET['id'];
                 $value = $_GET['value'];
@@ -60,13 +113,12 @@ class HelperController extends Controller {
                     $memberObjectAction->obj_id = $id;
                     $memberObjectAction->act_updatedate = new CDbExpression('NOW()');
                 }
-                if ($_GET['action'] == 'LIKE') {
-                    $memberObjectAction->act_like = $value;
-                } else if ($_GET['action'] == 'FAVORITE') {
-                    $memberObjectAction->act_favorite = $value;
-                }
+                $memberObjectAction->act_favorite = $value;
+                $status = $memberObjectAction->save(false);
+
                 echo CJSON::encode(array(
-                    'status' => $memberObjectAction->save(),
+                    'status' => $status,
+                    'action' => $memberObjectAction,
                     'message' => '',
                     'url' => ''
                 ));
@@ -257,6 +309,46 @@ class HelperController extends Controller {
             }
         }
     }
-    
+
+    public function actionAuthen() {
+        if (empty($_POST)) {
+            
+        } else {
+            $status = false;
+            $member = new Member();
+            $facebook_id = $_POST['facebook_id'];
+            if (!empty($facebook_id)) {
+                $member = Member::model()->findByAttributes(array(
+                    'facebook_id' => $facebook_id
+                ));
+                if ($member) {
+                    $status = true;
+                }
+            }
+            echo CJSON::encode(array(
+                'status' => $status,
+                'member' => $member
+            ));
+        }
+    }
+
+    public function actionLoginFB() {
+        $member = new Member();
+        $member->mem_email = '*';
+        $member->facebook_id = $_POST['facebook_id'];
+        $member->mem_updatedate = new CDbExpression('NOW()');
+        $member->mem_level = 1;
+        $member->mem_status = 1;
+        $member->mem_username = '*';
+        $status = false;
+        if ($member->save(false)) {
+            Yii::app()->session['member'] = $member;
+            $status = true;
+        }
+        echo CJSON::encode(array(
+            'status' => $status,
+            'member' => $member
+        ));
+    }
 
 }

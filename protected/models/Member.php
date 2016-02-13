@@ -5,6 +5,7 @@
  *
  * The followings are the available columns in table 'member':
  * @property integer $mem_id
+ * @property string $facebook_id
  * @property string $mem_fname
  * @property string $mem_lname
  * @property string $mem_sex
@@ -40,7 +41,7 @@ class Member extends CActiveRecord {
             array('mem_img', 'length', 'max' => 255),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
-            array('mem_id, mem_username,mem_password,mem_fname, mem_lname, mem_sex, mem_phone, mem_email, mem_address, mem_img, mem_level,mem_updatedate,mem_status', 'safe', 'on' => 'search'),
+            array('mem_id, facebook_id,mem_username,mem_password,mem_fname, mem_lname, mem_sex, mem_phone, mem_email, mem_address, mem_img, mem_level,mem_updatedate,mem_status', 'safe', 'on' => 'search'),
         );
     }
 
@@ -60,6 +61,7 @@ class Member extends CActiveRecord {
     public function attributeLabels() {
         return array(
             'mem_id' => 'Mem Id',
+            'facebook_id' => 'Facebook Id',
             'mem_username' => 'Mem Username',
             'mem_password' => 'Mem Password',
             'mem_fname' => 'Mem Fname',
@@ -93,6 +95,7 @@ class Member extends CActiveRecord {
         $criteria = new CDbCriteria;
 
         $criteria->compare('mem_id', $this->mem_id);
+        $criteria->compare('facebook_id', $this->facebook_id);
         $criteria->compare('mem_fname', $this->mem_fname, true);
         $criteria->compare('mem_lname', $this->mem_lname, true);
         $criteria->compare('mem_sex', $this->mem_sex, true);
@@ -118,17 +121,23 @@ class Member extends CActiveRecord {
     }
 
     public function afterFind() {
-
         if ($this->mem_sex == 'M') {
             $this->mem_sex = 'ชาย';
         } else {
             $this->mem_sex = 'หญิง';
         }
+        $this->mem_updatedate = strtotime($this->mem_updatedate);
+        $this->mem_updatedate = date('m/d/Y', $this->mem_updatedate);
         parent::afterFind();
     }
+
     public function beforeSave() {
-       $this->mem_updatedate = new CDbExpression('NOW()');
+        $this->mem_updatedate = new CDbExpression('NOW()');
         return parent::beforeSave();
+    }
+
+    public static function gender() {
+        return array('M' => 'ชาย', 'F' => 'หญิง');
     }
 
 }

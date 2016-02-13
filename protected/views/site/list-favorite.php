@@ -67,14 +67,19 @@ $baseUrl = Yii::app()->baseUrl;
     function updateMemberObjectActionFavorite(id) {
         var isConfirm = confirm('ยืนยันการลบข้อมูลพระที่ชื่นชอบออก');
         if (isConfirm) {
-            $.get('<?= Yii::app()->createUrl('helper/updateMemberObjectAction') ?>', {
+            $.get('<?= Yii::app()->createUrl('helper/RemoveMemberObjectActionFavorite') ?>', {
                 id: id,
                 action: 'FAVORITE',
                 value: 0
             },
             function (response) {
                 console.log(response);
-                window.location.reload(true);
+                if (response.status) {                    
+                    window.location.reload(true);
+                }else{
+                    alert(response.message);
+                }
+
             }, 'json');
         }
     }

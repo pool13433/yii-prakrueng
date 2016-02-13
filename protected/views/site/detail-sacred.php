@@ -50,10 +50,32 @@ $baseUrl = Yii::app()->baseUrl;
                                                 <u><?= $sacredObject->obj_name ?></u>
                                             </h1>
                                             <h3 class="pull-right">
-                                                <button id="btnFavorite" type="button" class="btn btn-danger">
+                                                <?php
+                                                $btnFavoriteTitle = 'โปรดปราาน';
+                                                $btnFavoriteClass = '';
+                                                $btnFavoriteValue = 0;
+                                                $btnLikeClass = '';
+                                                $btnLikeValue = 0;
+                                                $btnLikeTitle = 'ชื่นชอบ';
+                                                if (!empty($objectAction)) {
+                                                    if ($objectAction->act_favorite == 1) {
+                                                        $btnFavoriteClass = 'btn-danger';
+                                                        $btnFavoriteTitle = 'ไม่'.$btnFavoriteTitle;
+                                                    }
+                                                    if ($objectAction->act_like == 0) {
+                                                        $btnLikeClass = 'btn-primary';
+                                                        $btnLikeTitle = 'ไม่'.$btnLikeTitle;
+                                                    }
+                                                    $btnFavoriteValue = $objectAction->act_favorite;
+                                                    $btnLikeValue = $objectAction->act_like;
+                                                }
+                                                ?>
+                                                <button id="btnFavorite" type="button" title="<?=$btnFavoriteTitle?>"
+                                                        class="btn <?= $btnFavoriteClass ?>" name="<?= $btnFavoriteValue ?>">
                                                     <i class="fa fa-heart"></i> 
                                                 </button>
-                                                <button id="btnLike" type="button" class="btn btn-info">
+                                                <button id="btnLike" type="button" title="<?=$btnLikeTitle?>"
+                                                        class="btn <?= $btnLikeClass ?>" name="<?= $btnLikeValue ?>">
                                                     <i class="fa fa-thumbs-o-up"></i> 
                                                     <strong><?= $sacredObject->obj_like ?></strong>
                                                 </button>
@@ -225,7 +247,7 @@ $baseUrl = Yii::app()->baseUrl;
                                                                 $isUserLikeComment = WbQuestionAction::model()->findByAttributes(array(
                                                                     'ques_id' => $question['ques_id'],
                                                                     'mem_id' => $sessionMember->mem_id,
-                                                                ));                                                                
+                                                                ));
                                                                 if ($isUserLikeComment) {// แสดงว่าเคย Like comment                                                                    
                                                                     $isLike = $isUserLikeComment->act_like;
                                                                     //echo '<br/> ' . $isUserLikeComment->act_like . '<br/>';
@@ -233,12 +255,12 @@ $baseUrl = Yii::app()->baseUrl;
                                                                         $btnClass = 'btn-primary';
                                                                         $btnTitle = 'UnLike';
                                                                     } else {
-                                                                        $btnClass = '';                                                                        
+                                                                        $btnClass = '';
                                                                     }
                                                                 }
                                                             }
                                                             ?>
-                                                            <button class="fa fa-thumbs-o-up btn btn-sm btn-like <?= $btnClass ?>" title="<?=$btnTitle?>"
+                                                            <button class="fa fa-thumbs-o-up btn btn-sm btn-like <?= $btnClass ?>" title="<?= $btnTitle ?>"
                                                                     name="<?= $isLike ?>" id="<?= $question['ques_id'] ?>" onclick="actionLikeComment(this)">     
                                                                         <?= $question['ques_like'] ?>
                                                             </button> 
@@ -321,7 +343,7 @@ $baseUrl = Yii::app()->baseUrl;
         //actionLikeComment();
         actionLikeSacred();
         actionFavoriteSacred();
-        renderDefaultMemberAction();
+        //renderDefaultMemberAction();
         //renderQuestionAction();
     }
 
@@ -427,21 +449,6 @@ $baseUrl = Yii::app()->baseUrl;
     }
 
 
-
-    function renderDefaultMemberAction() {
-        $.get('<?= Yii::app()->createUrl('helper/getMemberObjectAction/' . $sacredObject->obj_id) ?>', {},
-                function (response) {
-                    if (response != null) {
-                        if (response.act_like == 1) {
-                            $('#btnLike').prop('disabled', true);
-                        }
-                        if (response.act_favorite == 1) {
-                            $('#btnFavorite').prop('disabled', true);
-                        }
-                    }
-                }, 'json');
-    }
-
     function actionLikeComment(elementButton) {
         var element = elementButton;
         var id = $(elementButton).prop('id');
@@ -471,32 +478,51 @@ $baseUrl = Yii::app()->baseUrl;
 
     function actionLikeSacred() {
         $('#btnLike').on('click', function () {
+            var element = this;
+            var value = $(this).attr('name');
             $.get('<?= Yii::app()->createUrl('helper/updateMemberObjectAction') ?>', {
                 id: <?= $sacredObject->obj_id ?>,
                 action: 'LIKE',
-                value: 1
+                value: value,
             },
-            function (response) {
-                if (response.status) {
-                    $('#btnLike').prop('disabled', true);
-                } else {
-                    alert(response.message);
-                    window.location.href = response.url;
-                }
-            }, 'json');
+                    function (response) {
+                        if (response.status) {
+                            if (response.action.act_like == '1') {
+                                $(element).removeClass('btn-primary');
+                                $(element).attr('title', 'ชื่นชอบ');
+                            } else {
+                                $(element).addClass('btn-primary');
+                                $(element).attr('title', 'ไม่ชื่นชอบ');
+                            }
+                            $(element).attr('name', response.action.act_like);
+                            $(element).find('strong').text(response.object.obj_like);
+                        } else {
+                            alert(response.message);
+                            window.location.href = response.url;
+                        }
+                    }, 'json');
         });
     }
 
     function actionFavoriteSacred() {
         $('#btnFavorite').on('click', function () {
+            var element = this;
+            var value = $(this).attr('name');
             $.get('<?= Yii::app()->createUrl('helper/updateMemberObjectAction') ?>', {
                 id: <?= $sacredObject->obj_id ?>,
                 action: 'FAVORITE',
-                value: 1
+                value: value
             },
             function (response) {
                 if (response.status) {
-                    $('#btnFavorite').prop('disabled', true);
+                    if (response.action.act_favorite == '1') {
+                        $(element).addClass('btn-danger');
+                        $(element).attr('title','ไม่โปรดปราน');
+                    } else {
+                        $(element).removeClass('btn-danger');
+                        $(element).attr('title','โปรดปราน');
+                    }
+                    $(element).attr('name', response.action.act_favorite);
                 } else {
                     alert(response.message);
                     window.location.href = response.url;

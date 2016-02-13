@@ -6,8 +6,11 @@ class SiteController extends Controller {
     private $member = null;
     private $imageWidth = 800;
     private $imageHeight = 600;
-    public $publicStatus = 1;
-    public $levelDefault = 1; // มือใหม่
+    public $publicStatus;
+    public $memberStatusDefault;
+    public $memberLevelDefault;
+
+    //memberLevelDefault
 
     public function init() {
 
@@ -49,11 +52,22 @@ class SiteController extends Controller {
         } else {
             $this->member = new Member();
         }
+
+        /*
+         * Load Config
+         */
+        $this->memberLevelDefault = WebConfig::getValueByKey('default_level');
+        $this->memberStatusDefault = WebConfig::getValueByKey('default_object_public');
+        $this->publicStatus = WebConfig::getValueByKey('default_status');
+        /*
+         * Load Config
+         */
     }
 
     public function actionLogin() {
         if (empty($_POST)) {
-            $this->render('login');
+            $config = WebConfig::model()->findByAttributes(array('name' => 'facebook_appid'));
+            $this->render('login', array('config' => $config));
         } else {
             $this->member = Member::model()->findByAttributes(array(
                 'mem_username' => $_POST['username'],
@@ -61,7 +75,7 @@ class SiteController extends Controller {
             ));
             if (empty($this->member)) {
                 Yii::app()->session['message'] = 'ไม่พบข้อมูลของท่านในระบบ';
-                //$this->redirect(array('site/login'));
+//$this->redirect(array('site/login'));
                 echo CJSON::encode(array(
                     'status' => false,
                     'message' => 'ไม่พบข้อมูลของท่านในระบบ',
@@ -86,21 +100,25 @@ class SiteController extends Controller {
         if (empty($_POST)) {
             $this->render('register', array(
                 'member' => new Member(),
-                'action_url' => 'site/register'
+                'action_url' => Yii::app()->createUrl('site/register')
             ));
         } else {
-            $this->member = new Member();
-            $this->member->mem_address = '';
+            if (empty($_POST['id'])) {
+                $this->member = new Member();
+            } else {
+                $this->member = Member::model()->findByPk($this->member->mem_id);
+                $this->member->mem_fname = $_POST['fname'];
+                $this->member->mem_lname = $_POST['lname'];
+                $this->member->mem_address = $_POST['address'];
+            }
             $this->member->mem_email = $_POST['email'];
             $this->member->mem_username = $_POST['username'];
             $this->member->mem_password = $_POST['password'];
-            $this->member->mem_fname = '';
             $this->member->mem_img = '';
-            $this->member->mem_level = $this->levelDefault;
-            $this->member->mem_lname = '';
+            $this->member->mem_level = $this->memberLevelDefault;
             $this->member->mem_phone = $_POST['phone'];
             $this->member->mem_sex = $_POST['sex'];
-            $this->member->mem_status = 1;
+            $this->member->mem_status = $this->memberStatusDefault;
             if ($this->member->save(false)) {
                 Yii::app()->session['member'] = $this->member;
                 echo CJSON::encode(array(
@@ -127,6 +145,7 @@ class SiteController extends Controller {
     }
 
     public function actionIndex() {
+
         $where_condition = ' obj_status = ' . $this->publicStatus . ' ';
         $pagin_page_size = 15;
         $pagin_page_current = (empty($_GET['page']) ? '1' : $_GET['page']);
@@ -188,8 +207,8 @@ class SiteController extends Controller {
 
         $criteria->limit = $pagin_page_size;
         $criteria->offset = ($pagin_page_current - 1) * $pagin_page_size;
-        //var_dump($criteria);
-        //exit();
+//var_dump($criteria);
+//exit();
         $listSacredObject = SacredObject::model()->findAll($criteria);
         $this->data['listSacredObject'] = $listSacredObject;
         $this->data['title'] = $title;
@@ -214,8 +233,7 @@ class SiteController extends Controller {
         } else {
             $paramsBegin['page'] = ($pagin_page_current - 1);
         }
-        $paramsEnd = array(
-        );
+        $paramsEnd = array();
 
         if ($pagin_page_all == $pagin_page_current) {
             $paramsEnd['page'] = $pagin_page_all;
@@ -251,13 +269,13 @@ class SiteController extends Controller {
         /*
          * Meta SEO Tag
          */
-        $metaDescription = '';
-        $sacredObjectType = $this->data['listSacredType'];                
+        $metaDescription = 'พระเครื่อง';
+        $sacredObjectType = SacredType::model()->findAll();
         foreach ($sacredObjectType as $index => $type) {
-            $metaDescription .= ','.$type['type_name'];
+            $metaDescription .= ',' . $type['type_name'];
         }
         foreach ($listSacredObject as $key => $object) {
-            $metaDescription .= ','.$object->obj_name;
+            $metaDescription .= ',' . $object->obj_name;
         }
         $this->metaDescription = $metaDescription;
         $this->metaKeywords = $metaDescription;
@@ -288,9 +306,14 @@ class SiteController extends Controller {
         $listSacredObjectImg = SacredObjectImg::model()->findAllByAttributes(array('obj_id' => $id));
         $this->data['listSacredObjectImg'] = $listSacredObjectImg;
 
+        $memberObjectAction = MemberObjectAction::model()->findByAttributes(array(
+            'obj_id' => $id,
+            'mem_id' => $this->member->mem_id,
+        ));
+        $this->data['objectAction'] = $memberObjectAction;
 
 
-        //$listQuestionAction = WbQuestion::model()->findAll();
+//$listQuestionAction = WbQuestion::model()->findAll();
         $listQuestion = Yii::app()->db->createCommand()
                 ->select('q.*,m.*')
                 ->from('wb_question q')
@@ -300,12 +323,12 @@ class SiteController extends Controller {
                 ))
                 ->order('q.ques_updatedate desc')
                 ->queryAll();
-        //echo CJSON::encode($listQuestionAction);
-        //exit();
+//echo CJSON::encode($listQuestionAction);
+//exit();
         $this->data['listCommentQuestion'] = $listQuestion;
-        
-        $this->metaDescription = $sacredObject->obj_name.','.$sacredObject->obj_price.','.$sacredObject->obj_status_desc.','.$sacredObject->obj_comment;
-        $this->metaKeywords = $sacredObject->obj_name.','.$sacredObject->obj_price.','.$sacredObject->obj_status_desc.','.$sacredObject->obj_comment;
+
+        $this->metaDescription = $sacredObject->obj_name . ',' . $sacredObject->obj_price . ',' . $sacredObject->obj_status_desc . ',' . $sacredObject->obj_comment;
+        $this->metaKeywords = $sacredObject->obj_name . ',' . $sacredObject->obj_price . ',' . $sacredObject->obj_status_desc . ',' . $sacredObject->obj_comment;
 
         $this->render('detail-sacred', $this->data);
     }
@@ -316,7 +339,13 @@ class SiteController extends Controller {
         $this->render('detail-news', $this->data);
     }
 
-    public function actionUpload() {
+    public function actionRulesDetail() {
+        $listRules = SacredRules::model()->findAll();
+        $this->data['listRules'] = $listRules;
+        $this->render('detail-rules', $this->data);
+    }
+
+    public function actionUpload($id = null) {
         if (empty($this->member->mem_id)) {
             Yii::app()->session['last_url'] = Yii::app()->createUrl('site/upload');
             $this->render('login');
@@ -329,9 +358,15 @@ class SiteController extends Controller {
                 $listProvince = Province::model()->findAll(array(
                     'order' => 'pro_name_th'
                 ));
+                if (empty($id)) {
+                    $sacredObject = new SacredObject();
+                } else {
+                    $sacredObject = SacredObject::model()->findByPk($id);
+                }
                 $this->render('upload', array(
                     'listSacredType' => $listSacredType,
-                    'listProvince' => $listProvince
+                    'listProvince' => $listProvince,
+                    'sacredObject' => $sacredObject
                 ));
             } else {
                 $this->member = Yii::app()->session['member'];
@@ -344,31 +379,42 @@ class SiteController extends Controller {
                     ));
                     exit(0);
                 } else {
+                    $urlRedirect = Yii::app()->createUrl('site/index');
                     $currentDate = date('Ymd');
                     $pathImage = YiiBase::getPathOfAlias("webroot") . '/images';
                     $utility = new Utilities();
-
-                    $sacredObject = new SacredObject();
+                    if (empty($_POST['id'])) {
+                        $sacredObject = new SacredObject();
+                        $sacredObject->obj_like = 0;
+                    } else {
+                        $urlRedirect = Yii::app()->createUrl('site/usersacredlist');
+                        $sacredObject = SacredObject::model()->findByPk($_POST['id']);
+                    }
                     $sacredObject->obj_born = $_POST['born'];
                     $sacredObject->obj_comment = $_POST['comment'];
                     $sacredObject->obj_location = $_POST['location'];
-                    $sacredObject->obj_like = 0;
                     $sacredObject->obj_name = $_POST['name'];
                     $sacredObject->obj_price = $_POST['price'];
                     $sacredObject->pro_id = $_POST['province'];
                     $sacredObject->type_id = $_POST['type'];
                     $sacredObject->mem_id = $this->member->mem_id;
                     $sacredObject->obj_updatedate = new CDbExpression('NOW()');
-                    /*
-                     * Manage Image Resize , Rename of File
-                     */
-                    $subDerectoryMain = '/upload_main/' . $currentDate . '_';
-                    //$imageName = $utility->resizeImage($pathImage . $subDerectoryMain, $_FILES['fileMain'], $this->imageWidth, $this->imageHeight);
-                    $imageName = $utility->resizeImagePercent($pathImage . $subDerectoryMain, $_FILES['fileMain'], 0.5);
-                    /*
-                     * Manage Image Resize , Rename of File
-                     */
-                    $sacredObject->obj_img = $subDerectoryMain . $imageName;
+
+                    if (!empty($_FILES['fileMain']['name'])) {
+                        /*
+                         * Manage Image Resize , Rename of File
+                         */
+                        $subDerectoryMain = '/upload_main/' . $currentDate . '_';
+//$imageName = $utility->resizeImage($pathImage . $subDerectoryMain, $_FILES['fileMain'], $this->imageWidth, $this->imageHeight);
+                        $imageName = $utility->resizeImagePercent($pathImage . $subDerectoryMain, $_FILES['fileMain'], 0.5);
+                        /*
+                         * Manage Image Resize , Rename of File
+                         */
+                        $sacredObject->obj_img = $subDerectoryMain . $imageName;
+                    }
+
+
+
                     if ($sacredObject->save(false)) {
 
                         if (!empty($_FILES['fileOther'])) {
@@ -383,7 +429,7 @@ class SiteController extends Controller {
                                  * Manage Image Resize , Rename of File
                                  */
                                 $subDerectoryOther = '/upload_other/' . $currentDate . '_';
-                                //$imageName = $utility->resizeImage($pathImage . $subDerectoryOther, $file, $this->imageWidth, $this->imageHeight);
+//$imageName = $utility->resizeImage($pathImage . $subDerectoryOther, $file, $this->imageWidth, $this->imageHeight);
                                 $imageName = $utility->resizeImagePercent($pathImage . $subDerectoryOther, $file, 0.5);
                                 /*
                                  * Manage Image Resize , Rename of File
@@ -404,11 +450,74 @@ class SiteController extends Controller {
                             'status' => true,
                             'title' => 'ลงข้อมูลปล่อยเช่าพระสำเร็จ',
                             'message' => 'ลงข้อมูลปล่อยเช่าพระสำเร็จ',
-                            'url' => ''
+                            'url' => $urlRedirect,
                         ));
                     }
                 }
             }
+        }
+    }
+
+    public function actionFacebookAuthorize() {
+        header('Content-Type: application/json');
+        $status = false;
+        $urlRedirect = '';
+        $message = 'เกิดข้อผิดพลาดในการเข้าสู่ระบบ';
+        if (!empty($_POST)) {
+
+            /*
+             * "id": "1527264324240222",
+              "name": "Thaismilesoft Teamwork",
+              "first_name": "Thaismilesoft",
+              "last_name": "Teamwork",
+              "gender": "male",
+              "locale": "th_TH",
+              "link": "https://www.facebook.com/app_scoped_user_id/1527264324240222/",
+              "third_party_id": "eFGQUpOagSdjheqILIqskMo8KoI",
+              "installed": true,
+              "timezone": 7,
+              "updated_time": "2015-01-26T04:05:59+0000",
+              "verified": true,
+              "age_range": {
+              "min": 21
+              },
+             */
+
+            $facebookId = $_POST['id'];
+            $facebook_lname = $_POST['last_name'];
+            $facebook_fname = $_POST['first_name'];
+            $facebook_gender = ($_POST['gender'] == 'male' ? 'M' : 'F');
+            if (!empty($facebookId)) {
+                $member = Member::model()->findByAttributes(array(
+                    'facebook_id' => $facebookId
+                ));
+                if (!$member) {
+                    $member = new Member();
+                }
+                $member->facebook_id = $facebookId;
+                $member->mem_fname = $facebook_fname;
+                $member->mem_lname = $facebook_lname;
+                $member->mem_sex = $facebook_gender;
+                $member->mem_status = $this->memberStatusDefault;
+                $member->mem_level = $this->memberLevelDefault;
+                $member->mem_updatedate = new CDbExpression('NOW()');
+                if ($member->save(false)) {
+                    if (empty($member->mem_phone) && empty($member->mem_username) && empty($member->mem_password)) {
+                        $urlRedirect = Yii::app()->createUrl('site/userprofile');
+                    } else {
+                        $urlRedirect = Yii::app()->createUrl('site/index');
+                    }
+                    Yii::app()->session['member'] = $member;
+                    $status = true;
+                }
+            } else {
+                $message = 'ไม่พบเลข facebookId';
+            }
+            echo CJSON::encode(array(
+                'status' => $status,
+                'message' => $message,
+                'url' => $urlRedirect
+            ));
         }
     }
 
@@ -422,6 +531,18 @@ class SiteController extends Controller {
 
         $this->data['listSacredObject'] = $listSacredObject;
         $this->render('list-sacred', $this->data);
+    }
+
+    public function actionUserDeleteSacred($id) {
+        $imagePath = YiiBase::getPathOfAlias("webroot") . '/images';
+        $object = SacredObject::model()->findByPk($id);
+        $filename = $imagePath . $object->obj_img;
+        if (file_exists($filename)) {
+            unlink($filename);
+        }
+        if ($object->delete()) {
+            $this->redirect(array('site/usersacredlist'));
+        }
     }
 
     public function actionUserFavoriteList() {
@@ -445,13 +566,15 @@ class SiteController extends Controller {
                 'profile' => true,
                 'password' => false,
                 'form_title' => 'แก้ไขข้อมูลส่วนตัว',
-                'action_url' => 'site/userprofile'
+                'action_url' => Yii::app()->createUrl('site/userprofile')
             ));
         } else {
             $member->mem_fname = $_POST['fname'];
             $member->mem_lname = $_POST['lname'];
-            $member->mem_username = $_POST['username'];
-            $member->mem_password = $_POST['password'];
+            if (empty($this->member->facebook_id)) {
+                $member->mem_username = $_POST['username'];
+                $member->mem_password = $_POST['password'];
+            }
             $member->mem_sex = $_POST['sex'];
             $member->mem_phone = $_POST['phone'];
             $member->mem_email = $_POST['email'];
@@ -459,7 +582,10 @@ class SiteController extends Controller {
             $member->mem_updatedate = new CDbExpression('NOW()');
             if ($member->save(false)) {
                 Yii::app()->session['member'] = $member;
-                $this->redirect(array('site/index'));
+                echo CJSON::encode(array(
+                    'status' => true,
+                    'url' => Yii::app()->createUrl('site/index'),
+                ));
             } else {
                 echo 'system error';
             }
@@ -529,6 +655,12 @@ class SiteController extends Controller {
         $this->data['listRules'] = $listRules;
         $this->render('rules', $this->data);
     }
+
+//    public function actionFacebook() {
+//        $this->render('facebook');
+//    }
+
+
 
     private function readArrayFiles(&$file_post) {
 

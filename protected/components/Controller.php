@@ -26,23 +26,23 @@ class Controller extends CController {
     
     public $metaDescription;
     public $metaKeywords;
-    public $metaAuthor = 'พระเครื่องเมืองไทย';
+    public $metaAuthor;
 
     public function getMetaDescription() {
         if (!$this->metaDescription)
-            return Yii::app()->settings->getValue('meta_description'); //return default description
+            return Yii::app()->params['meta_description'];  //return default description
         return $this->metaDescription;
     }
 
     public function getMetaKeywords() {
         if (!$this->metaKeywords)
-            return Yii::app()->settings->getValue('meta_keywords'); //return default keywords   
+            return Yii::app()->params['meta_keywords']; //return default keywords   
         return $this->metaKeywords;
     }
     
     public function getMetaAuthor() {
         if (!$this->metaAuthor)
-            return Yii::app()->settings->getValue('meta_author'); //return default author   
+            return Yii::app()->params['meta_author']; //return default author   
         return $this->metaAuthor;
     }
 

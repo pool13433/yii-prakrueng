@@ -1,7 +1,7 @@
 <div id="login-page" class="login">
     <div class="container">
 
-        <form class="form-login" id="form-login">
+        <form class="form-login form-lg" id="form-login">
             <h2 class="form-login-heading">เข้าใช้งานระบบ</h2>
             <div class="login-wrap">
                 <?php if (!empty(Yii::app()->session['message'])) { ?>
@@ -12,10 +12,10 @@
                     </div>
                 <?php } ?>
                 <div class="form-group">
-                    <input type="text" autofocus="" name="username" placeholder="Username" class="form-control">
+                    <input type="text" autofocus="" name="username" placeholder="Username" class="form-control input-lg">
                 </div>
                 <div class="form-group">
-                    <input type="password" name="password" placeholder="Password" class="form-control">
+                    <input type="password" name="password" placeholder="Password" class="form-control input-lg">
                 </div>
                 <label class="checkbox">
                     <span class="pull-right">
@@ -25,19 +25,44 @@
                 <button type="submit" class="btn btn-success btn-block">
                     <i class="fa fa-lock"></i> เข้าระบบทันที
                 </button>
-                <hr>
                 <div class="registration">
                     ยังไม่ได้ลงทะเบียนเป็นสมาชิกระบบ<br>
-                    <a href="<?= Yii::app()->createUrl('site/rules') ?>" class="btn btn-block btn-sm btn-primary">
+                    <a href="<?= Yii::app()->createUrl('site/rules') ?>" class="btn btn-block btn-xs btn-info">
                         <I class="fa fa-sign-in"></i> ลงทะเบียนทันที
                     </a>
                 </div>
+                <hr class="facebook"/>
+                <button type="button" id="loginBtn"
+                        class="btn btn-primary btn-block">
+                    <i class="fa fa-facebook large"></i> Facebook Login
+                </button>
+                <div id="response"></div>
             </div>
         </form>	  	
     </div>
 </div>
 <script type="text/javascript">
+
+    $(document).ready(function () {
+        if (facebookConnect) {
+            getUserData();
+        }
+        $('#loginBtn').on('click', function () {
+            //do the login
+            Pace.track(function () {
+                FB.login(function (response) {
+                    if (response.authResponse) {
+                        //user just authorized your app
+                        document.getElementById('loginBtn').style.display = 'none';
+                        getUserData();
+                    }
+                }, {scope: permissions});
+            });
+        });
+    });
+
     $(function () {
+        //checkUserInDatabase();
         $('#form-login').submit(function (e) {
             e.preventDefault();
         }).validate({
@@ -52,24 +77,29 @@
             submitHandler: function (form) {
                 //console.log(form);
                 //$(form).submit();
-                $.ajax({
-                    url: '<?= Yii::app()->createUrl('site/login') ?>',
-                    data: $(form).serialize(),
-                    type: 'POST',
-                    dataType: 'JSON',
-                    success: function (response) {
-                        if(response.status){
-                            window.location.href = response.url;
-                        }else{
-                            window.location.reload(true);
+                Pace.track(function () {
+                    $.ajax({
+                        url: '<?= Yii::app()->createUrl('site/login') ?>',
+                        data: $(form).serialize(),
+                        type: 'POST',
+                        dataType: 'JSON',
+                        success: function (response) {
+                            if (response.status) {
+                                window.location.href = response.url;
+                            } else {
+                                window.location.reload(true);
+                            }
+                        },
+                        error: function () {
+
                         }
-                    },
-                    error: function () {
-                        
-                    }
+                    });
                 });
             }
         });
     });
+    /*
+     * *************************** Handle Facebook Login *********************************
+     */
 
 </script>

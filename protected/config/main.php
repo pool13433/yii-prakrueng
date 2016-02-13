@@ -6,13 +6,14 @@
 // CWebApplication properties can be configured here.
 return array(
     'basePath' => dirname(__FILE__) . DIRECTORY_SEPARATOR . '..',
-    'name' => 'PraKreungMeungThai',
+    'name' => 'SudyodPrakruang.com',
     // preloading 'log' component
     'preload' => array('log'),
     // autoloading model and component classes
     'import' => array(
         'application.models.*',
         'application.components.*',
+        'application.components.Facebook.*',
     ),
     'modules' => array(
         // uncomment the following to enable the Gii tool
@@ -63,8 +64,16 @@ return array(
             ),
         ),
         'format' => array(
-            'class' => 'application.components.Formatter',            
-            'numberFormat'=>array('decimals'=>0, 'decimalSeparator'=>',', 'thousandSeparator'=>','),
+            'class' => 'application.components.Formatter',
+            'numberFormat' => array('decimals' => 0, 'decimalSeparator' => ',', 'thousandSeparator' => ','),
+        ),
+//        'Facebook' => array(
+//            'appId' => '987135201368195',
+//            'secret' => '2e1f2a8f7d4cd8881ee6cb5118d0cc63',
+//            'cookie' => true,
+//        ),
+        'loid' => array(
+            'class' => 'ext.lightopenid.loid',
         ),
     ),
     // application-level parameters that can be accessed
@@ -72,5 +81,7 @@ return array(
     'params' => array(
         // this is used in contact page
         'adminEmail' => 'webmaster@example.com',
+        'meta_description' => 'พระเครื่อง',
+        'meta_keywords' => 'พระเครื่อง',
     ),
 );

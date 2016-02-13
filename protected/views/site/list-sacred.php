@@ -12,10 +12,9 @@
                             <th>ลำดับ</th>
                             <th>ชื่อ</th>
                             <th>ราคา</th>
-                            <th>ปีที่สร้าง</th>
                             <th>หมวดหมู่</th>
-                            <th>จังหวัด</th>
                             <th>ชอบ</th>
+                            <th>สถานะ</th>
                             <th>สถานะ</th>
                         </tr>
                     </thead>
@@ -27,18 +26,27 @@
                                     <a href="<?= Yii::app()->createUrl('site/detail/' . $object->obj_id) ?>"><?= $object->obj_name ?></a>
                                 </td>
                                 <td><?= $object->obj_price ?></td>
-                                <td><?= $object->obj_born ?></td>
                                 <td><?= $object->type->type_name ?></td>
-                                <td><?= $object->province->pro_name_th ?></td>
                                 <td><?= $object->obj_like ?></td>
+                                <td>
+                                    <div class="btn-group">
+                                        <div class="btn-group" role="group">
+                                            <a href="<?= Yii::app()->createUrl('site/upload/' . $object->obj_id) ?>" class="btn btn-primary btn-sm">แก้ไข</a>
+                                        </div>
+                                        <div class="btn-group" role="group">
+                                            <a href="<?= Yii::app()->createUrl('Site/UserDeleteSacred/' . $object->obj_id) ?>" 
+                                               class="btn btn-danger btn-sm" onclick="return confirm('ยืนยันการลบข้อมูลออกจากระบบ')">ลบ</a>
+                                        </div>
+                                    </div>
+                                </td>
                                 <td style="width: 15%">
                                     <div class="btn-group" data-toggle="buttons">
                                         <label class="btn btn-danger btn-sm <?= ($object->obj_status == 0 ? 'active' : '') ?>"
-                                                onclick="changeSacedStatus(<?= $object->obj_id ?>, 0)">
-                                            <input type="radio" name="options" id="option1" <?= ($object->obj_status == 0  ? 'checked' : '') ?>> ส่วนตัว
+                                               onclick="changeSacedStatus(<?= $object->obj_id ?>, 0)">
+                                            <input type="radio" name="options" id="option1" <?= ($object->obj_status == 0 ? 'checked' : '') ?>> ส่วนตัว
                                         </label>
                                         <label class="btn btn-success btn-sm  <?= ($object->obj_status == 1 ? 'active' : '') ?>"
-                                                onclick="changeSacedStatus(<?= $object->obj_id ?>, 1)">
+                                               onclick="changeSacedStatus(<?= $object->obj_id ?>, 1)">
                                             <input type="radio" name="options" id="option2" <?= ($object->obj_status == 1 ? 'checked' : '') ?>> เผยแพร่
                                         </label>
                                     </div>                                    

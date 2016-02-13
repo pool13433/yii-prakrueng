@@ -1,32 +1,37 @@
 <?php
 $baseUrl = Yii::app()->baseUrl;
 ?>
-<form id="form-upload" method="post" action="<?= Yii::app()->createUrl('site/upload') ?>" class="form-horizontal" enctype="multipart/form-data">
+<form id="form-upload" method="post" action="<?= Yii::app()->createUrl('site/upload') ?>" class="form-horizontal form-lg" enctype="multipart/form-data">
     <div class="panel panel-warning">
         <div class="panel-heading">
             <h4> <i class="fa fa-shopping-cart"></i> ลงข้อมูลพระเครื่องเพื่อปล่อยเช่า</h4>
         </div>
         <div class="panel-body">
-<!--            <div role="alert" class="alert alert-danger alert-dismissible fade in"> 
-                <button aria-label="Close" data-dismiss="alert" class="close" type="button">
-                    <span aria-hidden="true" class="glyphicon glyphicon-remove"></span></button> 
-                <strong><u>กรุณา Login เพื่อเข้าระบบก่อนการลงประกาศขาย</u></strong> 
-                เพื่อความสะดวกในการจัดเก็บข้อมูล
-            </div>-->
+            <!--            <div role="alert" class="alert alert-danger alert-dismissible fade in"> 
+                            <button aria-label="Close" data-dismiss="alert" class="close" type="button">
+                                <span aria-hidden="true" class="glyphicon glyphicon-remove"></span></button> 
+                            <strong><u>กรุณา Login เพื่อเข้าระบบก่อนการลงประกาศขาย</u></strong> 
+                            เพื่อความสะดวกในการจัดเก็บข้อมูล
+                        </div>-->
             <div class="form-group">
                 <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">ชื่อสินค้า</label>
                 <div class="col-lg-5 col-md-5 col-sm-5 col-xs-8">
-                    <input type="text" class="form-control" name="name" id="name" required/>
+                    <input type="hidden" name="id" value="<?= $sacredObject->obj_id ?>"/>
+                    <input type="text" class="form-control input-lg" name="name" id="name" value="<?= $sacredObject->obj_name ?>" required/>
                     <span class="label label-warning">กรุณากรอกข้อมูล ชื่อสินค้า</span>
                 </div>
             </div>
             <div class="form-group">
                 <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">จัดอยู่ในหมวดหมู่</label>
                 <div class="col-lg-3 col-md-3 col-sm-4 col-xs-8">                    
-                    <select class="form-control" name="type" id="type" required>             
+                    <select class="form-control  input-lg" name="type" id="type" required>             
                         <option value="" selected>-- กรุณาเลือก --</option>
                         <?php foreach ($listSacredType as $index => $type) { ?>
-                            <option value="<?= $type->type_id ?>"><?= $type->type_name ?></option>
+                            <?php if ($type->type_id == $sacredObject->type_id) { ?>
+                                <option value="<?= $type->type_id ?>" selected><?= $type->type_name ?></option>
+                            <?php } else { ?>
+                                <option value="<?= $type->type_id ?>"><?= $type->type_name ?></option>
+                            <?php } ?>
                         <?php } ?>
                     </select>
                     <span class="label label-warning">กรุณาเลือก หมวดหมู่</span>
@@ -35,31 +40,35 @@ $baseUrl = Yii::app()->baseUrl;
             <div class="form-group">
                 <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">ราคาเช่า</label>
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
-                    <input type="text" class="form-control" name="price" id="price" required/>
+                    <input type="text" class="form-control  input-lg" name="price" id="price" value="<?= $sacredObject->obj_price ?>" required/>
                     <span class="label label-warning">กรุณากรอกข้อมูล ราคาสินค้า</span>
                 </div>
             </div>
             <div class="form-group">
                 <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">ปี พ.ศ. ที่จัดสร้าง</label>
                 <div class="col-lg-2 col-md-3 col-sm-3 col-xs-8">
-                    <input type="text" class="form-control" name="born" id="born" required maxlength="4"/>
+                    <input type="text" class="form-control  input-lg" name="born" id="born" required value="<?= $sacredObject->obj_born ?>"  maxlength="4"/>
                     <span class="label label-warning">กรุณาเลือก ปีที่สร้าง</span>
                 </div>
             </div>
             <div class="form-group">
                 <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">สถานที่รับสินค้า</label>
                 <div class="col-lg-6 col-md-6 col-sm-7 col-xs-8">
-                    <textarea rows="2" class="form-control" name="location" id="location"></textarea>                    
+                    <textarea rows="2" class="form-control  input-lg" name="location" id="location"><?= $sacredObject->obj_location ?></textarea>                    
                 </div>
             </div>
 
             <div class="form-group">
-                <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">กำเนิดจากจังหวัด</label>
+                <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">จังหวัดที่สร้าง</label>
                 <div class="col-lg-3 col-md-4 col-sm-4 col-xs-8">                    
-                    <select class="form-control" name="province" id="province" required>
+                    <select class="form-control  input-lg" name="province" id="province" required>
                         <option value="" selected>-- กรุณาเลือก --</option>
                         <?php foreach ($listProvince as $index => $province) { ?>
-                            <option value="<?= $province->pro_id ?>"><?= $province->pro_name_th ?></option>
+                            <?php if ($province->pro_id == $sacredObject->pro_id) { ?>
+                                <option value="<?= $province->pro_id ?>" selected><?= $province->pro_name_th ?></option>
+                            <?php } else { ?>
+                                <option value="<?= $province->pro_id ?>"><?= $province->pro_name_th ?></option>
+                            <?php } ?>
                         <?php } ?>
                     </select>
                     <span class="label label-warning">กรุณาเลือกจังหวัดที่เริ่มจัดสร้าง</span>
@@ -68,9 +77,18 @@ $baseUrl = Yii::app()->baseUrl;
             <div class="form-group">
                 <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">รูปหลัก</label>
                 <div class="col-lg-3 col-md-6 col-sm-3 col-xs-7 box-browse-upload">
-                    <input type="file" id="fileMain" name="fileMain"/>
+                    <?php
+                    $require = 'required';
+                    $pathImage = $baseUrl . '/images/image_main.png';
+                    if (!empty($sacredObject->obj_img)) {
+                        $pathImage = $baseUrl . '/images' . $sacredObject->obj_img;
+                        $require = '';
+                    }
+                    ?>
+                    <input type="file" id="fileMain" name="fileMain" <?= $require ?>/>
                     <a class="thumbnail">
-                        <img id="imgMain" class="img-rounded" style="max-width: 60%;" src="<?= $baseUrl . '/images/image_main.png' ?>"/>
+
+                        <img id="imgMain" class="img-rounded" style="max-width: 60%;" src="<?= $pathImage ?>"/>
                     </a>
                     <span class="label label-warning">กรุณากรอกข้อมูล รูปหลักสินค้า</span>
                 </div>                
@@ -81,7 +99,7 @@ $baseUrl = Yii::app()->baseUrl;
                     <div class="dropzone" id="my-awesome-dropzone" >
                         <div class="dropzone-previews" style="max-width: 100%"></div>
                         <div class="fallback">
-                            <input name="file" type="file" multiple/>
+                            <input name="file" type="file" multiple class="form-control"/>
                         </div>                        
                     </div>
                 </div>
@@ -89,7 +107,7 @@ $baseUrl = Yii::app()->baseUrl;
             <div class="form-group">
                 <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">อธิบายเพิ่มเติม</label>
                 <div class="col-lg-8 col-md-8 col-sm-7 col-xs-7">
-                    <textarea class="form-control" rows="5" id="comment" name="comment"></textarea>
+                    <textarea class="form-control  input-lg" rows="5" id="comment" name="comment"><?= $sacredObject->obj_comment ?></textarea>
                 </div>
             </div>
 
@@ -148,6 +166,7 @@ $baseUrl = Yii::app()->baseUrl;
                 data.append("location", $('#location').val());
                 data.append("province", $('#province').val());
                 data.append("comment", $('#comment').val());
+                data.append("id", $('#id').val());
                 data.append("fileMain", $("#fileMain")[0].files[0]);
             });
             // Refresh page when all images are uploaded
@@ -160,12 +179,10 @@ $baseUrl = Yii::app()->baseUrl;
         success: function (file, response) {
             console.log(response);
             var res = JSON.parse(response);
-            if (res.status) {
-                window.location.href = '<?= Yii::app()->createUrl('site/index') ?>'
-            } else {
+            if (!res.status) {
                 alert(res.message);
-                window.location.href = res.url;
             }
+            window.location.href = res.url;
         }
     };
     $(function () {
@@ -223,12 +240,6 @@ $baseUrl = Yii::app()->baseUrl;
             submitHandler: function (form) {
                 //$(form).ajaxSubmit();
                 console.log(form);
-                console.log($(form).find('input[type="file"]').val());
-                if ($(form).find('input[type="file"]').val() == '') {
-                    alert('กรุณาเลือก รูปหลัก');
-                    $(form).find('input[type="file"]').focus();
-                    return false;
-                }
                 if (myDropzone.getQueuedFiles().length > 0) {
                     console.log(' == myDropzone.processQueue ==');
                     myDropzone.processQueue();
@@ -245,12 +256,10 @@ $baseUrl = Yii::app()->baseUrl;
                         processData: false,
                         success: function (response) {
                             console.log(response);
-                            if (response.status) {
-                                window.location.href = '<?= Yii::app()->createUrl('site/index') ?>'
-                            } else {
+                            if (!response.status) {
                                 alert(response.message);
-                                window.location.href = response.url;
                             }
+                            window.location.href = response.url;
                         },
                         error: function () {
                             alert("error in ajax form submission");
