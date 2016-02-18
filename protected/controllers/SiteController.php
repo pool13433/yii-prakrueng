@@ -9,7 +9,7 @@ class SiteController extends Controller {
     public $publicStatus;
     public $memberStatusDefault;
     public $memberLevelDefault;
-
+    public $regionDefault = 3;
     //memberLevelDefault
 
     public function init() {
@@ -38,13 +38,15 @@ class SiteController extends Controller {
         $criteria = new CDbCriteria();
         $criteria->select = 'r.reg_id,r.reg_name,(SELECT COUNT(*) FROM province p WHERE p.reg_id = r.reg_id) cnt';
         $criteria->alias = 'r';
-        $listRegion = Region::model()->findAll($criteria);
-
+        $criteria->compare('r.reg_id', $this->regionDefault);
+        //$listRegion = Region::model()->findAll($criteria);
+        $region = Region::model()->find($criteria);
+        
         $this->data = array(
             'listSacredObjectLastInsert' => $listSacredObjectLastInsert,
             'listSacredType' => $listSacredType,
             'listMemberLastInsert' => $listMemberLastInsert,
-            'listRegion' => $listRegion
+            'listRegion' => $region
         );
 
         if (Yii::app()->session['member']) {
@@ -352,10 +354,11 @@ class SiteController extends Controller {
         } else {
 
             if (empty($_POST)) {
-                $listSacredType = SacredType::model()->findAll(array(
+                $listSacredType = SacredType::model()->findAll(array(                    
                     'order' => 'type_name'
                 ));
-                $listProvince = Province::model()->findAll(array(
+                $listProvince = Province::model()->findAll(array(                    
+                    'condition' => 'reg_id = '.$this->regionDefault,
                     'order' => 'pro_name_th'
                 ));
                 if (empty($id)) {
@@ -563,7 +566,7 @@ class SiteController extends Controller {
         if (empty($_POST)) {
             $this->render('register', array(
                 'member' => $member,
-                'profile' => true,
+                'profile' => $member,
                 'password' => false,
                 'form_title' => 'แก้ไขข้อมูลส่วนตัว',
                 'action_url' => Yii::app()->createUrl('site/userprofile')

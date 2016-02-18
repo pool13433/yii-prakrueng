@@ -7,8 +7,7 @@
         <div class="panel-body">
             <div class="row mt">
                 <div class="col-lg-12">
-
-                    <?php if (empty($profile) && empty($profile->facebook_id)) { ?>
+                    <?php if (empty($profile->facebook_id)) { ?>
                         <div class="form-group">
                             <label for="username" class="col-sm-2 col-sm-2 control-label">username<small> *</small></label>
                             <div class="col-sm-4">

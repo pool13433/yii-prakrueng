@@ -70,6 +70,17 @@
             </div>
         </div>
         <div class="form-group">
+            <label class="col-sm-2 control-label">สถานะ</label>
+            <div class="col-sm-2">
+                <label class="radio-inline">
+                    <input type="radio" name="status" value="1" <?=($member->mem_status == '1' ? 'checked' : '')?> required> User,Member
+                </label>
+                <label class="radio-inline">
+                    <input type="radio" name="status" value="0" <?=($member->mem_status == '0' ? 'checked' : '')?>> Administrator
+                </label>                
+            </div>
+        </div>
+        <div class="form-group">
             <label class="col-sm-2 control-label">ที่อยู่</label>
             <div class="col-sm-10">
                 <textarea class="form-control" name="address"><?= $member->mem_address ?></textarea>
@@ -92,9 +103,9 @@
                 <th>ลำดับ</th>
                 <th>ชื่อ</th>
                 <th>สกุล</th>
-                <th>โทร</th>
-                <th>เพศ</th>
+                <th>โทร</th>                
                 <th>อีเมลล์</th>
+                <th>สถานะ</th>
                 <th>แก้ไข</th>
                 <th>ลบ</th>
             </tr>
@@ -106,8 +117,8 @@
                     <td><?= $mem->mem_fname ?></td>
                     <td><?= $mem->mem_lname ?></td>
                     <td><?= $mem->mem_phone ?></td>
-                    <td><?= $mem->mem_sex ?></td>
                     <td><?= $mem->mem_email ?></td>
+                    <td><?= $mem->mem_status_desc ?></td>
                     <td>
                         <a href="<?= Yii::app()->createUrl('member/index/' . $mem->mem_id) ?>" class="btn btn-warning btn-sm">แก้ไข</a>
                     </td>

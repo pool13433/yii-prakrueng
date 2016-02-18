@@ -3,7 +3,7 @@
         <div class="panel-heading" role="tab" id="headingOne">
             <h4 class="panel-title">
                 <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                    <i class="fa fa-search"></i> ค้นหาพระเครื่องทั่วเมืองไทย
+                    <i class="fa fa-search"></i> ค้นหาพระเครื่องเมืองตะวันออก
                 </a>
             </h4>
         </div>
@@ -42,36 +42,32 @@
 
 <section class="task-panel tasks-widget panel sidebar">
     <div class="panel-heading">
-        <div class="pull-left"><h3><i class="fa fa-map-marker"></i> ภูมิภาคของจังหวัดที่จัดสร้างวัตถุ</h3></div>
+        <div class="pull-left"><h3><i class="fa fa-map-marker"></i> จังหวัดทั้งหมดในภาคตะวันออก</h3></div>
         <br>
     </div>
     <div class="panel-body">
         <div class="panel-group" id="accordionRegion" role="tablist" aria-multiselectable="true">
             <div class="panel panel-warning" id="boxPrakreungRegion">
-                <?php foreach ($listRegion as $index => $region) { ?>
-                    <div class="panel-heading" role="tab" id="headingOne">
-                        <h6 class="panel-title" style="font-size: 0.6em;">
-                            <a role="button" data-toggle="collapse" data-parent="#accordion" href="#region<?= $index ?>" aria-expanded="true" aria-controls="collapseOne">
-                                <?= $region->reg_name ?> (<?= $region->cnt ?> จังหวัด)<i class="glyphicon glyphicon-chevron-down"></i>
-                            </a>
-                        </h6>
+                <div class="panel-heading" role="tab" id="headingOne">
+                    <h6 class="panel-title" style="font-size: 0.6em;">
+                        <?= $listRegion->reg_name ?> (<?= $listRegion->cnt ?> จังหวัด)<i class="glyphicon glyphicon-chevron-down"></i>
+                    </h6>
+                </div>
+                <div class="panel-collapse">
+                    <div class="panel-body">
+                        <?php
+                        $listProvinceByRegion = Province::model()->findAllByAttributes(array('reg_id' => $listRegion->reg_id), array('order' => 'pro_name_th'));
+                        foreach ($listProvinceByRegion as $key => $province) {
+                            ?>
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" value="<?= $province->pro_id ?>">
+                                    <?= $province->pro_name_th ?>
+                                </label>
+                            </div>
+                        <?php } ?>
                     </div>
-                    <div id="region<?= $index ?>" class="panel-collapse collapse <?= ($index == 0 ? 'in' : '') ?>" role="tabpanel" aria-labelledby="headingOne">
-                        <div class="panel-body">
-                            <?php
-                            $listProvinceByRegion = Province::model()->findAllByAttributes(array('reg_id' => $region->reg_id), array('order' => 'pro_name_th'));
-                            foreach ($listProvinceByRegion as $key => $province) {
-                                ?>
-                                <div class="checkbox">
-                                    <label>
-                                        <input type="checkbox" value="<?= $province->pro_id ?>">
-                                        <?= $province->pro_name_th ?>
-                                    </label>
-                                </div>
-                            <?php } ?>
-                        </div>
-                    </div>
-                <?php } ?>
+                </div>
             </div>
         </div>
 </section>

@@ -14,7 +14,7 @@ $baseUrl = Yii::app()->baseUrl;
                             เพื่อความสะดวกในการจัดเก็บข้อมูล
                         </div>-->
             <div class="form-group">
-                <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">ชื่อสินค้า</label>
+                <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">ชื่อสินค้า<small> *</small></label>
                 <div class="col-lg-5 col-md-5 col-sm-5 col-xs-8">
                     <input type="hidden" name="id" value="<?= $sacredObject->obj_id ?>"/>
                     <input type="text" class="form-control input-lg" name="name" id="name" value="<?= $sacredObject->obj_name ?>" required/>
@@ -22,7 +22,7 @@ $baseUrl = Yii::app()->baseUrl;
                 </div>
             </div>
             <div class="form-group">
-                <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">จัดอยู่ในหมวดหมู่</label>
+                <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">จัดอยู่ในหมวดหมู่<small> *</small></label>
                 <div class="col-lg-3 col-md-3 col-sm-4 col-xs-8">                    
                     <select class="form-control  input-lg" name="type" id="type" required>             
                         <option value="" selected>-- กรุณาเลือก --</option>
@@ -38,14 +38,14 @@ $baseUrl = Yii::app()->baseUrl;
                 </div>
             </div>
             <div class="form-group">
-                <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">ราคาเช่า</label>
+                <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">ราคาเช่า<small> *</small></label>
                 <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
                     <input type="text" class="form-control  input-lg" name="price" id="price" value="<?= $sacredObject->obj_price ?>" required/>
                     <span class="label label-warning">กรุณากรอกข้อมูล ราคาสินค้า</span>
                 </div>
             </div>
             <div class="form-group">
-                <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">ปี พ.ศ. ที่จัดสร้าง</label>
+                <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">ปี พ.ศ. ที่จัดสร้าง<small> *</small></label>
                 <div class="col-lg-2 col-md-3 col-sm-3 col-xs-8">
                     <input type="text" class="form-control  input-lg" name="born" id="born" required value="<?= $sacredObject->obj_born ?>"  maxlength="4"/>
                     <span class="label label-warning">กรุณาเลือก ปีที่สร้าง</span>
@@ -59,7 +59,7 @@ $baseUrl = Yii::app()->baseUrl;
             </div>
 
             <div class="form-group">
-                <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">จังหวัดที่สร้าง</label>
+                <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">จังหวัดที่สร้าง<small> *</small></label>
                 <div class="col-lg-3 col-md-4 col-sm-4 col-xs-8">                    
                     <select class="form-control  input-lg" name="province" id="province" required>
                         <option value="" selected>-- กรุณาเลือก --</option>
@@ -75,7 +75,7 @@ $baseUrl = Yii::app()->baseUrl;
                 </div>
             </div>
             <div class="form-group">
-                <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">รูปหลัก</label>
+                <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">รูปหลัก<small> *</small></label>
                 <div class="col-lg-3 col-md-6 col-sm-3 col-xs-7 box-browse-upload">
                     <?php
                     $require = 'required';

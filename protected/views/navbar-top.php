@@ -8,7 +8,7 @@
             <span class="icon-bar"></span>
         </button>
         <a class="navbar-brand" href="<?= Yii::app()->createUrl('site/index') ?>" 
-           style="font-size: 2.5em;font-weight: bold"><u>สุดยอดพระเครื่อง</u>
+           style="font-size: 2.5em;font-weight: bold"><u>สุดยอดพระเครื่องเมืองตะวันออก</u>
         </a>
     </div>
 
@@ -39,7 +39,7 @@
                 <?php $member = Yii::app()->session['member'] ?>
 
                 <?php if ($member->mem_status == 0) { ?>
-                                                                                                                                                                                                        <!--                    <li><a href="#">ข้อมูลพระเครื่อง <span class="sr-only">(current)</span></a></li>-->
+                                                                                                                                                                                                                                                                                                                <!--                    <li><a href="#">ข้อมูลพระเครื่อง <span class="sr-only">(current)</span></a></li>-->
 
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">ข้อมูลพระเครื่อง <span class="caret"></span></a>
@@ -47,7 +47,7 @@
                             <li><a href="<?= Yii::app()->createUrl('sacred/index') ?>">พระเครื่อง</a></li>
                             <li><a href="<?= Yii::app()->createUrl('sacred/indexType') ?>">ประเภทพระเครื่อง</a></li>
                             <li role="separator" class="divider"></li>
-                            <li><a href="<?= Yii::app()->createUrl('sacred/indexRegion') ?>">ภูมิภาค</a></li>
+        <!--                            <li><a href="<?= Yii::app()->createUrl('sacred/indexRegion') ?>">ภูมิภาค</a></li>-->
                             <li><a href="<?= Yii::app()->createUrl('sacred/indexProvince') ?>">จังหวัดกำเนิด</a></li>
                             <li role="separator" class="divider"></li>
                             <li><a href="<?= Yii::app()->createUrl('sacred/indexNews') ?>">ข่าว</a></li>
@@ -85,7 +85,7 @@
                             </a>
                         </li>
                         <li role="separator" class="divider"></li>
-                        <li><a href="javascript:void(0)" id="btnLogout">
+                        <li><a href="javascript:void(0)" id="handleLogout">
                                 <i class="fa fa-sign-out"></i> ออกจากระบบ</a>
                         </li>
                     </ul>
@@ -104,30 +104,9 @@
      */
     var permissions = [
         'email',
-        'user_likes',
-        'friends_likes',
-        'user_about_me',
-        'friends_about_me',
         'user_birthday',
-        'friends_birthday',
-        'user_education_history',
-        'friends_education_history',
-        'user_hometown',
-        'friends_hometown',
-        'user_relationships',
-        'friends_relationships',
-        'user_relationship_details',
-        'friends_relationship_details',
-        'user_location',
-        'friends_location',
-        'user_religion_politics',
-        'friends_religion_politics',
-        'user_website',
-        'friends_website',
-        'user_work_history',
-        'friends_work_history'
+        'user_likes'
     ].join(',');
-
     var fields = [
         'id',
         'name',
@@ -146,29 +125,13 @@
         'verified',
         'age_range',
         'bio',
-        'birthday',
-        'cover',
-        'currency',
-        'devices',
-        'education',
-        'email',
-        'hometown',
-        'interested_in',
-        'location',
-        'political',
-        'payment_pricepoints',
-        'favorite_athletes',
-        'favorite_teams',
-        'picture',
-        'quotes',
-        'relationship_status',
-        'religion',
-        'significant_other',
-        'video_upload_limits',
-        'website',
-        'work'
+        'birthday'
     ].join(',');
-
+    
+    $(document).ready(function(){
+        handleLogout();
+    });
+    
     window.fbAsyncInit = function () {
         //SDK loaded, initialize it
         FB.init({
@@ -184,24 +147,17 @@
                 var accessToken = response.authResponse.accessToken;
                 if (accessToken) {
                     facebookConnect = true;
-                    $('#btnLogout').on('click', function () {
-                        var isConf = confirm('ยืนยันการออกจากระบบ');
-                        if (isConf) {
-                            FB.logout(function (response) {
-                                // user is now logged out
-                                console.log('response ::' + response);
-                            });
-                            window.location.href = '<?= Yii::app()->createUrl('site/logout') ?>';
-                        }
-                    }
-                    );
+                    FB.logout(function (response) {
+                        // user is now logged out
+                        console.log('response ::' + response);
+                    });
+                    handleLogout();
                 }
             } else {
                 //user is not authorized
             }
         });
     };
-
     function getUserData() {
 
         FB.api('/me', {fields: fields}, function (response) {
@@ -217,9 +173,19 @@
         });
     }
 
+    function handleLogout() {
+        $('#handleLogout').on('click', function () {
+            var isConf = confirm('ยืนยันการออกจากระบบ');
+            if (isConf) {
+
+                window.location.href = '<?= Yii::app()->createUrl('site/logout') ?>';
+            }
+        });
+    }
 
 
-//load the JavaScript SDK
+
+    //load the JavaScript SDK
     (function (d, s, id) {
         var js, fjs = d.getElementsByTagName(s)[0];
         if (d.getElementById(id)) {
@@ -227,11 +193,9 @@
         }
         js = d.createElement(s);
         js.id = id;
-        js.src = '<?= Yii::app()->baseUrl . '/js/facebookSDK.js' ?>';//"//connect.facebook.net/en_US/sdk.js";
+        js.src = '<?= Yii::app()->baseUrl . '/js/facebookSDK.js' ?>'; //"//connect.facebook.net/en_US/sdk.js";
         fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));
-
-    
     /*
      * *************************** Handle Facebook Login *********************************
      */

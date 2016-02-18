@@ -16,6 +16,7 @@
  * @property integer $mem_level
  */
 class Member extends CActiveRecord {
+    public $mem_status_desc;
 
     /**
      * @return string the associated database table name
@@ -52,6 +53,7 @@ class Member extends CActiveRecord {
         // NOTE: you may need to adjust the relation name and the related
         // class name for the relations automatically generated below.
         return array(
+             //'memberLevel' => array(self::BELONGS_TO, 'MemberLevel', 'mem_status'),
         );
     }
 
@@ -125,6 +127,11 @@ class Member extends CActiveRecord {
             $this->mem_sex = 'ชาย';
         } else {
             $this->mem_sex = 'หญิง';
+        }
+        if ($this->mem_status == 0) {
+            $this->mem_status_desc = 'Administrator';
+        } else {
+            $this->mem_status_desc = 'Member';
         }
         $this->mem_updatedate = strtotime($this->mem_updatedate);
         $this->mem_updatedate = date('m/d/Y', $this->mem_updatedate);

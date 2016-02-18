@@ -52,6 +52,7 @@ class MemberController extends Controller {
         $member->mem_img = $_POST['img'];
         $member->mem_level = $_POST['level'];
         $member->mem_lname = $_POST['lname'];
+        $member->mem_status = $_POST['status'];
         $member->mem_phone = $_POST['phone'];
         $member->mem_sex = $_POST['sex'];
         $member->mem_updatedate = new CDbExpression('NOW()');
