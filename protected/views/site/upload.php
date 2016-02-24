@@ -16,7 +16,7 @@ $baseUrl = Yii::app()->baseUrl;
             <div class="form-group">
                 <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">ชื่อสินค้า<small> *</small></label>
                 <div class="col-lg-5 col-md-5 col-sm-5 col-xs-8">
-                    <input type="hidden" name="id" value="<?= $sacredObject->obj_id ?>"/>
+                    <input type="hidden" id="id" name="id" value="<?= $sacredObject->obj_id ?>"/>
                     <input type="text" class="form-control input-lg" name="name" id="name" value="<?= $sacredObject->obj_name ?>" required/>
                     <span class="label label-warning">กรุณากรอกข้อมูล ชื่อสินค้า</span>
                 </div>
@@ -104,6 +104,26 @@ $baseUrl = Yii::app()->baseUrl;
                     </div>
                 </div>
             </div>
+            <?php if (!empty($sacredObject->obj_id)) { ?>
+                <div class="form-group">
+                    <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">รูปภาพเดิม</label>
+                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
+                        <div class="row">
+                            <?php $relateImage = SacredObjectImg::model()->findAllByAttributes(array('obj_id' => $sacredObject->obj_id)) ?>
+                            <?php foreach ($relateImage as $index => $image) { ?>
+                                <div class="col-lg-2 image-container" onclick="removeImage(<?= $image->img_id ?>)">
+                                    <img src="<?= $baseUrl . '/images' . $image->img_name ?>" class="img-thumbnail"/>
+                                    <div class="after" title="ลบ">
+                                        <span class="zoom">
+                                            <i class="glyphicon glyphicon-remove-sign"></i>
+                                        </span>
+                                    </div>
+                                </div>
+                            <?php } ?>
+                        </div> 
+                    </div>                
+                </div>
+            <?php } ?>
             <div class="form-group">
                 <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">อธิบายเพิ่มเติม</label>
                 <div class="col-lg-8 col-md-8 col-sm-7 col-xs-7">
@@ -276,6 +296,19 @@ $baseUrl = Yii::app()->baseUrl;
         $.each(spans, function (index, span) {
             $(span).css({'display': 'none'});
         });
+    }
+
+    function removeImage(imageId) {
+        var isConfirm = confirm('ยืนยันการลบข้อมูลรูปนี้');
+        if (isConfirm) {
+            $.post('<?= Yii::app()->createUrl('Helper/removeImage') ?>', {
+                id: imageId
+            }, function (response) {
+                if (response.status) {
+                    window.location.reload();
+                }
+            }, 'json');
+        }
     }
 
 </script>

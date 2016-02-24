@@ -60,21 +60,22 @@ $baseUrl = Yii::app()->baseUrl;
                                                 if (!empty($objectAction)) {
                                                     if ($objectAction->act_favorite == 1) {
                                                         $btnFavoriteClass = 'btn-danger';
-                                                        $btnFavoriteTitle = 'ไม่'.$btnFavoriteTitle;
+                                                        $btnFavoriteTitle = 'ไม่' . $btnFavoriteTitle;
                                                     }
                                                     if ($objectAction->act_like == 0) {
                                                         $btnLikeClass = 'btn-primary';
-                                                        $btnLikeTitle = 'ไม่'.$btnLikeTitle;
+                                                        $btnLikeTitle = 'ไม่' . $btnLikeTitle;
                                                     }
                                                     $btnFavoriteValue = $objectAction->act_favorite;
                                                     $btnLikeValue = $objectAction->act_like;
                                                 }
                                                 ?>
-                                                <button id="btnFavorite" type="button" title="<?=$btnFavoriteTitle?>"
+                                                <div class="fb-like btn" data-href="<?=Yii::app()->request->url?>" data-layout="button_count" data-action="like" data-show-faces="true" data-share="true"></div>
+                                                <button id="btnFavorite" type="button" title="<?= $btnFavoriteTitle ?>"
                                                         class="btn <?= $btnFavoriteClass ?>" name="<?= $btnFavoriteValue ?>">
                                                     <i class="fa fa-heart"></i> 
                                                 </button>
-                                                <button id="btnLike" type="button" title="<?=$btnLikeTitle?>"
+                                                <button id="btnLike" type="button" title="<?= $btnLikeTitle ?>"
                                                         class="btn <?= $btnLikeClass ?>" name="<?= $btnLikeValue ?>">
                                                     <i class="fa fa-thumbs-o-up"></i> 
                                                     <strong><?= $sacredObject->obj_like ?></strong>
@@ -329,7 +330,7 @@ $baseUrl = Yii::app()->baseUrl;
         </div>
     </section>
 </section>
-
+<div id="fb-root"></div>
 <script type="text/javascript">
     var imageElement = $(".zoom");
     $(function () {
@@ -513,22 +514,38 @@ $baseUrl = Yii::app()->baseUrl;
                 action: 'FAVORITE',
                 value: value
             },
-            function (response) {
-                if (response.status) {
-                    if (response.action.act_favorite == '1') {
-                        $(element).addClass('btn-danger');
-                        $(element).attr('title','ไม่โปรดปราน');
-                    } else {
-                        $(element).removeClass('btn-danger');
-                        $(element).attr('title','โปรดปราน');
-                    }
-                    $(element).attr('name', response.action.act_favorite);
-                } else {
-                    alert(response.message);
-                    window.location.href = response.url;
-                }
-            }, 'json');
+                    function (response) {
+                        if (response.status) {
+                            if (response.action.act_favorite == '1') {
+                                $(element).addClass('btn-danger');
+                                $(element).attr('title', 'ไม่โปรดปราน');
+                            } else {
+                                $(element).removeClass('btn-danger');
+                                $(element).attr('title', 'โปรดปราน');
+                            }
+                            $(element).attr('name', response.action.act_favorite);
+                        } else {
+                            alert(response.message);
+                            window.location.href = response.url;
+                        }
+                    }, 'json');
         });
     }
+
+    /*
+     * ************************ Facebook Button share ************************ 
+     */
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id))
+            return;
+        js = d.createElement(s);
+        js.id = id;
+        js.src = "//connect.facebook.net/th_TH/sdk.js#xfbml=1&version=v2.5&appId=375551315815765";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+    /*
+     * ************************ Facebook Button share ************************ 
+     */
 
 </script>

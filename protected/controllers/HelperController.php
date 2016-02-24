@@ -351,4 +351,21 @@ class HelperController extends Controller {
         ));
     }
 
+    public function actionRemoveImage() {
+        if (!empty($_POST)) {
+            $baseImage = YiiBase::getPathOfAlias("webroot") . '/images';
+
+            $imageId = $_POST['id'];
+            $image = SacredObjectImg::model()->findByPk($imageId);
+            $filename = $baseImage . $image->img_name;
+            if (file_exists($filename)) {
+                unlink($filename);
+            }
+            $status = $image->delete();
+            echo CJSON::encode(array(
+                'status' => $status
+            ));
+        }
+    }
+
 }
