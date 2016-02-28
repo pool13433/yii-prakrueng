@@ -38,15 +38,17 @@ class SiteController extends Controller {
         $criteria = new CDbCriteria();
         $criteria->select = 'r.reg_id,r.reg_name,(SELECT COUNT(*) FROM province p WHERE p.reg_id = r.reg_id) cnt';
         $criteria->alias = 'r';
-        $criteria->compare('r.reg_id', $this->regionDefault);
-        //$listRegion = Region::model()->findAll($criteria);
-        $region = Region::model()->find($criteria);
+        
+        // east region
+        //$criteria->compare('r.reg_id', $this->regionDefault);
+        //$region = Region::model()->find($criteria);        
+        $listRegion = Region::model()->findAll($criteria);
         
         $this->data = array(
             'listSacredObjectLastInsert' => $listSacredObjectLastInsert,
             'listSacredType' => $listSacredType,
             'listMemberLastInsert' => $listMemberLastInsert,
-            'listRegion' => $region
+            'listRegion' => $listRegion
         );
 
         if (Yii::app()->session['member']) {
@@ -357,10 +359,11 @@ class SiteController extends Controller {
                 $listSacredType = SacredType::model()->findAll(array(                    
                     'order' => 'type_name'
                 ));
-                $listProvince = Province::model()->findAll(array(                    
-                    'condition' => 'reg_id = '.$this->regionDefault,
+                $listRegion = Region::model()->findAll();
+                /*$listProvince = Province::model()->findAll(array(                    
+                    //'condition' => 'reg_id = '.$this->regionDefault,
                     'order' => 'pro_name_th'
-                ));
+                ));*/
                 if (empty($id)) {
                     $sacredObject = new SacredObject();
                 } else {
@@ -368,7 +371,8 @@ class SiteController extends Controller {
                 }
                 $this->render('upload', array(
                     'listSacredType' => $listSacredType,
-                    'listProvince' => $listProvince,
+                    'listRegion' => $listRegion,
+                    //'listProvince' => $listProvince,
                     'sacredObject' => $sacredObject
                 ));
             } else {

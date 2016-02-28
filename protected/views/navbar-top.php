@@ -8,7 +8,7 @@
             <span class="icon-bar"></span>
         </button>
         <a class="navbar-brand" href="<?= Yii::app()->createUrl('site/index') ?>" 
-           style="font-size: 2.5em;font-weight: bold"><u>สุดยอดพระเครื่องเมืองตะวันออก</u>
+           style="font-size: 2.5em;font-weight: bold"><u>สุดยอดพระเครื่อง</u>
         </a>
     </div>
 
@@ -30,7 +30,16 @@
 
             <?php if (empty(Yii::app()->session['member'])) { ?>
                 <li>
-                    <a href="<?= Yii::app()->createUrl('site/login') ?>"><i class="glyphicon glyphicon-log-in"></i> เข้าระบบ</a>                    
+                    <?php 
+                    /*
+                     * Manage URL Domain
+                     */
+                    $finalUrl = str_replace("//", "//www.",Yii::app()->getBaseUrl(true)).'/site/login';
+                    $finalUrl = str_replace('www.www.', 'www.', $finalUrl);
+                    ?>
+                    <a href="<?= $finalUrl ?>">
+                        <i class="glyphicon glyphicon-log-in"></i>
+                        เข้าระบบ</a>                    
                 </li>
                 <li>
                     <a href="<?= Yii::app()->createUrl('site/rules') ?>"><i class="glyphicon glyphicon-registration-mark"></i> ลงทะเบียน</a>
@@ -39,7 +48,7 @@
                 <?php $member = Yii::app()->session['member'] ?>
 
                 <?php if ($member->mem_status == 0) { ?>
-                                                                                                                                                                                                                                                                                                                <!--                    <li><a href="#">ข้อมูลพระเครื่อง <span class="sr-only">(current)</span></a></li>-->
+                                                                                                                                                                                                                                                                                                                        <!--                    <li><a href="#">ข้อมูลพระเครื่อง <span class="sr-only">(current)</span></a></li>-->
 
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">ข้อมูลพระเครื่อง <span class="caret"></span></a>
@@ -127,11 +136,11 @@
         'bio',
         'birthday'
     ].join(',');
-    
-    $(document).ready(function(){
+
+    $(document).ready(function () {
         handleLogout();
     });
-    
+
     window.fbAsyncInit = function () {
         //SDK loaded, initialize it
         FB.init({

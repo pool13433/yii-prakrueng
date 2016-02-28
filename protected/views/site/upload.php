@@ -59,16 +59,26 @@ $baseUrl = Yii::app()->baseUrl;
             </div>
 
             <div class="form-group">
-                <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">จังหวัดที่สร้าง<small> *</small></label>
+                <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">พระถูกสร้างที่จังหวัด<small> *</small></label>
                 <div class="col-lg-3 col-md-4 col-sm-4 col-xs-8">                    
                     <select class="form-control  input-lg" name="province" id="province" required>
                         <option value="" selected>-- กรุณาเลือก --</option>
-                        <?php foreach ($listProvince as $index => $province) { ?>
-                            <?php if ($province->pro_id == $sacredObject->pro_id) { ?>
-                                <option value="<?= $province->pro_id ?>" selected><?= $province->pro_name_th ?></option>
-                            <?php } else { ?>
-                                <option value="<?= $province->pro_id ?>"><?= $province->pro_name_th ?></option>
-                            <?php } ?>
+                        <?php foreach ($listRegion as $index => $region) { ?>
+                        <optgroup label=" ภูมิภาค <?= $region->reg_name ?>" style="font-weight: bold;">
+                                <?php
+                                $listProvince = Province::model()->findAll(array(
+                                    'condition' => 'reg_id = ' . $region->reg_id,
+                                    'order' => 'pro_name_th'
+                                ));
+                                ?>
+                                <?php foreach ($listProvince as $index => $province) { ?>
+                                    <?php if ($province->pro_id == $sacredObject->pro_id) { ?>
+                                        <option value="<?= $province->pro_id ?>" selected><?= $province->pro_name_th ?></option>
+                                    <?php } else { ?>
+                                        <option value="<?= $province->pro_id ?>"><?= $province->pro_name_th ?></option>
+                                    <?php } ?>
+                                <?php } ?>
+                            </optgroup>
                         <?php } ?>
                     </select>
                     <span class="label label-warning">กรุณาเลือกจังหวัดที่เริ่มจัดสร้าง</span>

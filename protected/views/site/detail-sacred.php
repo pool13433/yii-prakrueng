@@ -5,10 +5,13 @@ $baseUrl = Yii::app()->baseUrl;
 <section id="main-content" style="margin-left: 0px;">
     <section class="site-min-height">
         <div class="row">
-
-            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
+            <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">                
                 <div class="row">
                     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                        <ol class="breadcrumb panel" style="font-size: 1.5em;">
+                            <li><a href="<?= Yii::app()->createUrl('site/index') ?>"><i class="glyphicon glyphicon-arrow-left"></i> กลับหน้าหลัก</a></li>
+                            <li class="active"><i class="glyphicon glyphicon-list-alt"></i> รายละเอียดพระเครื่อง</li>
+                        </ol>
                         <!-- Nav tabs -->
                         <ul class="nav nav-tabs" role="tablist" id="myTabs">
                             <li role="presentation" class="active">
@@ -70,7 +73,7 @@ $baseUrl = Yii::app()->baseUrl;
                                                     $btnLikeValue = $objectAction->act_like;
                                                 }
                                                 ?>
-                                                <div class="fb-like btn" data-href="<?=Yii::app()->request->url?>" data-layout="button_count" data-action="like" data-show-faces="true" data-share="true"></div>
+                                                <div class="fb-like btn" data-href="<?= Yii::app()->request->url ?>" data-layout="button_count" data-action="like" data-show-faces="true" data-share="true"></div>
                                                 <button id="btnFavorite" type="button" title="<?= $btnFavoriteTitle ?>"
                                                         class="btn <?= $btnFavoriteClass ?>" name="<?= $btnFavoriteValue ?>">
                                                     <i class="fa fa-heart"></i> 
@@ -96,8 +99,8 @@ $baseUrl = Yii::app()->baseUrl;
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="col-lg-5 col-md-5 col-12 col-xs-12">
-                                            <div id="albumImage">
+                                        <div class="col-lg-5 col-md-5 col-12 col-xs-12">                                            
+                                            <div class="row" id="albumImage">
                                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6">
                                                     <a href="#" class="thumbnail" data-image="<?= $baseUrl . '/images/' . $sacredObject->obj_img ?>" data-zoom-image="<?= $baseUrl . '/images/' . $sacredObject->obj_img ?>"> 
                                                         <img id="img_zoom" class="img-rounded" src="<?= $baseUrl . '/images/' . $sacredObject->obj_img ?>"/> 
@@ -110,6 +113,14 @@ $baseUrl = Yii::app()->baseUrl;
                                                         </a>
                                                     </div>
                                                 <?php } ?>
+                                            </div>
+                                            <div role="alert" class="alert alert-warning alert-dismissible fade in" style="font-size: 1.1em;">
+                                                <button aria-label="Close" data-dismiss="alert" class="close" type="button">
+                                                    <span aria-hidden="true">×</span></button> 
+                                                <strong>แนะนำในการดูรายละเอียดภาพพระเครื่อง</strong> 
+                                                ใช้สกอร์เมาส์ (ที่อยู่ตรงกลางเมาส์)
+                                                <br/>- เลื่อนขึ้นด้านบน ขยายเลนส์กล้อง จะดูรายละเอียดได้ดียิ่งขึ้น
+                                                <br/>- เลื่อนขึ้นด้านล่าง ย่อเลนส์กล่้องเข้า ความละเอียดจะน้อนลง
                                             </div>
                                         </div>
                                     </div>
@@ -339,7 +350,7 @@ $baseUrl = Yii::app()->baseUrl;
         handleElevateZoomer();
         initMemberObjectAction();
     });
-
+    
     function initMemberObjectAction() {
         //actionLikeComment();
         actionLikeSacred();
@@ -347,7 +358,7 @@ $baseUrl = Yii::app()->baseUrl;
         //renderDefaultMemberAction();
         //renderQuestionAction();
     }
-
+    
     function submitPostComment(objectId) {
         var messagePost = $('#messagePost').val();
         if (messagePost != '') {
@@ -367,7 +378,7 @@ $baseUrl = Yii::app()->baseUrl;
             alert('กรุณากรอกข้อความแสดงความคิดเห็นก่อน');
         }
     }
-
+    
     function cloneComment(comment) {
         var boxComment = htmlBoxComment() //$('#boxComments').children(':first-child').clone();
         $(boxComment).find('h1').text(comment.ques_message);
@@ -387,7 +398,7 @@ $baseUrl = Yii::app()->baseUrl;
         }
         $('#messagePost').val('');
     }
-
+    
     function htmlBoxComment() {
         var boxComment = '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">';
         boxComment += '<div class="page-header">';
@@ -401,13 +412,13 @@ $baseUrl = Yii::app()->baseUrl;
         boxComment += '</div>';
         return $.parseHTML(boxComment);
     }
-
+    
     function removeElevateZoom() {
         $('.zoomContainer').remove();
         imageElement.removeData('elevateZoom');
         imageElement.removeData('zoomImage');
     }
-
+    
     function handleElevateZoomer() {
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             if (e.currentTarget.hash == '#home') {
@@ -420,7 +431,7 @@ $baseUrl = Yii::app()->baseUrl;
             removeElevateZoom();
         });
     }
-
+    
     function customElevateZoom() {
         //initiate the plugin and pass the id of the div containing gallery images 
         imageElement.elevateZoom({
@@ -441,15 +452,15 @@ $baseUrl = Yii::app()->baseUrl;
             return false;
         });
     }
-
+    
     function updatePageViewer() {
         $.get('<?= Yii::app()->createUrl('helper/UpdateSacredObjectView/' . $sacredObject->obj_id) ?>', {},
                 function (response) {
                     console.log(' status ::==' + response.status);
                 }, 'json');
     }
-
-
+    
+    
     function actionLikeComment(elementButton) {
         var element = elementButton;
         var id = $(elementButton).prop('id');
@@ -476,7 +487,7 @@ $baseUrl = Yii::app()->baseUrl;
             }
         }, 'json');
     }
-
+    
     function actionLikeSacred() {
         $('#btnLike').on('click', function () {
             var element = this;
@@ -504,7 +515,7 @@ $baseUrl = Yii::app()->baseUrl;
                     }, 'json');
         });
     }
-
+    
     function actionFavoriteSacred() {
         $('#btnFavorite').on('click', function () {
             var element = this;
@@ -531,7 +542,7 @@ $baseUrl = Yii::app()->baseUrl;
                     }, 'json');
         });
     }
-
+    
     /*
      * ************************ Facebook Button share ************************ 
      */
@@ -547,5 +558,5 @@ $baseUrl = Yii::app()->baseUrl;
     /*
      * ************************ Facebook Button share ************************ 
      */
-
+    
 </script>
