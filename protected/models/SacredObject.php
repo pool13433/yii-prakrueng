@@ -23,6 +23,7 @@ class SacredObject extends CActiveRecord {
 
     public $count_img;
     public $obj_status_desc;
+    public $obj_update_original;
 
     /**
      * @return string the associated database table name
@@ -38,7 +39,7 @@ class SacredObject extends CActiveRecord {
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('obj_name, obj_price, obj_born, obj_comment, type_id, pro_id, obj_updatedate', 'required'),
+            array('obj_name, obj_price, obj_born, obj_comment, type_id, pro_id', 'required'),
             array('obj_price, obj_like,obj_view,mem_id, type_id, pro_id', 'numerical', 'integerOnly' => true),
             array('obj_name, obj_img', 'length', 'max' => 255),
             array('obj_born', 'length', 'max' => 4),
@@ -128,20 +129,26 @@ class SacredObject extends CActiveRecord {
     }
 
     protected function afterFind() {
+        $this->obj_update_original = $this->obj_updatedate;
         // convert to display format
-        $this->obj_updatedate = strtotime($this->obj_updatedate);
-        $this->obj_updatedate = date('m/d/Y', $this->obj_updatedate);
+        $this->obj_updatedate = strtotime($this->obj_updatedate);        
+        $this->obj_updatedate = date('d/m/Y', $this->obj_updatedate);
         $this->obj_born = (intval($this->obj_born) + 543);
         $this->obj_price = Yii::app()->format->formatNumber($this->obj_price);
-        $this->obj_status_desc = ($this->obj_status == 1 ? 'เผยแพร่' : 'ส่วนตัว');
+        $this->obj_status_desc = ($this->obj_status == 1 ? 'เผยแพร่' : 'ปิดการขาย');
         parent::afterFind();
     }
 
     public function beforeSave() {
-        $this->obj_updatedate = new CDbExpression('NOW()');
-        $this->obj_price = Yii::app()->format->unformatNumber($this->obj_price);
-        $this->obj_born = (intval($this->obj_born) - 543);
-        return parent::beforeSave();
+        if (parent::beforeSave()) {
+            if ($this->obj_updatedate !== null) {
+                $this->obj_updatedate = $this->obj_update_original;
+            }
+            $this->obj_price = Yii::app()->format->unformatNumber($this->obj_price);
+            $this->obj_born = (intval($this->obj_born) - 543);
+            return true;
+        }
+        return false;
     }
 
 }

@@ -2,12 +2,12 @@
 <form  id="form-register" class="form-horizontal style-form form-lg">
     <div class="panel panel-warning">
         <div class="panel-heading">
-            <h4><i class="fa fa-angle-right"></i> <?= (empty($form_title) ? 'ลงทะเบียนเพื่อเข้าร่วมเป็นสมาชิกของเรา' : $form_title) ?></h4>
+            <h3><i class="fa fa-angle-right"></i> <?= (empty($form_title) ? 'ลงทะเบียนเพื่อเข้าร่วมเป็นสมาชิกของเรา' : $form_title) ?></h3>
         </div>
         <div class="panel-body">
             <div class="row mt">
                 <div class="col-lg-12">
-                    <?php if (empty($profile->facebook_id)) { ?>
+                    <?php if (empty($profile->facebook_id) && empty(Yii::app()->session['member'])) { ?>
                         <div class="form-group">
                             <label for="username" class="col-sm-2 col-sm-2 control-label">username<small> *</small></label>
                             <div class="col-sm-4">
@@ -47,9 +47,9 @@
                                 <?php $genders = Member::gender() ?>
                                 <?php foreach ($genders as $key => $gender) { ?>
                                     <?php if ($member->mem_sex == $key) { ?>
-                                        <option value="<?=$key?>" selected><?=$gender?></option>
+                                        <option value="<?= $key ?>" selected><?= $gender ?></option>
                                     <?php } else { ?>
-                                        <option value="<?=$key?>"><?=$gender?></option>
+                                        <option value="<?= $key ?>"><?= $gender ?></option>
                                     <?php } ?>
                                 <?php } ?>                                                                
                             </select>

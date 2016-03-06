@@ -4,67 +4,120 @@ $baseUrl = Yii::app()->baseUrl;
 <!-- Content Begin-->
 
 <div class="row">
-    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">                 
+    <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">       
+
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 panel">
                 <div class="row">
-                    <h3 class="pull-left"><i class="fa fa-angle-right"></i> <?= $title ?></h3>
-                    <div class="pull-right">
-                        <?php
-                        $this->renderPartial('/site/pagination_index', array(
-                            'pagination' => $pagination
-                        ))
-                        ?>
+                    <h3 class="col-lg-5 col-md-2 col-sm-12 col-xs-12" style="font-size: 1.6em;">
+                        <i class="fa fa-angle-right"></i> <?= $title ?>
+                    </h3>
+
+                    <div class="col-lg-6 col-md-9 col-sm-9 col-xs-6">
+                        <div class="row pull-right">
+                            <?php
+                            $this->renderPartial('/site/pagination_index', array(
+                                'pagination' => $pagination
+                            ))
+                            ?>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-1 col-md-1 col-sm-3 pagination col-xs-6">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                จัดเรียง
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" id="boxColumnSort">
+                                <?php foreach ($sortDatas as $key => $sort) { ?>
+                                    <li>
+                                        <a title="<?= $sort['field'] ?>" 
+                                           href="<?= Yii::app()->createUrl('site/index', array('field' => $sort['field'], 'by' => $sort['by'])) ?>">
+                                               <?= $sort['label'] ?>
+                                        </a>
+                                    </li>
+                                <?php } ?>
+                            </ul>
+                        </div>
                     </div>
                 </div>
-                <!-- -- 1st ROW OF PANELS ---->
-                <div id="boxPraKreung" class="row">
-                    <?php if (count($listSacredObject) == 0) { ?>
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 mb">        
-                            <div role="alert" class="alert alert-warning alert-dismissible fade in"> 
-                                <button aria-label="Close" data-dismiss="alert" class="close" type="button">
-                                    <span aria-hidden="true">×</span></button> 
-                                <strong>ไม่พบข้อมูล</strong> ผลการค้นหาไม่พบข้อมูลจากเงื่อนไขการค้นหา
-                            </div>
-                        </div>
-                    <?php } else { ?>
-                        <?php foreach ($listSacredObject as $index => $object) { ?>
-                            <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 mb">        
-                                <div class="panel panel-warning">
-                                    <div class="panel-heading clearfix">
-                                        <h4 class="panel-title" style="padding-top: 7.5px;"> <b><i class="fa fa-circle-o"></i> <?= $object->obj_name ?></h4>
-                                        <h4 class="panel-title fa fa-money" style="padding-top: 7.5px;"> <?= $object->obj_price ?> บาท</h4>                                        
-                                    </div>
-                                    <div class="panel-body">
-                                        <div class="thumbnail">
-                                            <a class="fancybox" href="<?= $baseUrl . '/images/' . $object->obj_img ?>">                                       
-                                                <img class="img-responsive" src="<?= $baseUrl . '/images/' . $object->obj_img ?>"
-                                                     style="max-width: 75%;min-height: 200px;max-height: 200px;" alt="">
-                                            </a>                                                                   
-                                        </div>
-                                        <h4 class="pull-left"> 
-                                            <i class="fa fa-map-marker"></i> <?= $object->province->pro_name_th ?>
-                                        </h4>
-                                        <p class="pull-right">
-                                            <a href="<?= Yii::app()->createUrl('site/detail/' . $object->obj_id) ?>" class="btn btn-warning">
-                                                <i class="fa fa-flag"></i> เพิ่มเติม...
-                                            </a>
-                                        </p>
-                                    </div>
+            </div>
+
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 panel" id="container-scrollbar"> <!-- class="scrollbar-color" id="container-scrollbar"-->
+                <div class="row">
+                    <h3 class="pull-right col-lg-12" style="font-size: 1.6em;">
+                        [ แสดง <?= $display_length ?> ชิ้น ต่อ 1 หน้า จากข้อมูลทั้งหมด <?= $total_length ?> ชิ้น ]
+                    </h3>
+                </div>
+                <div class="row">
+                    <div id="boxPraKreung">
+                        <?php if (count($listSacredObject) == 0) { ?>
+                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 mb">        
+                                <div role="alert" class="alert alert-warning alert-dismissible fade in"> 
+                                    <button aria-label="Close" data-dismiss="alert" class="close" type="button">
+                                        <span aria-hidden="true">×</span></button> 
+                                    <strong>ไม่พบข้อมูล</strong> ผลการค้นหาไม่พบข้อมูลจากเงื่อนไขการค้นหา
                                 </div>
                             </div>
+                        <?php } else { ?>
+                            <?php foreach ($listSacredObject as $index => $object) { ?>
+                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 mb">        
+                                    <div class="panel panel-warning box-card">
+                                        <div class="panel-body">
+                                            <div class="thumbnail">
+                                                <a class="fancybox" href="<?= $baseUrl . '/images' . $object->obj_img ?>">                                       
+                                                    <img class="lazy img-responsive" alt="Responsive image"
+                                                         data-original="<?= $baseUrl . '/images' . $object->obj_img ?>"
+                                                         src="<?= $baseUrl . '/images' . $object->obj_img ?>"
+                                                         style="max-width: 75%;min-height: 200px;max-height: 200px;">
+                                                    <noscript>
+                                                    <img src="<?= $baseUrl . '/images' . $object->obj_img ?>" width="640" heigh="480">
+                                                    </noscript>
+                                                </a>                                                                   
+                                            </div>
+                                            <div class="col-lg-12">
+                                                <strong class="title" style="font-size: 1.1em">
+                                                    <p><?= $object->obj_name; ?></p>
+                                                </strong>
+                                            </div>
+                                            <div class="col-lg-12">
+                                                <p class="pull-left" style="padding-top: 7.5px;"> 
+                                                    <i class="fa fa-money"></i> <?= $object->obj_price ?> บาท
+                                                </p>   
+                                                <p class="pull-right" style="padding-top: 7.5px;"> 
+                                                    <i class="fa fa-clock-o"></i> <?= $object->obj_updatedate ?>
+                                                </p>   
+                                            </div>
+                                        </div>
+                                        <div class="panel-footer">
+                                            <a href="<?= Yii::app()->createUrl('site/detail/' . $object->obj_id) ?>" 
+                                               class="btn btn-warning btn-sm btn-block" style="font-size: 1.5em;font-weight: bold">
+                                                <i class="fa fa-share-square-o"></i> รายละเอียด...
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            <?php } ?>
                         <?php } ?>
-                    <?php } ?>
-                </div><!-- /END 6TH ROW OF PANELS -->
-                <div class="row">
-                    <div class="pull-right">
-                        <?php
-                        $this->renderPartial('/site/pagination_index', array(
-                            'pagination' => $pagination
-                        ))
-                        ?>
                     </div>
                 </div>
+                <div class="row">
+                    <h3 class="pull-right col-lg-12" style="font-size: 1.6em;">
+                        [ แสดง <?= $display_length ?> ชิ้น ต่อ 1 หน้า จากข้อมูลทั้งหมด <?= $total_length ?> ชิ้น ]
+                    </h3>
+                </div>
+            </div>
+            <!-- -- 1st ROW OF PANELS ---->
+
+        </div>
+        <div class="row">
+            <div class="pull-right">
+                <?php
+                $this->renderPartial('/site/pagination_index', array(
+                    'pagination' => $pagination
+                ))
+                ?>
             </div>
         </div>
         <div class="row">
@@ -92,9 +145,8 @@ $baseUrl = Yii::app()->baseUrl;
                     </a>
                 </div> 
             </div>
-        </div>
-    </div>    
-
+        </div> 
+    </div>
     <!-- Sidebar Right Begin-->
     <div class="col-lg-3 col-md-3 col-sm-12 col-xs-12">
         <?php
@@ -108,6 +160,25 @@ $baseUrl = Yii::app()->baseUrl;
         <!-- Sidebar Right End -->
 
     </div>
-
 </div>
 <!-- Co ntent End --> 
+<script type="text/javascript">
+    $(document).ready(function () {
+        var panelCards = $('.box-card');
+        $.each(panelCards, function (index, card) {
+            var name = $.trim($(card).find('strong.title').text());
+            var price = $(card).find('p.pull-left').text();
+            var date = $(card).find('p.pull-right').text();
+            /*console.log('------------------------------------------');
+             console.log(' name ::==' + name);
+             console.log('name.length ::==' + name.length)
+             console.log('------------------------------------------');*/
+            if (name.length <= 28) {
+                $(card).find('panel-body').find('.col-lg-12').eq(0).append('<br/>');
+                var targetObj = $(card).find('div.panel-body').find('strong').find('p');
+                $('<br/>').insertBefore(targetObj);
+            }
+            $(card).find('strong.title').css({'font-size': '1.5em'});
+        });
+    });
+</script>

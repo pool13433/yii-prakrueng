@@ -1,3 +1,6 @@
+<?php
+$baseUrl = Yii::app()->baseUrl;
+?>
 <div class="row">
     <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
 
@@ -5,10 +8,11 @@
             <div class="panel-heading">
                 <h4><i class="fa fa-sitemap"></i> ข้อมูลพระเครื่องของคุณที่ทำการได้ปล่อยเช่า</h4>
             </div>
-            <div class="panel-body">
-                <table class="table table-bordered table-condensed">
+            <div class="panel-body" style="overflow: scroll;">
+                <table class="table table-bordered table-responsive">
                     <thead>
                         <tr>
+                            <th>รูป</th>
                             <th>ลำดับ</th>
                             <th>ชื่อ</th>
                             <th>ราคา</th>
@@ -21,6 +25,17 @@
                     <tbody>
                         <?php foreach ($listSacredObject as $index => $object) { ?>
                             <tr>
+                                <td>
+                                    <a class="fancybox" href="<?= $baseUrl . '/images' . $object->obj_img ?>">                                       
+                                        <img class="lazy img-responsive" alt="Responsive image"
+                                             data-original="<?= $baseUrl . '/images' . $object->obj_img ?>"
+                                             src="<?= $baseUrl . '/images' . $object->obj_img ?>"
+                                             style="max-width: 75%;min-height: 100px;max-height: 100px;">
+                                        <noscript>
+                                        <img src="<?= $baseUrl . '/images' . $object->obj_img ?>" width="640" heigh="480">
+                                        </noscript>
+                                    </a>         
+                                </td>
                                 <td><?= ($index + 1) ?></td>
                                 <td>
                                     <a href="<?= Yii::app()->createUrl('site/detail/' . $object->obj_id) ?>"><?= $object->obj_name ?></a>

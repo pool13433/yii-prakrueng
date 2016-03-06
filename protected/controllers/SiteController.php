@@ -10,6 +10,8 @@ class SiteController extends Controller {
     public $memberStatusDefault;
     public $memberLevelDefault;
     public $regionDefault = 3;
+    public $displayDefault = 100;
+
     //memberLevelDefault
 
     public function init() {
@@ -38,12 +40,12 @@ class SiteController extends Controller {
         $criteria = new CDbCriteria();
         $criteria->select = 'r.reg_id,r.reg_name,(SELECT COUNT(*) FROM province p WHERE p.reg_id = r.reg_id) cnt';
         $criteria->alias = 'r';
-        
+
         // east region
         //$criteria->compare('r.reg_id', $this->regionDefault);
         //$region = Region::model()->find($criteria);        
         $listRegion = Region::model()->findAll($criteria);
-        
+
         $this->data = array(
             'listSacredObjectLastInsert' => $listSacredObjectLastInsert,
             'listSacredType' => $listSacredType,
@@ -63,8 +65,26 @@ class SiteController extends Controller {
         $this->memberLevelDefault = WebConfig::getValueByKey('default_level');
         $this->memberStatusDefault = WebConfig::getValueByKey('default_object_public');
         $this->publicStatus = WebConfig::getValueByKey('default_status');
+        $this->displayDefault = WebConfig::getValueByKey('display_length');
         /*
          * Load Config
+         */
+
+        /*
+         * Fixed Bug Facebook API
+         */
+        $baseDomain = Yii::app()->getBaseUrl(true);
+        $baseUrl = Yii::app()->request->url;
+        if (intval(strpos($baseDomain, 'sudyodprakruang'))) {
+            if (intval(strpos($baseUrl, 'upload'))) {
+                if (!intval(strpos($baseDomain, 'www'))) {
+                    header("Location: http://www.sudyodprakruang.com/site/upload");
+                    exit();
+                }
+            }
+        }
+        /*
+         * Fixed Bug Facebook API
          */
     }
 
@@ -75,11 +95,11 @@ class SiteController extends Controller {
         } else {
             $this->member = Member::model()->findByAttributes(array(
                 'mem_username' => $_POST['username'],
-                'mem_password' => $_POST['password'],
+                'mem_password' => md5($_POST['password']),
             ));
             if (empty($this->member)) {
                 Yii::app()->session['message'] = 'ไม่พบข้อมูลของท่านในระบบ';
-//$this->redirect(array('site/login'));
+                //$this->redirect(array('site/login'));
                 echo CJSON::encode(array(
                     'status' => false,
                     'message' => 'ไม่พบข้อมูลของท่านในระบบ',
@@ -117,7 +137,9 @@ class SiteController extends Controller {
             }
             $this->member->mem_email = $_POST['email'];
             $this->member->mem_username = $_POST['username'];
-            $this->member->mem_password = $_POST['password'];
+
+            $this->member->mem_password = md5($_POST['password']);
+
             $this->member->mem_img = '';
             $this->member->mem_level = $this->memberLevelDefault;
             $this->member->mem_phone = $_POST['phone'];
@@ -151,7 +173,7 @@ class SiteController extends Controller {
     public function actionIndex() {
 
         $where_condition = ' obj_status = ' . $this->publicStatus . ' ';
-        $pagin_page_size = 15;
+        $pagin_page_size = $this->displayDefault;
         $pagin_page_current = (empty($_GET['page']) ? '1' : $_GET['page']);
         $mem_id = (empty($_GET['user']) ? '' : $_GET['user']);
 
@@ -207,7 +229,12 @@ class SiteController extends Controller {
                 $where_condition .= ' AND o.pro_id in (' . $arrayString . ') ';
             }
         }
-        $criteria->order = 'o.obj_updatedate desc';
+        if (!empty($_GET['field']) && !empty($_GET['by'])) {
+            $criteria->order = 'o.obj_' . trim($_GET['field']) . ' ' . trim($_GET['by']);
+        } else {
+            $criteria->order = 'o.obj_updatedate,obj_id desc';
+        }
+
 
         $criteria->limit = $pagin_page_size;
         $criteria->offset = ($pagin_page_current - 1) * $pagin_page_size;
@@ -215,7 +242,7 @@ class SiteController extends Controller {
 //exit();
         $listSacredObject = SacredObject::model()->findAll($criteria);
         $this->data['listSacredObject'] = $listSacredObject;
-        $this->data['title'] = $title;
+
 
         /*
          * pagination logic 
@@ -251,6 +278,20 @@ class SiteController extends Controller {
         $pagin_url_begin = ($pagin_page_count > 0 ? Yii::app()->createUrl('site/index', $paramsBegin) : 'javascript:void(0)');
         $pagin_url_end = ($pagin_page_count > 0 ? Yii::app()->createUrl('site/index', $paramsEnd) : 'javascript:void(0)');
 
+        /*
+         * DateSorting
+         */
+        $sortDatas = PrakruangUtility::getSortData();
+        $this->data['sortDatas'] = $sortDatas;
+
+        $this->data['total_length'] = $count_object;
+        $this->data['title'] = $title;
+        $this->data['display_length'] = $this->displayDefault;
+        /*
+         * DateSorting
+         */
+
+
         $this->data['pagination'] = array(
             'page_size' => $pagin_page_size,
             'page_count' => $pagin_page_count,
@@ -259,7 +300,7 @@ class SiteController extends Controller {
             'page_type_id' => $typeId,
             'page_user_id' => $mem_id,
             'page_url_begin' => $pagin_url_begin,
-            'page_url_end' => $pagin_url_end
+            'page_url_end' => $pagin_url_end,
         );
         /*
          * pagiation logic
@@ -314,6 +355,9 @@ class SiteController extends Controller {
             'obj_id' => $id,
             'mem_id' => $this->member->mem_id,
         ));
+        if (empty($memberObjectAction)) {
+            $memberObjectAction = new MemberObjectAction();
+        }
         $this->data['objectAction'] = $memberObjectAction;
 
 
@@ -356,14 +400,14 @@ class SiteController extends Controller {
         } else {
 
             if (empty($_POST)) {
-                $listSacredType = SacredType::model()->findAll(array(                    
+                $listSacredType = SacredType::model()->findAll(array(
                     'order' => 'type_name'
                 ));
                 $listRegion = Region::model()->findAll();
-                /*$listProvince = Province::model()->findAll(array(                    
-                    //'condition' => 'reg_id = '.$this->regionDefault,
-                    'order' => 'pro_name_th'
-                ));*/
+                /* $listProvince = Province::model()->findAll(array(                    
+                  //'condition' => 'reg_id = '.$this->regionDefault,
+                  'order' => 'pro_name_th'
+                  )); */
                 if (empty($id)) {
                     $sacredObject = new SacredObject();
                 } else {
@@ -500,14 +544,14 @@ class SiteController extends Controller {
                 ));
                 if (!$member) {
                     $member = new Member();
+                    $member->mem_status = $this->memberStatusDefault;
+                    $member->mem_level = $this->memberLevelDefault;
+                    $member->mem_updatedate = new CDbExpression('NOW()');
+                    $member->mem_fname = $facebook_fname;
+                    $member->mem_lname = $facebook_lname;
+                    $member->mem_sex = $facebook_gender;
                 }
                 $member->facebook_id = $facebookId;
-                $member->mem_fname = $facebook_fname;
-                $member->mem_lname = $facebook_lname;
-                $member->mem_sex = $facebook_gender;
-                $member->mem_status = $this->memberStatusDefault;
-                $member->mem_level = $this->memberLevelDefault;
-                $member->mem_updatedate = new CDbExpression('NOW()');
                 if ($member->save(false)) {
                     if (empty($member->mem_phone) && empty($member->mem_username) && empty($member->mem_password)) {
                         $urlRedirect = Yii::app()->createUrl('site/userprofile');
@@ -565,6 +609,14 @@ class SiteController extends Controller {
         $this->render('list-favorite', $this->data);
     }
 
+    public function actionPasswordChange() {
+        $member = Yii::app()->session['member'];
+        $member->mem_password = '';
+        $this->render('password', array(
+            'member' => $member,
+        ));
+    }
+
     public function actionUserProfile() {
         $member = Yii::app()->session['member'];
         if (empty($_POST)) {
@@ -578,10 +630,10 @@ class SiteController extends Controller {
         } else {
             $member->mem_fname = $_POST['fname'];
             $member->mem_lname = $_POST['lname'];
-            if (empty($this->member->facebook_id)) {
-                $member->mem_username = $_POST['username'];
-                $member->mem_password = $_POST['password'];
-            }
+//            if (empty($this->member->facebook_id)) {
+//                $member->mem_username = $_POST['username'];
+//                $member->mem_password = md5($_POST['password']);
+//            }
             $member->mem_sex = $_POST['sex'];
             $member->mem_phone = $_POST['phone'];
             $member->mem_email = $_POST['email'];

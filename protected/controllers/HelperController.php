@@ -74,8 +74,8 @@ class HelperController extends Controller {
                 }
                 $status = $memberObjectAction->save(false);
 
-                $sacredObject->obj_updatedate = new CDbExpression('NOW()');
-                $status = $sacredObject->save(false);
+                //$sacredObject->obj_updatedate = new CDbExpression('NOW()');
+                $status = $sacredObject->update();
 
                 echo CJSON::encode(array(
                     'status' => $status,
@@ -213,7 +213,7 @@ class HelperController extends Controller {
 //            ));            
             $object = SacredObject::model()->findByPk($id);
             $object->obj_status = $status;
-            $object->obj_updatedate = new CDbExpression('NOW()');
+            //$object->obj_updatedate = new CDbExpression('NOW()');
             echo CJSON::encode(array(
                 'status' => $object->update(),
                 'message' => '',
@@ -333,12 +333,17 @@ class HelperController extends Controller {
     }
 
     public function actionLoginFB() {
-        $member = new Member();
-        $member->mem_email = '*';
-        $member->facebook_id = $_POST['facebook_id'];
-        $member->mem_updatedate = new CDbExpression('NOW()');
-        $member->mem_level = 1;
-        $member->mem_status = 1;
+        $member = Member::model()->findByAttributes(array(
+            'facebook_id' => $_POST['facebook_id']
+        ));
+        if (empty($member)) {
+            $member = new Member();
+            $member->mem_level = 1;
+            $member->mem_status = 1;
+            $member->mem_email = '*';
+            $member->facebook_id = $_POST['facebook_id'];
+            $member->mem_updatedate = new CDbExpression('NOW()');
+        }
         $member->mem_username = '*';
         $status = false;
         if ($member->save(false)) {
@@ -366,6 +371,43 @@ class HelperController extends Controller {
                 'status' => $status
             ));
         }
+    }
+
+    public function actionCheckPasswordOld() {
+        $isPassword = false;
+        $username = $_POST['username'];
+        $passwordOld = $_POST['password'];
+        if (!empty($_POST)) {
+            $member = Member::model()->findByAttributes(array(
+                'mem_username' => $username,
+                'mem_password' => md5($passwordOld)
+            ));
+            if ($member) {
+                $isPassword = true;
+            }
+            echo CJSON::encode(array(
+                'status' => $isPassword,
+                'url' => Yii::app()->createUrl('Site/Index'),
+            ));
+        }
+    }
+
+    public function actionSaveChanePasswordNew() {
+        $isChane = false;
+        $member = Yii::app()->session['member'];
+        if (!empty($_POST)) {
+            $member->mem_username = $_POST['username'];
+            $member->mem_password = md5($_POST['confirmPasswordNew']);
+            echo CJSON::encode(array(
+                'status' => $member->update(),
+                'message' => 'เปลี่ยนรหัสผ่านสำเร็จ',
+                'url' => Yii::app()->createUrl('site/index')
+            ));
+        }
+    }
+
+    public function actionCheckPasswordNew() {
+        
     }
 
 }

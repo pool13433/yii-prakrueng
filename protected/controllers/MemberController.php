@@ -25,6 +25,8 @@ class MemberController extends Controller {
     }
 
     public function actionIndex($id = null) {
+
+
         $member = new Member();
         if (!empty($id)) {
             $member = Member::model()->findByPk($id);
@@ -109,4 +111,5 @@ class MemberController extends Controller {
             $this->redirect(array('member/indexLevel'));
         }
     }
+
 }

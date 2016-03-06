@@ -1,6 +1,15 @@
 var MaximumSizeOfFile = (1024 * 1024) * 2;
 
 $(document).ready(function () {
+    /*
+     * referrence http://www.appelsiini.net/projects/lazyload
+     */
+    $("img.lazy").show().lazyload({
+        event: "sporty",
+        threshold: 200,
+        effect: "fadeIn",
+        container: $("#container-scrollbar")
+    });
     customDatatable();
     customPace();
     //customElevateZoom();
@@ -12,6 +21,27 @@ $(document).ready(function () {
         'autoSize': false});
 
 });
+$(window).bind("load", function () {
+    var timeout = setTimeout(function () {
+        $("img.lazy").trigger("sporty")
+    }, 5000);
+});
+
+$(document).on('click', 'a[href!="#"]', function (e) {
+    Pace.restart();
+});
+
+$(document).ajaxStart(function () {
+    Pace.restart();
+});
+Pace.on("start", function () {
+    $("div.paceDiv").show();
+});
+
+Pace.on("done", function () {
+    $("div.paceDiv").hide();
+});
+
 
 
 $.extend(true, $.fn.dataTable.defaults, {

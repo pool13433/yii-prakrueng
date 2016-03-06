@@ -170,6 +170,18 @@
         </div>
     </div>
 </section>
+
+<section class="task-panel tasks-widget panel sidebar">
+    <div class="panel-heading">
+        <div class="pull-left"><h3><i class="fa fa-facebook-square"></i> ติดตาม Facebbok Fanpage</h3></div>
+        <br>
+    </div>
+    <div class="panel-body">
+        <div class="fb-page" data-href="https://www.facebook.com/sudyodprakruangcom-168585533519090/" data-tabs="timeline" data-width="300" data-height="600" data-small-header="true" data-adapt-container-width="true" data-hide-cover="true" data-show-facepile="true"></div>
+    </div>
+</section>
+<div id="fb-root"></div>
+
 <script type="text/javascript">
     var checkboxType = $('#boxPraKreungLastAdd input[type="checkbox"]');
     var checkboxRegion = $('#accordionRegion input[type=checkbox]');
@@ -299,4 +311,15 @@
             }
         });
     }
+
+    (function (d, s, id) {
+        var js, fjs = d.getElementsByTagName(s)[0];
+        if (d.getElementById(id))
+            return;
+        js = d.createElement(s);
+        js.id = id;
+        js.src = "//connect.facebook.net/th_TH/sdk.js#xfbml=1&version=v2.5&appId=375551315815765";
+        fjs.parentNode.insertBefore(js, fjs);
+    }(document, 'script', 'facebook-jssdk'));
+
 </script>

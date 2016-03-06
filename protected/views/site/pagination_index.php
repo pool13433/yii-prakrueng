@@ -1,4 +1,4 @@
-<nav>
+<nav style="font-size: 0.6em;font-weight: bold">
     <ul class="pagination">
 
         <li>

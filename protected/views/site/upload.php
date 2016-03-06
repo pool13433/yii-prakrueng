@@ -64,7 +64,7 @@ $baseUrl = Yii::app()->baseUrl;
                     <select class="form-control  input-lg" name="province" id="province" required>
                         <option value="" selected>-- กรุณาเลือก --</option>
                         <?php foreach ($listRegion as $index => $region) { ?>
-                        <optgroup label=" ภูมิภาค <?= $region->reg_name ?>" style="font-weight: bold;">
+                            <optgroup label=" ภูมิภาค <?= $region->reg_name ?>" style="font-weight: bold;">
                                 <?php
                                 $listProvince = Province::model()->findAll(array(
                                     'condition' => 'reg_id = ' . $region->reg_id,
@@ -154,7 +154,9 @@ $baseUrl = Yii::app()->baseUrl;
             </div>
         </div>
     </div>
+
 </form>
+
 <script type="text/javascript">
 
     // The camelized version of the ID of the form element
@@ -186,6 +188,7 @@ $baseUrl = Yii::app()->baseUrl;
                  * Jquery - validate form
                  */
                 $('#form-upload').submit();
+                Pace.restart();
             });
             // sending data
             myDropzone.on("sending", function (file, xhr, data) {
@@ -198,6 +201,11 @@ $baseUrl = Yii::app()->baseUrl;
                 data.append("comment", $('#comment').val());
                 data.append("id", $('#id').val());
                 data.append("fileMain", $("#fileMain")[0].files[0]);
+
+            });
+
+            myDropzone.on("totaluploadprogress", function (progress) {
+                document.querySelector("#total-progress .progress-bar").style.width = progress + "%";
             });
             // Refresh page when all images are uploaded
             myDropzone.on("complete", function (file) {
@@ -275,25 +283,27 @@ $baseUrl = Yii::app()->baseUrl;
                     myDropzone.processQueue();
                 } else {
                     console.log(' == ajax ==');
-                    $.ajax({
-                        url: '<?= Yii::app()->createUrl('site/upload') ?>',
-                        type: 'POST',
-                        data: new FormData($('#form-upload')[0]),
-                        dataType: 'json',
-                        async: false,
-                        cache: false,
-                        contentType: false,
-                        processData: false,
-                        success: function (response) {
-                            console.log(response);
-                            if (!response.status) {
-                                alert(response.message);
+                    Pace.track(function () {
+                        $.ajax({
+                            url: '<?= Yii::app()->createUrl('site/upload') ?>',
+                            type: 'POST',
+                            data: new FormData($('#form-upload')[0]),
+                            dataType: 'json',
+                            async: false,
+                            cache: false,
+                            contentType: false,
+                            processData: false,
+                            success: function (response) {
+                                console.log(response);
+                                if (!response.status) {
+                                    alert(response.message);
+                                }
+                                window.location.href = response.url;
+                            },
+                            error: function () {
+                                alert("error in ajax form submission");
                             }
-                            window.location.href = response.url;
-                        },
-                        error: function () {
-                            alert("error in ajax form submission");
-                        }
+                        });
                     });
                 }
 

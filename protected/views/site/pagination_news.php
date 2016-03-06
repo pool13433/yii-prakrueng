@@ -1,6 +1,5 @@
-<nav>
+<nav style="font-size: 0.6em;font-weight: bold">
     <ul class="pagination">
-
         <li>
             <a href="<?= $pagination['page_url_begin'] ?>" aria-label="Previous">
                 <span aria-hidden="true" class="glyphicon glyphicon-chevron-left"></span>

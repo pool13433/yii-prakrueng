@@ -56,21 +56,19 @@ $baseUrl = Yii::app()->baseUrl;
                                                 <?php
                                                 $btnFavoriteTitle = 'โปรดปราาน';
                                                 $btnFavoriteClass = '';
-                                                $btnFavoriteValue = 0;
+                                                $btnFavoriteValue = (empty($objectAction->act_favorite) ? 0 : $objectAction->act_favorite);
                                                 $btnLikeClass = '';
-                                                $btnLikeValue = 0;
+                                                $btnLikeValue = (empty($objectAction->act_like) ? 1 : $objectAction->act_like);
                                                 $btnLikeTitle = 'ชื่นชอบ';
                                                 if (!empty($objectAction)) {
                                                     if ($objectAction->act_favorite == 1) {
                                                         $btnFavoriteClass = 'btn-danger';
                                                         $btnFavoriteTitle = 'ไม่' . $btnFavoriteTitle;
                                                     }
-                                                    if ($objectAction->act_like == 0) {
+                                                    if ($objectAction->act_like == 1) {
                                                         $btnLikeClass = 'btn-primary';
                                                         $btnLikeTitle = 'ไม่' . $btnLikeTitle;
                                                     }
-                                                    $btnFavoriteValue = $objectAction->act_favorite;
-                                                    $btnLikeValue = $objectAction->act_like;
                                                 }
                                                 ?>
                                                 <div class="fb-like btn" data-href="<?= Yii::app()->request->url ?>" data-layout="button_count" data-action="like" data-show-faces="true" data-share="true"></div>
@@ -101,15 +99,19 @@ $baseUrl = Yii::app()->baseUrl;
                                         </div>
                                         <div class="col-lg-5 col-md-5 col-12 col-xs-12">                                            
                                             <div class="row" id="albumImage">
-                                                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6">
+                                                <div class="col-lg-4 col-md-3 col-sm-2 col-xs-4">
                                                     <a href="#" class="thumbnail" data-image="<?= $baseUrl . '/images/' . $sacredObject->obj_img ?>" data-zoom-image="<?= $baseUrl . '/images/' . $sacredObject->obj_img ?>"> 
-                                                        <img id="img_zoom" class="img-rounded" src="<?= $baseUrl . '/images/' . $sacredObject->obj_img ?>"/> 
+                                                        <img id="img_zoom" class="img-rounded lazy" 
+                                                             data-original="<?= $baseUrl . '/images/' . $sacredObject->obj_img ?>"
+                                                             src="<?= $baseUrl . '/images/' . $sacredObject->obj_img ?>"/> 
                                                     </a>
                                                 </div>
                                                 <?php foreach ($listSacredObjectImg as $index => $img) { ?>
-                                                    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6">
+                                                    <div class="col-lg-4 col-md-3 col-sm-2 col-xs-4">
                                                         <a href="#" class="thumbnail" data-image="<?= $baseUrl . '/images/' . $img->img_name ?>" data-zoom-image="<?= $baseUrl . '/images/' . $img->img_name ?>"> 
-                                                            <img id="img_zoom" class="img-rounded" src="<?= $baseUrl . '/images/' . $img->img_name ?>"/> 
+                                                            <img id="img_zoom" class="img-rounded lazy" 
+                                                                 data-original="<?= $baseUrl . '/images/' . $img->img_name ?>"
+                                                                 src="<?= $baseUrl . '/images/' . $img->img_name ?>"/> 
                                                         </a>
                                                     </div>
                                                 <?php } ?>
@@ -302,13 +304,15 @@ $baseUrl = Yii::app()->baseUrl;
                                                         <div class="panel panel-default">
                                                             <div class="panel-body">
                                                                 <a href="#" class="thumbnail">
-                                                                    <img src="<?= $baseUrl . '/images/' . $relate->obj_img ?>" alt="..." style="min-height: 200px;">
+                                                                    <img src="<?= $baseUrl . '/images/' . $relate->obj_img ?>" alt="..." 
+                                                                         style="max-width: 75%;min-height: 200px;max-height: 200px;">
                                                                 </a>
-                                                                <p class="pull-right">
-                                                                    <a href="<?= Yii::app()->createUrl('site/detail/' . $relate->obj_id) ?>" class="btn btn-warning">
-                                                                        <i class="fa fa-flag"></i> เพิ่มเติม...
-                                                                    </a>
-                                                                </p>
+                                                            </div>
+                                                            <div class="panel-footer">
+                                                                <a href="<?= Yii::app()->createUrl('site/detail/' . $relate->obj_id) ?>" class="btn btn-warning btn-block"
+                                                                   style="font-size: 1.1em;font-weight: bold">
+                                                                    <i class="fa fa-share-square-o"></i> รายละเอียด...
+                                                                </a>
                                                             </div>
                                                         </div>
                                                     </a>
@@ -350,7 +354,7 @@ $baseUrl = Yii::app()->baseUrl;
         handleElevateZoomer();
         initMemberObjectAction();
     });
-    
+
     function initMemberObjectAction() {
         //actionLikeComment();
         actionLikeSacred();
@@ -358,7 +362,7 @@ $baseUrl = Yii::app()->baseUrl;
         //renderDefaultMemberAction();
         //renderQuestionAction();
     }
-    
+
     function submitPostComment(objectId) {
         var messagePost = $('#messagePost').val();
         if (messagePost != '') {
@@ -378,7 +382,7 @@ $baseUrl = Yii::app()->baseUrl;
             alert('กรุณากรอกข้อความแสดงความคิดเห็นก่อน');
         }
     }
-    
+
     function cloneComment(comment) {
         var boxComment = htmlBoxComment() //$('#boxComments').children(':first-child').clone();
         $(boxComment).find('h1').text(comment.ques_message);
@@ -398,7 +402,7 @@ $baseUrl = Yii::app()->baseUrl;
         }
         $('#messagePost').val('');
     }
-    
+
     function htmlBoxComment() {
         var boxComment = '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">';
         boxComment += '<div class="page-header">';
@@ -412,13 +416,13 @@ $baseUrl = Yii::app()->baseUrl;
         boxComment += '</div>';
         return $.parseHTML(boxComment);
     }
-    
+
     function removeElevateZoom() {
         $('.zoomContainer').remove();
         imageElement.removeData('elevateZoom');
         imageElement.removeData('zoomImage');
     }
-    
+
     function handleElevateZoomer() {
         $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
             if (e.currentTarget.hash == '#home') {
@@ -431,7 +435,7 @@ $baseUrl = Yii::app()->baseUrl;
             removeElevateZoom();
         });
     }
-    
+
     function customElevateZoom() {
         //initiate the plugin and pass the id of the div containing gallery images 
         imageElement.elevateZoom({
@@ -452,15 +456,15 @@ $baseUrl = Yii::app()->baseUrl;
             return false;
         });
     }
-    
+
     function updatePageViewer() {
         $.get('<?= Yii::app()->createUrl('helper/UpdateSacredObjectView/' . $sacredObject->obj_id) ?>', {},
                 function (response) {
                     console.log(' status ::==' + response.status);
                 }, 'json');
     }
-    
-    
+
+
     function actionLikeComment(elementButton) {
         var element = elementButton;
         var id = $(elementButton).prop('id');
@@ -487,7 +491,7 @@ $baseUrl = Yii::app()->baseUrl;
             }
         }, 'json');
     }
-    
+
     function actionLikeSacred() {
         $('#btnLike').on('click', function () {
             var element = this;
@@ -515,7 +519,7 @@ $baseUrl = Yii::app()->baseUrl;
                     }, 'json');
         });
     }
-    
+
     function actionFavoriteSacred() {
         $('#btnFavorite').on('click', function () {
             var element = this;
@@ -542,7 +546,7 @@ $baseUrl = Yii::app()->baseUrl;
                     }, 'json');
         });
     }
-    
+
     /*
      * ************************ Facebook Button share ************************ 
      */
@@ -558,5 +562,5 @@ $baseUrl = Yii::app()->baseUrl;
     /*
      * ************************ Facebook Button share ************************ 
      */
-    
+
 </script>

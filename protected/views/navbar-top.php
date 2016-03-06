@@ -1,3 +1,4 @@
+
 <nav id="my-menu" class="navbar navbar-custom navbar-fixed-top" role="navigation">
     <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
@@ -30,11 +31,11 @@
 
             <?php if (empty(Yii::app()->session['member'])) { ?>
                 <li>
-                    <?php 
+                    <?php
                     /*
                      * Manage URL Domain
                      */
-                    $finalUrl = str_replace("//", "//www.",Yii::app()->getBaseUrl(true)).'/site/login';
+                    $finalUrl = str_replace("//", "//www.", Yii::app()->getBaseUrl(true)) . '/site/login';
                     $finalUrl = str_replace('www.www.', 'www.', $finalUrl);
                     ?>
                     <a href="<?= $finalUrl ?>">
@@ -48,7 +49,7 @@
                 <?php $member = Yii::app()->session['member'] ?>
 
                 <?php if ($member->mem_status == 0) { ?>
-                                                                                                                                                                                                                                                                                                                        <!--                    <li><a href="#">ข้อมูลพระเครื่อง <span class="sr-only">(current)</span></a></li>-->
+                                                                                                                                                                                                                                                                                                                                <!--                    <li><a href="#">ข้อมูลพระเครื่อง <span class="sr-only">(current)</span></a></li>-->
 
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">ข้อมูลพระเครื่อง <span class="caret"></span></a>
@@ -93,6 +94,13 @@
                                 <i class="fa fa-user"></i> แก้ไขข้อมูลส่วนตัว
                             </a>
                         </li>
+                        <?php if (empty($member->facebook_id)) { ?>
+                            <li>
+                                <a href="<?= Yii::app()->createUrl('site/passwordChange') ?>">
+                                    <i class="fa fa-lock"></i> แก้ไขข้อมูลรหัสผ่าน
+                                </a>
+                            </li>
+                        <?php } ?>
                         <li role="separator" class="divider"></li>
                         <li><a href="javascript:void(0)" id="handleLogout">
                                 <i class="fa fa-sign-out"></i> ออกจากระบบ</a>

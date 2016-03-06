@@ -50,7 +50,8 @@ $baseUrl = Yii::app()->baseUrl;
     </head>
 
     <body>
-        <div class="container">
+        <div class="paceDiv"></div>
+        <div class="container-fluid">
 
             <?php $this->renderPartial('/navbar-top') ?>
             <div class="wrapper">
@@ -63,7 +64,6 @@ $baseUrl = Yii::app()->baseUrl;
 
         <?php
         $cs = Yii::app()->getClientScript();
-        $cs->registerScriptFile($baseUrl . '/js/jquery.js');
         $cs->registerScriptFile($baseUrl . '/js/jquery-1.8.3.min.js');
         $cs->registerScriptFile($baseUrl . '/js/bootstrap.min.js');
 
@@ -89,6 +89,8 @@ $baseUrl = Yii::app()->baseUrl;
         $cs->registerScriptFile($baseUrl . '/js/validate/jquery.validate.min.js');
         
         $cs->registerScriptFile($baseUrl . '/js/facebookSDK.js');
+        
+        $cs->registerScriptFile($baseUrl . '/js/jquery.lazyload.min.js');        
         
         $cs->registerScriptFile($baseUrl . '/js/pace/pace.min.js');        
 

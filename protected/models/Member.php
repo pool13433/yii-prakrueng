@@ -16,6 +16,7 @@
  * @property integer $mem_level
  */
 class Member extends CActiveRecord {
+
     public $mem_status_desc;
 
     /**
@@ -53,7 +54,7 @@ class Member extends CActiveRecord {
         // NOTE: you may need to adjust the relation name and the related
         // class name for the relations automatically generated below.
         return array(
-             //'memberLevel' => array(self::BELONGS_TO, 'MemberLevel', 'mem_status'),
+                //'memberLevel' => array(self::BELONGS_TO, 'MemberLevel', 'mem_status'),
         );
     }
 
@@ -145,6 +146,13 @@ class Member extends CActiveRecord {
 
     public static function gender() {
         return array('M' => 'ชาย', 'F' => 'หญิง');
+    }
+
+    public function validatePassword($password) {
+        $password = md5($password);
+        if ($password == $this->mem_password) {
+            return true;
+        }
     }
 
 }
