@@ -131,10 +131,10 @@ class SiteController extends Controller {
                 $this->member = new Member();
             } else {
                 $this->member = Member::model()->findByPk($this->member->mem_id);
-                $this->member->mem_fname = $_POST['fname'];
-                $this->member->mem_lname = $_POST['lname'];
                 $this->member->mem_address = $_POST['address'];
             }
+            $this->member->mem_fname = $_POST['fname'];
+            $this->member->mem_lname = $_POST['lname'];
             $this->member->mem_email = $_POST['email'];
             $this->member->mem_username = $_POST['username'];
 
@@ -232,7 +232,7 @@ class SiteController extends Controller {
         if (!empty($_GET['field']) && !empty($_GET['by'])) {
             $criteria->order = 'o.obj_' . trim($_GET['field']) . ' ' . trim($_GET['by']);
         } else {
-            $criteria->order = 'o.obj_updatedate,obj_id desc';
+            $criteria->order = 'o.obj_updatedate desc';
         }
 
 

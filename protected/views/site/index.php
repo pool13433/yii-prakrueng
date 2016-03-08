@@ -63,7 +63,7 @@ $baseUrl = Yii::app()->baseUrl;
                         <?php } else { ?>
                             <?php foreach ($listSacredObject as $index => $object) { ?>
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 mb">        
-                                    <div class="panel panel-warning box-card">
+                                    <div class="panel panel-warning box-card" style="min-height: 460px;">
                                         <div class="panel-body">
                                             <div class="thumbnail">
                                                 <a class="fancybox" href="<?= $baseUrl . '/images' . $object->obj_img ?>">                                       
@@ -86,7 +86,7 @@ $baseUrl = Yii::app()->baseUrl;
                                                     <i class="fa fa-money"></i> <?= $object->obj_price ?> บาท
                                                 </p>   
                                                 <p class="pull-right" style="padding-top: 7.5px;"> 
-                                                    <i class="fa fa-clock-o"></i> <?= $object->obj_updatedate ?>
+                                                    <i class="fa fa-clock-o"></i> <?=  date("d/m/Y H:m:s", strtotime($object->obj_updatedate)) ?>
                                                 </p>   
                                             </div>
                                         </div>
@@ -173,7 +173,7 @@ $baseUrl = Yii::app()->baseUrl;
              console.log(' name ::==' + name);
              console.log('name.length ::==' + name.length)
              console.log('------------------------------------------');*/
-            if (name.length <= 28) {
+            if (name.length <= 20) {
                 $(card).find('panel-body').find('.col-lg-12').eq(0).append('<br/>');
                 var targetObj = $(card).find('div.panel-body').find('strong').find('p');
                 $('<br/>').insertBefore(targetObj);

@@ -131,8 +131,8 @@ class SacredObject extends CActiveRecord {
     protected function afterFind() {
         $this->obj_update_original = $this->obj_updatedate;
         // convert to display format
-        $this->obj_updatedate = strtotime($this->obj_updatedate);        
-        $this->obj_updatedate = date('d/m/Y', $this->obj_updatedate);
+        //$this->obj_updatedate = strtotime($this->obj_updatedate);        
+        //$this->obj_updatedate = date('d/m/Y', $this->obj_updatedate);
         $this->obj_born = (intval($this->obj_born) + 543);
         $this->obj_price = Yii::app()->format->formatNumber($this->obj_price);
         $this->obj_status_desc = ($this->obj_status == 1 ? 'เผยแพร่' : 'ปิดการขาย');
@@ -141,9 +141,11 @@ class SacredObject extends CActiveRecord {
 
     public function beforeSave() {
         if (parent::beforeSave()) {
-            if ($this->obj_updatedate !== null) {
-                $this->obj_updatedate = $this->obj_update_original;
-            }
+//            if ($this->obj_updatedate !== null) {
+//                $this->obj_updatedate = $this->obj_update_original;
+//            }else{
+//                $this->obj_updatedate = new CDbExpression('NOW()');
+//            }
             $this->obj_price = Yii::app()->format->unformatNumber($this->obj_price);
             $this->obj_born = (intval($this->obj_born) - 543);
             return true;

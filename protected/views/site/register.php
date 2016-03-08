@@ -99,15 +99,24 @@
 </form>
 
 <script type = "text/javascript" >
+    $.validator.addMethod("regex", function (value, element, regexp) {
+        var check = false;
+        return this.optional(element) || regexp.test(value);
+    }, "Please check your input.");
+
     $(function () {
         $('#form-register').submit(function (e) {
             e.preventDefault();
         }).validate({
             rules: {
-                username: "required",
+                username: {
+                    required: true,
+                    regex: /^[a-zA-Z0-9]+$/
+                },
                 password: {
                     required: true,
-                    equalTo: '#confirm_password'
+                    equalTo: '#confirm_password',
+                    regex: /^[a-zA-Z0-9]+$/
                 },
                 confirm_password: {
                     required: true,
@@ -122,10 +131,14 @@
                 fname: "required"
             },
             messages: {
-                username: "กรุณากรอก username",
+                username: {
+                    require: "กรุณากรอก username",
+                    regex: 'กรุณากรอก ตัวเลขกับอักษรภาษาอังกฤษเท่านั้น',
+                },
                 password: {
                     required: "กรุณากรอก password",
-                    equalTo: 'กรุณากรอก password ให้ตรงกัน'
+                    equalTo: 'กรุณากรอก password ให้ตรงกัน',
+                    regex: 'กรุณากรอก ตัวเลขกับอักษรภาษาอังกฤษเท่านั้น',
                 },
                 confirm_password: {
                     required: "กรุณากรอก confirm password",

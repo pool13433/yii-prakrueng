@@ -1,4 +1,4 @@
-var MaximumSizeOfFile = (1024 * 1024) * 2;
+var MaximumSizeOfFile = (1024 * 1024) * 3;
 
 $(document).ready(function () {
     /*

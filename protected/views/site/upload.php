@@ -17,7 +17,9 @@ $baseUrl = Yii::app()->baseUrl;
                 <label class="control-label col-lg-3 col-md-3 col-sm-4 col-xs-4">ชื่อสินค้า<small> *</small></label>
                 <div class="col-lg-5 col-md-5 col-sm-5 col-xs-8">
                     <input type="hidden" id="id" name="id" value="<?= $sacredObject->obj_id ?>"/>
-                    <input type="text" class="form-control input-lg" name="name" id="name" value="<?= $sacredObject->obj_name ?>" required/>
+                    <input type="text" class="form-control input-lg" name="name" id="name" 
+                           maxlength="40"
+                           value="<?= $sacredObject->obj_name ?>" required/>
                     <span class="label label-warning">กรุณากรอกข้อมูล ชื่อสินค้า</span>
                 </div>
             </div>
