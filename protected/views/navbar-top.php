@@ -49,26 +49,28 @@
                 <?php $member = Yii::app()->session['member'] ?>
 
                 <?php if ($member->mem_status == 0) { ?>
-                                                                                                                                                                                                                                                                                                                                <!--                    <li><a href="#">ข้อมูลพระเครื่อง <span class="sr-only">(current)</span></a></li>-->
+                                                                                                                                                                                                                                                                                                                                        <!--                    <li><a href="#">ข้อมูลพระเครื่อง <span class="sr-only">(current)</span></a></li>-->
 
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">ข้อมูลพระเครื่อง <span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li><a href="<?= Yii::app()->createUrl('sacred/index') ?>">พระเครื่อง</a></li>
-                            <li><a href="<?= Yii::app()->createUrl('sacred/indexType') ?>">ประเภทพระเครื่อง</a></li>
+                            <li><a href="<?= Yii::app()->createUrl('sacred/index') ?>"><i class="fa fa-sitemap"></i> พระเครื่อง</a></li>
+                            <li><a href="<?= Yii::app()->createUrl('sacred/indexType') ?>"><i class="glyphicon glyphicon-king"></i> ประเภทพระเครื่อง</a></li>
                             <li role="separator" class="divider"></li>
         <!--                            <li><a href="<?= Yii::app()->createUrl('sacred/indexRegion') ?>">ภูมิภาค</a></li>-->
-                            <li><a href="<?= Yii::app()->createUrl('sacred/indexProvince') ?>">จังหวัดกำเนิด</a></li>
+                            <li><a href="<?= Yii::app()->createUrl('sacred/indexProvince') ?>"><i class="glyphicon glyphicon-bookmark"></i> จังหวัดกำเนิด</a></li>
                             <li role="separator" class="divider"></li>
-                            <li><a href="<?= Yii::app()->createUrl('sacred/indexNews') ?>">ข่าว</a></li>
-                            <li><a href="<?= Yii::app()->createUrl('sacred/indexRules') ?>">กฏกติกา</a></li>
+                            <li><a href="<?= Yii::app()->createUrl('sacred/indexNews') ?>"><i class="glyphicon glyphicon-list-alt"></i> ข่าว</a></li>
+                            <li><a href="<?= Yii::app()->createUrl('sacred/indexRules') ?>"><i class="glyphicon glyphicon-volume-down"></i> กฏกติกา</a></li>
+                            <li role="separator" class="divider"></li>
+                            <li><a href="<?= Yii::app()->createUrl('system/config') ?>"><i class="glyphicon glyphicon-cog"></i> ตั้งค่าระบบ</a></li>
                         </ul>
                     </li>
                     <li class="dropdown">
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">ข้อมูลสมาชิก <span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li><a href="<?= Yii::app()->createUrl('member/index') ?>">สมาชิก</a></li>
-                            <li><a href="<?= Yii::app()->createUrl('member/indexLevel') ?>">ระดับสมาชิก</a></li>
+                            <li><a href="<?= Yii::app()->createUrl('member/index') ?>"> <i class="glyphicon glyphicon-user"></i> สมาชิก</a></li>
+                            <li><a href="<?= Yii::app()->createUrl('member/indexLevel') ?>"><i class="glyphicon glyphicon-th-list"></i> ระดับสมาชิก</a></li>
                         </ul>
                     </li>
                 <?php } ?>
@@ -76,7 +78,7 @@
                 <li class="dropdown">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"
                        style="padding-right: 30px;">
-                        คุณ <?php echo Yii::app()->session['member']->mem_fname?>
+                        คุณ <?php echo Yii::app()->session['member']->mem_fname ?>
                         <i class="glyphicon glyphicon-user"></i> <span class="caret"></span>                        
                     </a>
                     <ul class="dropdown-menu">

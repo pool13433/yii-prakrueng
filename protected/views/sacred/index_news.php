@@ -4,7 +4,8 @@
             <i class=" glyphicon glyphicon-plus"></i> ข้อมูลใหม่
         </a>
     </legend>
-    <form class="form-horizontal" method="post" action="<?= Yii::app()->createUrl('sacred/newsSave') ?>">
+    <form class="form-horizontal" method="post" enctype="multipart/form-data"
+          action="<?= Yii::app()->createUrl('sacred/newsSave') ?>">
 
         <div class="form-group">
             <label class="col-sm-2 control-label">ชื่อ</label>
@@ -12,6 +13,12 @@
                 <input type="hidden" name="id" value="<?= $news->news_id ?>">
                 <input type="text" class="form-control" name="title" value="<?= $news->news_title ?>" 
                        required autofocus placeholder="หัวข้อ">
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">ภาพ</label>
+            <div class="col-sm-4">
+                <input type="file" class="form-control" name="image" value="<?= $news->news_img ?>" placeholder="ภาพ">
             </div>
         </div>
         <div class="form-group">
@@ -23,7 +30,7 @@
         <div class="form-group">
             <label class="col-sm-2 control-label">ลิ้งที่มา</label>
             <div class="col-sm-9">
-                <input type="url" class="form-control" name="link" value="<?= $news->news_link ?>" 
+                <input type="text" class="form-control" name="link" value="<?= $news->news_link ?>" 
                        placeholder="ลิ้ง">
             </div>
         </div>

@@ -8,6 +8,7 @@
  * @property string $news_title
  * @property string $news_detail
  * @property string $news_link
+ * @property string $news_img
  * @property integer $mem_id
  * @property string $news_updatedate
  * @property integer $news_status
@@ -28,7 +29,7 @@ class SacredNews extends CActiveRecord {
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('news_title, news_detail, mem_id, news_updatedate, news_status', 'required'),
+            array('news_title, news_detail, news_img,mem_id, news_updatedate, news_status', 'required'),
             array('mem_id, news_status', 'numerical', 'integerOnly' => true),
             array('news_title', 'length', 'max' => 255),
             // The following rule is used by search().
@@ -56,6 +57,7 @@ class SacredNews extends CActiveRecord {
             'news_title' => 'News Title',
             'news_detail' => 'News Detail',
             'news_link' => 'News Link',
+            'news_img' => 'news_img',
             'mem_id' => 'Mem',
             'news_updatedate' => 'News Update',
             'news_status' => 'News Status',

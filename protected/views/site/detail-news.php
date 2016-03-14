@@ -9,12 +9,25 @@ $baseUrl = Yii::app()->baseUrl;
             <div class="col-lg-9 col-md-9 col-sm-12 col-xs-12">
                 <div class="panel panel-warning panel-news">
                     <div class="panel-heading">
-                        <h4><i class="glyphicon glyphicon-info-sign"></i></h4>
+                        <h4><i class="glyphicon glyphicon-info-sign"></i> <?= $news->news_title ?></h4>
                     </div>
                     <div class="panel-body">
-                        <h4><b><u><?=$news->news_title?></u></b></h4>
-                        <p><?=$news->news_detail?></p>
-                        <hr/>
+                        <?php if (!empty($news->news_img)) { ?>
+                            <div class="row">
+                                <div class="col-lg-10 col-lg-offset-2 col-sm-10 col-sm-offset-1">                                
+                                    <a class="fancybox" href="<?= $baseUrl . '/images' . $news->news_img ?>">                                       
+                                        <img class="img-responsive lazyload" alt="Responsive image"
+                                             data-src="<?= $baseUrl . '/images' . $news->news_img ?>">
+                                    </a>  
+                                </div>
+                            </div>
+                        <?php } ?>
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <p><?= $news->news_detail ?></p>
+                                <hr/>
+                            </div>
+                        </div>
                         <p>ที่มา :: <a href="<?= $news->news_link ?>" target="_blank"><?= $news->news_link ?></a></p> 
                     </div>
                 </div>

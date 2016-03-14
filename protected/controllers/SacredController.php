@@ -6,13 +6,14 @@ class SacredController extends Controller {
     //public $imageSize = 400;
     private $imageWeight = 800;
     private $imageHeight = 600;
+    private $resizeUpload = 0.5;
 
     public function init() {
         $sessionMember = Yii::app()->session['member'];
         if (empty($sessionMember->mem_id)) {
             $this->render('../authen');
             exit();
-        }                
+        }
         $this->imagePath = YiiBase::getPathOfAlias("webroot") . '/images';
     }
 
@@ -202,10 +203,20 @@ class SacredController extends Controller {
     }
 
     public function actionNewsSave() {
+        $pathImage = YiiBase::getPathOfAlias("webroot") . '/images';
         if (empty($_POST['id'])) {
             $news = new SacredNews();
         } else {
             $news = SacredNews::model()->findByPk($_POST['id']);
+        }
+        $utility = new Utilities();
+        $currentDate = date('Ymd');
+        if (!empty($_FILES['image']['name'])) {
+            $subDerectoryMain = '/upload_news/' . $currentDate . '_';
+            $imageName = $utility->resizeImagePercent($pathImage . $subDerectoryMain, $_FILES['image'], $this->resizeUpload);
+            $news->news_img = $subDerectoryMain . $imageName;
+        } else {
+            $news->news_img = '';
         }
         $news->news_title = $_POST['title'];
         $news->news_detail = $_POST['detail'];

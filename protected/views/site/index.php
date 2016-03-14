@@ -63,36 +63,32 @@ $baseUrl = Yii::app()->baseUrl;
                         <?php } else { ?>
                             <?php foreach ($listSacredObject as $index => $object) { ?>
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 mb">        
-                                    <div class="panel panel-warning box-card" style="min-height: 460px;">
-                                        <div class="panel-body">
+                                    <div class="panel panel-warning box-card" style="height: 650px;">
+                                        <div class="panel-body" style="height:420px;">
                                             <div class="thumbnail">
                                                 <a class="fancybox" href="<?= $baseUrl . '/images' . $object->obj_img ?>">                                       
-                                                    <img class="lazy img-responsive" alt="Responsive image"
-                                                         data-original="<?= $baseUrl . '/images' . $object->obj_img ?>"
-                                                         src="<?= $baseUrl . '/images' . $object->obj_img ?>"
-                                                         style="max-width: 75%;min-height: 200px;max-height: 200px;">
-                                                    <noscript>
-                                                    <img src="<?= $baseUrl . '/images' . $object->obj_img ?>" width="640" heigh="480">
-                                                    </noscript>
+                                                    <img class="img-responsive lazyload" alt="Responsive image"
+                                                         data-src="<?= $baseUrl . '/images' . $object->obj_img ?>"
+                                                         style="max-width: 90%;min-height: 250px;max-height: 250px;">
                                                 </a>                                                                   
                                             </div>
-                                            <div class="col-lg-12">
-                                                <strong class="title" style="font-size: 1.1em">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                <strong class="title" style="font-size: 1.1em;">
                                                     <p><?= $object->obj_name; ?></p>
                                                 </strong>
                                             </div>
-                                            <div class="col-lg-12">
+                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                                 <p class="pull-left" style="padding-top: 7.5px;"> 
                                                     <i class="fa fa-money"></i> <?= $object->obj_price ?> บาท
                                                 </p>   
                                                 <p class="pull-right" style="padding-top: 7.5px;"> 
-                                                    <i class="fa fa-clock-o"></i> <?=  date("d/m/Y H:m:s", strtotime($object->obj_updatedate)) ?>
+                                                    <i class="fa fa-clock-o"></i> <?= date("d/m/Y H:m", strtotime($object->obj_updatedate)) ?>
                                                 </p>   
                                             </div>
                                         </div>
                                         <div class="panel-footer">
                                             <a href="<?= Yii::app()->createUrl('site/detail/' . $object->obj_id) ?>" 
-                                               class="btn btn-warning btn-sm btn-block" style="font-size: 1.5em;font-weight: bold">
+                                               class="btn btn-warning btn-xs btn-block" style="font-size: 1.5em;font-weight: bold">
                                                 <i class="fa fa-share-square-o"></i> รายละเอียด...
                                             </a>
                                         </div>
@@ -158,27 +154,5 @@ $baseUrl = Yii::app()->baseUrl;
         ))
         ?>
         <!-- Sidebar Right End -->
-
     </div>
 </div>
-<!-- Co ntent End --> 
-<script type="text/javascript">
-    $(document).ready(function () {
-        var panelCards = $('.box-card');
-        $.each(panelCards, function (index, card) {
-            var name = $.trim($(card).find('strong.title').text());
-            var price = $(card).find('p.pull-left').text();
-            var date = $(card).find('p.pull-right').text();
-            /*console.log('------------------------------------------');
-             console.log(' name ::==' + name);
-             console.log('name.length ::==' + name.length)
-             console.log('------------------------------------------');*/
-            if (name.length <= 20) {
-                $(card).find('panel-body').find('.col-lg-12').eq(0).append('<br/>');
-                var targetObj = $(card).find('div.panel-body').find('strong').find('p');
-                $('<br/>').insertBefore(targetObj);
-            }
-            $(card).find('strong.title').css({'font-size': '1.5em'});
-        });
-    });
-</script>

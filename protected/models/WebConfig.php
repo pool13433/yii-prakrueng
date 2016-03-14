@@ -24,7 +24,7 @@ class WebConfig extends CActiveRecord {
         // NOTE: you should only define rules for those attributes that
         // will receive user inputs.
         return array(
-            array('name, value, updatedate', 'required'),
+            array('name, value,visible, unit,updatedate', 'required'),
             array('name, value', 'length', 'max' => 100),
             // The following rule is used by search().
             // @todo Please remove those attributes that should not be searched.
@@ -49,6 +49,8 @@ class WebConfig extends CActiveRecord {
         return array(
             'name' => 'Name',
             'value' => 'Value',
+            'visible' => 'visible',
+            'unit' => 'unit',
             'updatedate' => 'Updatedate',
         );
     }
@@ -99,6 +101,14 @@ class WebConfig extends CActiveRecord {
                 }
             }
         }
+    }
+
+    public static function getPercentResize() {
+        return array(
+            '0.25' => '1/4',
+            '0.50' => '2/4',
+            '0.75' => '3/4',
+        );
     }
 
 }

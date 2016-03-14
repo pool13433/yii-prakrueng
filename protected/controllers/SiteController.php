@@ -11,6 +11,8 @@ class SiteController extends Controller {
     public $memberLevelDefault;
     public $regionDefault = 3;
     public $displayDefault = 100;
+    public $sizeUpload = 3;
+    public $resizeUpload = 0.5;
 
     //memberLevelDefault
 
@@ -66,6 +68,8 @@ class SiteController extends Controller {
         $this->memberStatusDefault = WebConfig::getValueByKey('default_object_public');
         $this->publicStatus = WebConfig::getValueByKey('default_status');
         $this->displayDefault = WebConfig::getValueByKey('display_length');
+        $this->sizeUpload = WebConfig::getValueByKey('upload_size');
+        $this->resizeUpload = WebConfig::getValueByKey('image_resize');
         /*
          * Load Config
          */
@@ -417,7 +421,8 @@ class SiteController extends Controller {
                     'listSacredType' => $listSacredType,
                     'listRegion' => $listRegion,
                     //'listProvince' => $listProvince,
-                    'sacredObject' => $sacredObject
+                    'sacredObject' => $sacredObject,
+                    'sizeUpload' => $this->sizeUpload,
                 ));
             } else {
                 $this->member = Yii::app()->session['member'];
@@ -456,16 +461,12 @@ class SiteController extends Controller {
                          * Manage Image Resize , Rename of File
                          */
                         $subDerectoryMain = '/upload_main/' . $currentDate . '_';
-//$imageName = $utility->resizeImage($pathImage . $subDerectoryMain, $_FILES['fileMain'], $this->imageWidth, $this->imageHeight);
-                        $imageName = $utility->resizeImagePercent($pathImage . $subDerectoryMain, $_FILES['fileMain'], 0.5);
+                        $imageName = $utility->resizeImagePercent($pathImage . $subDerectoryMain, $_FILES['fileMain'], $this->resizeUpload);
                         /*
                          * Manage Image Resize , Rename of File
                          */
                         $sacredObject->obj_img = $subDerectoryMain . $imageName;
                     }
-
-
-
                     if ($sacredObject->save(false)) {
 
                         if (!empty($_FILES['fileOther'])) {
@@ -481,7 +482,7 @@ class SiteController extends Controller {
                                  */
                                 $subDerectoryOther = '/upload_other/' . $currentDate . '_';
 //$imageName = $utility->resizeImage($pathImage . $subDerectoryOther, $file, $this->imageWidth, $this->imageHeight);
-                                $imageName = $utility->resizeImagePercent($pathImage . $subDerectoryOther, $file, 0.5);
+                                $imageName = $utility->resizeImagePercent($pathImage . $subDerectoryOther, $file, $this->resizeUpload);
                                 /*
                                  * Manage Image Resize , Rename of File
                                  */

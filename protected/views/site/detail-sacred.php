@@ -30,11 +30,6 @@ $baseUrl = Yii::app()->baseUrl;
                                 </a>
                             </li>
                             <li role="presentation">
-                                <a href="#relate" aria-controls="relate" role="tab" data-toggle="tab">
-                                    <h5><i class="fa fa-link"></i> พระเครื่องที่เกี่ยวข้อง</h5>
-                                </a>
-                            </li>
-                            <li role="presentation">
                                 <a href="#comment" aria-controls="comment" role="tab" data-toggle="tab">
                                     <h5><i class="fa fa-comments-o"></i> แสดงความคิดเห็น</h5>
                                 </a>
@@ -89,7 +84,7 @@ $baseUrl = Yii::app()->baseUrl;
                                         </div>
                                         <div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
                                             <div id="mainImage">
-                                                <div class="col-lg-12 col-md-12 col-sm-12">
+                                                <div class="col-lg-10 col-lg-offset-1 col-md-12 col-md-offset-1 col-sm-12">
                                                     <a href="#" class="thumbnail">
                                                         <img id="img_zoom" class="img-responsive zoom" src="<?= $baseUrl . '/images/' . $sacredObject->obj_img ?>"                                                              
                                                              alt="" data-zoom-image="<?= $baseUrl . '/images/' . $sacredObject->obj_img ?>">
@@ -101,7 +96,7 @@ $baseUrl = Yii::app()->baseUrl;
                                             <div class="row" id="albumImage">
                                                 <div class="col-lg-4 col-md-3 col-sm-2 col-xs-4">
                                                     <a href="#" class="thumbnail" data-image="<?= $baseUrl . '/images/' . $sacredObject->obj_img ?>" data-zoom-image="<?= $baseUrl . '/images/' . $sacredObject->obj_img ?>"> 
-                                                        <img id="img_zoom" class="img-rounded lazy" 
+                                                        <img id="img_zoom" class="img-rounded" 
                                                              data-original="<?= $baseUrl . '/images/' . $sacredObject->obj_img ?>"
                                                              src="<?= $baseUrl . '/images/' . $sacredObject->obj_img ?>"/> 
                                                     </a>
@@ -109,9 +104,9 @@ $baseUrl = Yii::app()->baseUrl;
                                                 <?php foreach ($listSacredObjectImg as $index => $img) { ?>
                                                     <div class="col-lg-4 col-md-3 col-sm-2 col-xs-4">
                                                         <a href="#" class="thumbnail" data-image="<?= $baseUrl . '/images/' . $img->img_name ?>" data-zoom-image="<?= $baseUrl . '/images/' . $img->img_name ?>"> 
-                                                            <img id="img_zoom" class="img-rounded lazy" 
+                                                            <img id="img_zoom" class="img-rounded lazyload" 
                                                                  data-original="<?= $baseUrl . '/images/' . $img->img_name ?>"
-                                                                 src="<?= $baseUrl . '/images/' . $img->img_name ?>"/> 
+                                                                 data-src="<?= $baseUrl . '/images/' . $img->img_name ?>"/> 
                                                         </a>
                                                     </div>
                                                 <?php } ?>
@@ -124,6 +119,49 @@ $baseUrl = Yii::app()->baseUrl;
                                                 <br/>- เลื่อนขึ้นด้านบน ขยายเลนส์กล้อง จะดูรายละเอียดได้ดียิ่งขึ้น
                                                 <br/>- เลื่อนขึ้นด้านล่าง ย่อเลนส์กล่้องเข้า ความละเอียดจะน้อนลง
                                             </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="panel panel-default">
+                                    <div class="panel-body">
+                                        <div class="page-header">
+                                            <h2><i class="fa fa-link"></i> 
+                                                <strong><u>พระเครื่องที่เกี่ยวข้องของผู้ขายท่านนี้</u></strong>
+                                            </h2>
+                                        </div>
+                                        <div class="row">
+                                            <?php foreach ($listSacredObjectRelate as $index => $relate) { ?>
+                                                <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12 mb">        
+                                                    <div class="panel panel-warning box-card-sm">
+                                                        <div class="panel-body" style="font-size: 0.9em;">
+                                                            <div class="thumbnail">
+                                                                <a class="fancybox" href="<?= $baseUrl . '/images' . $relate->obj_img ?>">                                       
+                                                                    <img class="img-responsive lazyload" alt="Responsive image"
+                                                                         data-src="<?= $baseUrl . '/images' . $relate->obj_img ?>"
+                                                                         style="max-width: 75%;min-height: 200px;max-height: 200px;">
+                                                                </a>                                                                   
+                                                            </div>
+                                                            <div class="col-lg-12" style="height: 45px;">
+                                                                <strong class="title" style="font-size: 1.1em">
+                                                                    <p><?= $relate->obj_name; ?></p>
+                                                                </strong>
+                                                            </div>
+                                                            <div class="col-lg-12">
+                                                                <p class="pull-left" style="padding-top: 7.5px;"> 
+                                                                    <i class="fa fa-money"></i> <?= $relate->obj_price ?> บาท
+                                                                </p>   
+                                                            </div>
+                                                        </div>
+                                                        <div class="panel-footer">
+                                                            <a href="<?= Yii::app()->createUrl('site/detail/' . $relate->obj_id) ?>" 
+                                                               class="btn btn-warning btn-sm btn-block" style="font-size: 1.2em;font-weight: bold">
+                                                                <i class="fa fa-share-square-o"></i> รายละเอียด...
+                                                            </a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+
+                                            <?php } ?>
                                         </div>
                                     </div>
                                 </div>
@@ -287,42 +325,6 @@ $baseUrl = Yii::app()->baseUrl;
                                 </div>
                             </div>
                             <!-- Panel Relate-->
-
-                            <!-- Panel Recommen-->
-                            <div role="tabpanel" class="tab-pane" id="relate">
-                                <div class="panel panel-default">
-                                    <div class="panel-body">
-                                        <div class="page-header">
-                                            <h1><i class="fa fa-link"></i> 
-                                                <small><u>พระเครื่องที่เกี่ยวข้อง</u></small>
-                                            </h1>
-                                        </div>
-                                        <div class="row">
-                                            <?php foreach ($listSacredObjectRelate as $index => $relate) { ?>
-                                                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                                                    <a href="#">
-                                                        <div class="panel panel-default">
-                                                            <div class="panel-body">
-                                                                <a href="#" class="thumbnail">
-                                                                    <img src="<?= $baseUrl . '/images/' . $relate->obj_img ?>" alt="..." 
-                                                                         style="max-width: 75%;min-height: 200px;max-height: 200px;">
-                                                                </a>
-                                                            </div>
-                                                            <div class="panel-footer">
-                                                                <a href="<?= Yii::app()->createUrl('site/detail/' . $relate->obj_id) ?>" class="btn btn-warning btn-block"
-                                                                   style="font-size: 1.1em;font-weight: bold">
-                                                                    <i class="fa fa-share-square-o"></i> รายละเอียด...
-                                                                </a>
-                                                            </div>
-                                                        </div>
-                                                    </a>
-                                                </div>
-                                            <?php } ?>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <!-- Panel Recommen-->
 
                         </div>
                     </div>

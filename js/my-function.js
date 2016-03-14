@@ -1,17 +1,9 @@
-var MaximumSizeOfFile = (1024 * 1024) * 3;
+//var MaximumSizeOfFile = (1024 * 1024) * 3;
 
 $(document).ready(function () {
-    /*
-     * referrence http://www.appelsiini.net/projects/lazyload
-     */
-    $("img.lazy").show().lazyload({
-        event: "sporty",
-        threshold: 200,
-        effect: "fadeIn",
-        container: $("#container-scrollbar")
-    });
     customDatatable();
     customPace();
+    customCardBoxBealtiful();
     //customElevateZoom();
     //initApp();
     validateDefault();
@@ -19,13 +11,19 @@ $(document).ready(function () {
         //'width': 400,
         //'height': 300,
         'autoSize': false});
+});
 
+window.addEvent('domready', function () {
+    /* LazyLoad instance */
+    var lazyloader = new LazyLoad({
+        range: 200,
+        realSrcAttribute: "data-src",
+        useFade: true,
+        elements: '.lazyload',
+        container: window
+    });
 });
-$(window).bind("load", function () {
-    var timeout = setTimeout(function () {
-        $("img.lazy").trigger("sporty")
-    }, 5000);
-});
+
 
 $(document).on('click', 'a[href!="#"]', function (e) {
     Pace.restart();
@@ -129,7 +127,33 @@ function validateDefault() {
         },
     });
 }
-
+function customCardBoxBealtiful() {
+    var panelCards = $('.box-card');
+    $.each(panelCards, function (index, card) {
+        var maxLength = 50;
+        var name = $.trim($(card).find('strong.title').text());
+        var price = $(card).find('p.pull-left').text();
+        var date = $(card).find('p.pull-right').text();
+        console.log('------------------------------------------');
+         console.log(' name ::==' + name);
+         console.log('name.length ::==' + name.length)
+         console.log('------------------------------------------');
+        if (name.length < 35) {
+            $(card).find('panel-body').find('.col-lg-12').eq(0).append('<br/>');
+            var targetObj = $(card).find('div.panel-body').find('strong');
+            //$('<br/>').insertBefore(targetObj);
+            name += " ";
+            for(var i = 0 ; i < maxLength ;i++){
+                name += "\u00A0";
+            }
+            targetObj.text(name);
+            $(card).find('strong.title').css({'font-size': '1.2em'});
+        }else{
+            $(card).find('strong.title').css({'font-size': '1.4em'});
+        }
+        
+    });
+}
 
 
 

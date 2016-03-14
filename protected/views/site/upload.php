@@ -160,7 +160,8 @@ $baseUrl = Yii::app()->baseUrl;
 </form>
 
 <script type="text/javascript">
-
+    var sizeUpload = <?=$sizeUpload?>;
+    var MaximumSizeOfFile = (1024 * 1024) * sizeUpload;
     // The camelized version of the ID of the form element
     var myDropzone = {};
     Dropzone.options.myAwesomeDropzone = {

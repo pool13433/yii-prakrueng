@@ -88,12 +88,14 @@ $baseUrl = Yii::app()->baseUrl;
 
         $cs->registerScriptFile($baseUrl . '/js/validate/jquery.validate.min.js');
         
-        $cs->registerScriptFile($baseUrl . '/js/facebookSDK.js');
-        
-        $cs->registerScriptFile($baseUrl . '/js/jquery.lazyload.min.js');        
+        $cs->registerScriptFile($baseUrl . '/js/facebookSDK.js');  
         
         $cs->registerScriptFile($baseUrl . '/js/pace/pace.min.js');        
-
+        
+        // Lazyload
+        $cs->registerScriptFile($baseUrl . '/js/lazyload/mootools.js');        
+        $cs->registerScriptFile($baseUrl . '/js/lazyload/LazyLoad.js');        
+        
         $cs->registerScriptFile($baseUrl . '/js/my-function.js');
         ?>
     </body>
