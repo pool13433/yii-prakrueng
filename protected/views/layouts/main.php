@@ -46,6 +46,11 @@ $baseUrl = Yii::app()->baseUrl;
                 src: url('webfont.eot'); /* IE9 Compat Modes */
                 src: url('<?php echo Yii::app()->request->baseUrl; ?>/fonts/TH-Dan-Vi-Vek/TH Dan Vi Vek ver 1.03.ttf') format('truetype');
             }            
+            @font-face {
+                font-family: 'Supermarket';
+                src: url('webfont.eot'); /* IE9 Compat Modes */
+                src: url('<?php echo Yii::app()->request->baseUrl; ?>/fonts/supermarket-1-1/supermarket.ttf') format('truetype');
+            }       
         </style>
     </head>
 

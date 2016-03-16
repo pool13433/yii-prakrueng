@@ -291,6 +291,8 @@ class SiteController extends Controller {
         $this->data['total_length'] = $count_object;
         $this->data['title'] = $title;
         $this->data['display_length'] = $this->displayDefault;
+        $fieldSelect = (empty($_GET['field']) ? 'updatedate' : $_GET['field']);
+        $this->data['sort_select'] = PrakruangUtility::getSortDataByField($fieldSelect);
         /*
          * DateSorting
          */

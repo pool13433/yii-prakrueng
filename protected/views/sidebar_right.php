@@ -198,7 +198,7 @@
             if ($(this).is(':checked')) { // checked
                 checked = 1;
             }
-            console.log($(this).is(':checked'));
+            //console.log($(this).is(':checked'));
             var data = {
                 group: 'TYPE', value: $(this).val(), checked: checked
             };
@@ -213,7 +213,7 @@
             if ($(this).is(':checked')) { // checked
                 checked = 1;
             }
-            console.log($(this).is(':checked'));
+            //console.log($(this).is(':checked'));
             var data = {
                 group: 'REGION', value: $(this).val(), checked: checked,
             };

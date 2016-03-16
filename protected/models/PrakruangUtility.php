@@ -20,4 +20,14 @@ class PrakruangUtility extends CFormModel {
             array('field' => 'updatedate', 'by' => 'desc', 'label' => 'วันที่ลงประกาศ ปัจจุบัน-อดีต'),
         );
     }
+    public static function getSortDataByField($field) {
+        $fieldSelect = '';
+        $sorts = PrakruangUtility::getSortData();
+        foreach ($sorts as $index => $sort) {
+            if($sort['field'] == $field){
+                $fieldSelect = $sort['label'];
+            }
+        }
+        return $fieldSelect;
+    }
 }

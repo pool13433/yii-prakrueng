@@ -1,10 +1,14 @@
-
+body *,h5 *{
+    font-family: 'TH-Dan-Vi-Vek';
+/*    font-family: 'Supermarket';
+    font-size: 0.95em;*/
+}
 /*==========  Mobile First Method  ==========*/
 
 /* Custom, iPhone Retina */ 
 @media only screen and (min-width : 320px) and (max-width : 480px){
     .thumbnail img.img-responsive{
-        //max-height: 150px;
+        /*max-height: 150px;*/
         max-width: 150px;
     }
     div.form-group label.control-label,
@@ -15,24 +19,36 @@
     .nav-tabs *{
         font-size: 0.90em;    
     }
+    a.design-list{
+        display: none;
+    }
 }
 
 /* Extra Small Devices, Phones */ 
 @media only screen and (min-width : 481px) and (max-width : 767px) {
     .thumbnail img.img-responsive{
-        //max-height: 200px;
+        /*max-height: 200px;*/
         max-width: 250px;
+    }
+    a.design-list{
+        display: none;
     }
 }
 
 /* Small Devices, Tablets */
 @media only screen and (min-width : 768px)  and (max-width : 991px) {
     .thumbnail img.img-responsive{
-        //max-height: 400px;
+        /*max-height: 400px;*/
         max-width: 400px;
     }
     .nav-tabs *{
         font-size: 1.0em;    
+    }
+    div.collapse.navbar-collapse.navbar-ex1-collapse{
+        font-size: 0.8em;
+    }
+    a.design-list{
+        display: none;
     }
 }
 
@@ -50,7 +66,7 @@
 /* Large Devices, Wide Screens */
 @media only screen and (min-width : 1200px) {
     .thumbnail img.img-responsive{
-        //max-height: 450px;
+        /*max-height: 450px;*/
         max-width: 400px;
     }
     .nav-tabs *{
@@ -301,9 +317,7 @@ form label.control-label *{
     color: red;
 }
 
-body *,h5 *{
-    font-family: 'TH-Dan-Vi-Vek';                
-}
+
 body a, 
 div.alert, 
 div.panel-heading,
